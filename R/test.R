@@ -1,4 +1,4 @@
-add <- function()
+solvent_blank_filter <- function(sample_to_filter, data_frame)
 {
-  2 + 2
+  return(subset(data_frame, data_frame[sample_to_filter] <= 0))
 }
