@@ -18,7 +18,7 @@ kmd_diff <- 0
 cut_ions <- c() # list
 merge_groups <- list() # dictonary
 
-  data_frame <- data_frame[order("mz", decreasing = FALSE),]
+  data_frame <- data_frame[order(data_frame$mz, decreasing = FALSE), ]
   number_of_rows <- nrow(data_frame)
   for(i in seq_along(1:number_of_rows)) {
     current_feature <- data_frame[i, c("Compound", "mz", "rt")]
@@ -27,7 +27,11 @@ merge_groups <- list() # dictonary
     current_ion <- current_feature$Compound
     if (!(current_ion %in% cut_ions))
     {
-      for(j in seq_along(i + 1:number_of_rows)) {
+      for(j in (i + 1):number_of_rows) {
+        if(j > number_of_rows)
+        {
+          break
+        }
         if(data_frame$Compound[j] %in% cut_ions) {
           next
         }
@@ -49,14 +53,13 @@ merge_groups <- list() # dictonary
            (ring_band == 0 ||
             double_band < isowin)) {
             cut_ions <- c(cut_ions, data_frame$Compound[j])
-            merge_groups[[as.character(current_ion)]] <- c(merge_groups[[as.character(current_ion)]], i)
-            print(current_ion)
+            merge_groups[[as.character(current_ion)]] <- c(merge_groups[[as.character(current_ion)]], data_frame$Compound[j])
         }
       }
     }
   }
-  ion_filter_list["cut_ions"] <- cut_ions
-  ion_filter_list["merge_groups"] <- merge_groups
+  ion_filter_list[["cut_ions"]] <- cut_ions
+  ion_filter_list[["merge_groups"]] <- merge_groups
   return(ion_filter_list)
 
 }
