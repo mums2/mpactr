@@ -14,3 +14,15 @@ test_that("Test that solvent blank filter removes correct columns", {
                                 "sample1_2" = c(1, 350, 600))
   expect_equal(test_ex_df, expected_result)
 })
+
+
+test_that("mismatched peaks filter works", {
+  peak_df <- readr::read_csv("~/Desktop/mpactR/tests/exttestdata/102623 peaktable coculture simple.csv", skip = 2)
+  colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
+  colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
+  
+  sample_df <- readr::read_csv("~/Desktop/mpactR/tests/exttestdata/102623 samplelist.csv")
+  meta <- readr::read_csv("~/Desktop/mpactR/tests/exttestdata/102623 metadata simple.csv")
+  
+  relfil_ion_list <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+})
