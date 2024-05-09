@@ -1,3 +1,7 @@
+# TODO Generate a class-like structure for the tree-plot
+
+
+
 #' @params data_frame with first three columns: Compound, mz, rt
 solvent_blank_filter <- function(data_frame, sample_to_filter)
 {
@@ -78,11 +82,41 @@ merge_groups <- list() # dictonary
   return(ion_filter_list)
 
 }
-# Generate a class-like structure for the tree-plot
-merge_ions <- function(data_frame, ion_filter_list) {
 
-  data_frame[which(!(data_frame$Compound %in% cut_ions)), ]
+# blank filter
+filter_blank <- function(data_frame, metadata) {
   
 }
 
-#
+# grpave code: 
+  msdata_errprop = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'), sep=',', header=[0, 1, 2], index_col=[0, 1, 2])
+
+    # Find technical averages and RSDs
+    msdata_errprop_tidy = msdata_errprop.stack([0, 1, 2])
+    msdata_errprop_mean = msdata_errprop_tidy.groupby(level=[0, 1, 2, 3, 4]).mean()
+    msdata_errprop_mean = msdata_errprop_mean.groupby(level=[0, 1, 2, 3]).mean().to_frame()
+    msdata_errprop_mean.columns = ['average']
+    msdata_errprop_mean['biolRSD'] = msdata_errprop_tidy.groupby(level=[0, 1, 2, 3]).std().fillna(0) / msdata_errprop_tidy.groupby(level=[0, 1, 2, 3]).mean()
+    msdata_errprop_mean['bioln'] = msdata_errprop_tidy.groupby(level=[0, 1, 2, 3]).count()
+    msdata_errprop_sd = (msdata_errprop_tidy.groupby(level=[0, 1, 2, 3, 4]).std() / msdata_errprop_tidy.groupby(level=[0, 1, 2, 3, 4]).mean()).to_frame()
+    msdata_errprop_mean['techRSD'] = msdata_errprop_sd.groupby(level=[0, 1, 2, 3]).mean()
+    msdata_errprop_n = msdata_errprop_tidy.groupby(level=[0, 1, 2, 3, 4]).count()
+    msdata_errprop_mean['techn'] = msdata_errprop_n.groupby(level=[0, 1, 2, 3]).mean()
+
+    # Save summary data and group averages
+    msdata_errprop_mean.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_summarydata.csv'), header=True, index=True)
+    msdata_errprop_grpav = msdata_errprop_mean.loc[:, msdata_errprop_mean.columns.intersection(['average'])]
+    msdata_errprop_grpav.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_groupaverages.csv'), header=True, index=True)
+
+if analysis_params.grpave:
+        stats.groupave(analysis_params)
+        print('Parsing ion lists')
+        groupionlists = filter.parsionlists(analysis_params)
+if analysis_params.blnkfltr:
+        msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'), sep=',', header=[0, 1, 2], index_col=None)
+        msdata = filter.listfilter(msdata, groupionlists[analysis_params.blnkgrp], False)
+        msdata = msdata.drop(analysis_params.blnkgrp, axis=1, level=0)
+        msdata.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'), header=True, index=False)
+        iondict = pd.read_csv(analysis_params.outputdir / 'iondict.csv', sep=',', header=[0], index_col=0)
+        iondict['pass_blnkfil'] = ~iondict.index.isin(groupionlists[analysis_params.blnkgrp])
+        iondict.to_csv(analysis_params.outputdir / 'iondict.csv', header=True, index=True)
