@@ -84,29 +84,90 @@ merge_groups <- list() # dictonary
 }
 
 # blank filter
+# the current expected metadata format as input
+#full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
+#  filter(Biological_Group != "NA") %>%
+#  select(Injection, Sample_Code, Biological_Group) 
+
 filter_blank <- function(data_frame, metadata) {
   
+  # extract feature sample (rows are features, columns are samples)
+  ft <- as.data.frame(peak_df[ , !(colnames(peak_df) %in% c("mz", "rt", "kmd"))])
+  rownames(ft) <- as.character(ft$Compound)
+  ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
+  
+  # transpose so rows are samples and columns are features
+  ft_t <- t(ft)
+  
+  # make sure metadata rows in the same order as ft_t rownames
+  full_meta <- full_meta[order(match(full_meta$Injection, rownames(ft_t))), ]
+  full_meta$Injection <- as.factor(full_meta$Injection)
+  full_meta$Sample_Code <- as.factor(full_meta$Sample_Code)
+  full_meta$Biological_Group <- as.factor(full_meta$Biological_Group)
+  
+  # calculate RSD for biological and technical groups
+  biol_stats <- ft_t %>% 
+    pivot_longer(cols = c(as.character(peak_df$Compound[1]):as.character(tail(peak_df$Compound, 1))), names_to = "Compound") %>%
+    group_by(Compound, Biological_Group) %>%
+    summarise(average = mean(value),
+              biolRSD = if_else(average != 0, sd(value) / mean(value), 0),
+              bioln = n()) %>%
+    ungroup()
+  
+  tech_stats <- ft_t %>%
+    pivot_longer(cols = c(as.character(peak_df$Compound[1]):as.character(tail(peak_df$Compound, 1))), names_to = "Compound") %>%
+    group_by(Compound, Sample_Code, Biological_Group) %>%
+    summarise(sd = if_else(mean(value) != 0, sd(value) / mean(value), 0),
+              n = n()) %>%
+    ungroup() %>%
+    group_by(Compound, Biological_Group) %>%
+    summarise(techRSD = mean(sd),
+              techn = mean(n))
+    
+  group_stats <- biol_stats %>%
+  left_join(tech_stats, by = c("Compound", "Biological_Group"))
+  
+  return(group_stats)
 }
 
-# grpave code: 
-  msdata_errprop = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'), sep=',', header=[0, 1, 2], index_col=[0, 1, 2])
+# tidy approach:
+#biol_stats <- ft_t %>% 
+#      pivot_longer(cols = c(as.character(peak_df$Compound[1]):as.character(tail(peak_df$Compound, 1))), names_to = "Compound") %>%
+#      group_by(Compound, Biological_Group) %>%
+#      summarise(average = mean(value),
+#                biolRSD = if_else(average != 0, sd(value) / mean(value), 0),
+                bioln = n()) %>%
+#      ungroup()
+#      
+#tech_stats <- ft_t %>%
+#  pivot_longer(cols = c(as.character(peak_df$Compound[1]):as.character(tail(peak_df$Compound, 1))), names_to = "Compound") %>%
+#  group_by(Compound, Sample_Code, Biological_Group) %>%
+#  summarise(sd = if_else(mean(value) != 0, sd(value) / mean(value), 0),
+#            n = n()) %>%
+#  ungroup() %>%
+#  group_by(Compound, Biological_Group) %>%
+#  summarise(techRSD = mean(sd),
+#            techn = mean(n))
+#  
+#  group_stats <- biol_stats %>%
+#  left_join(tech_stats, by = c("Compound", "Biological_Group"))
 
-    # Find technical averages and RSDs
-    msdata_errprop_tidy = msdata_errprop.stack([0, 1, 2])
-    msdata_errprop_mean = msdata_errprop_tidy.groupby(level=[0, 1, 2, 3, 4]).mean()
-    msdata_errprop_mean = msdata_errprop_mean.groupby(level=[0, 1, 2, 3]).mean().to_frame()
-    msdata_errprop_mean.columns = ['average']
-    msdata_errprop_mean['biolRSD'] = msdata_errprop_tidy.groupby(level=[0, 1, 2, 3]).std().fillna(0) / msdata_errprop_tidy.groupby(level=[0, 1, 2, 3]).mean()
-    msdata_errprop_mean['bioln'] = msdata_errprop_tidy.groupby(level=[0, 1, 2, 3]).count()
-    msdata_errprop_sd = (msdata_errprop_tidy.groupby(level=[0, 1, 2, 3, 4]).std() / msdata_errprop_tidy.groupby(level=[0, 1, 2, 3, 4]).mean()).to_frame()
-    msdata_errprop_mean['techRSD'] = msdata_errprop_sd.groupby(level=[0, 1, 2, 3]).mean()
-    msdata_errprop_n = msdata_errprop_tidy.groupby(level=[0, 1, 2, 3, 4]).count()
-    msdata_errprop_mean['techn'] = msdata_errprop_n.groupby(level=[0, 1, 2, 3]).mean()
 
-    # Save summary data and group averages
-    msdata_errprop_mean.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_summarydata.csv'), header=True, index=True)
-    msdata_errprop_grpav = msdata_errprop_mean.loc[:, msdata_errprop_mean.columns.intersection(['average'])]
-    msdata_errprop_grpav.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_groupaverages.csv'), header=True, index=True)
+# Reshape approach - unstabe *in progress*
+# stats::reshape(data = ft_t,
+#                direction = "long",
+#                varying = which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1)),
+#                v.names = colnames(ft_t)[which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1))],
+#                idvar = c("Injection", "Sample_Code", "Biological_Group")
+# )
+
+# stats::reshape(data = ft_t,
+#                direction = "long",
+#                varying = which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1)),
+#                v.names = colnames(ft_t)[which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1))],
+#                timevar = c("Injection", "Sample_Code", "Biological_Group"))
+
+# ft_t_sub <- ft_t %>% select(`1`, `2`, `3`, Biological_Group, Sample_Code)
 
 if analysis_params.grpave:
         stats.groupave(analysis_params)
