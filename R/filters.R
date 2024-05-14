@@ -136,7 +136,7 @@ merge_ions <- function(data_frame, ion_filter_list) {
 filter_blank <- function(data_frame, metadata) {
   
   # extract feature sample (rows are features, columns are samples)
-  ft <- as.data.frame(peak_df_relfil[ , !(colnames(peak_df_relfil) %in% c("mz", "rt", "kmd"))])
+  ft <- as.data.frame(data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))])
   rownames(ft) <- as.character(ft$Compound)
   ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
   
@@ -144,16 +144,16 @@ filter_blank <- function(data_frame, metadata) {
   ft_t <- as.data.frame(t(ft))
   
   # make sure metadata rows in the same order as ft_t rownames
-  full_meta <- full_meta[order(match(full_meta$Injection, rownames(ft_t))), ]
-  full_meta$Injection <- as.factor(full_meta$Injection)
-  full_meta$Sample_Code <- as.factor(full_meta$Sample_Code)
-  full_meta$Biological_Group <- as.factor(full_meta$Biological_Group)
+  metadata <- metadata[order(match(metadata$Injection, rownames(ft_t))), ]
+  metadata$Injection <- as.factor(metadata$Injection)
+  metadata$Sample_Code <- as.factor(metadata$Sample_Code)
+  metadata$Biological_Group <- as.factor(metadata$Biological_Group)
   
-  ft_t <- cbind(ft_t, full_meta[, c("Sample_Code", "Biological_Group")])
+  ft_t <- cbind(ft_t, metadata[, c("Sample_Code", "Biological_Group")])
   
   # calculate RSD for biological and technical groups
   biol_stats <- ft_t %>% 
-    pivot_longer(cols = c(as.character(peak_df_relfil$Compound[1]):as.character(tail(peak_df_relfil$Compound, 1))), names_to = "Compound") %>%
+    pivot_longer(cols = c(as.character(data_frame$Compound[1]):as.character(tail(data_frame$Compound, 1))), names_to = "Compound") %>%
     group_by(Compound, Biological_Group) %>%
     summarise(average = mean(value),
               biolRSD = if_else(average != 0, sd(value) / mean(value), 0),
@@ -161,7 +161,7 @@ filter_blank <- function(data_frame, metadata) {
     ungroup()
   
   tech_stats <- ft_t %>%
-    pivot_longer(cols = c(as.character(peak_df$Compound[1]):as.character(tail(peak_df$Compound, 1))), names_to = "Compound") %>%
+    pivot_longer(cols = c(as.character(data_frame$Compound[1]):as.character(tail(data_frame$Compound, 1))), names_to = "Compound") %>%
     group_by(Compound, Sample_Code, Biological_Group) %>%
     summarise(sd = if_else(mean(value) != 0, sd(value) / mean(value), 0),
               n = n()) %>%
@@ -218,6 +218,7 @@ filter_blank <- function(data_frame, metadata) {
 # parse ions by group
 parse_ions_by_group <- function(group_stats, group_threshold = 0.01) {
 #  groups <- unique(group_stats$Biological_Group)
+  group_stats <- group_avgs
   
   group_stats_tbl <- group_stats %>%
     mutate(Compound = as.numeric(Compound)) %>%
@@ -247,6 +248,8 @@ parse_ions_by_group <- function(group_stats, group_threshold = 0.01) {
   group_filter_list <- lapply(biol_groups, \(x){names(x)[which(x > group_threshold)]})
     
 }
+
+# group_filter_list$`ANG18 monoculture` %in% group_stats$Compound
 
 #lapply(biol_groups, \(x){which(x > group_threshold)})
 

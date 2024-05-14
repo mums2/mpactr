@@ -15,7 +15,9 @@ test_that("Test that solvent blank filter removes correct columns", {
   expect_equal(test_ex_df, expected_result)
 })
 
-
+############################################
+####     filter 1: mismatched peaks     ####
+############################################
 test_that("mismatched peaks filter works", {
   peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
   colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
@@ -33,3 +35,97 @@ test_that("mismatched peaks filter works", {
 
   expect_equal(relfil_ion_list$cut_ions, expected_cut_ions)
 })
+
+test_that("merge_ions correctly updates intensity values and columns", {
+  peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
+  colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
+  colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
+
+  peak_df <- initialize_data(peak_df)
+  
+  sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
+  meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
+  
+  relfil_ion_list <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = FALSE)
+  
+  peak_df_merged <- merge_ions(peak_df, relfil_ion_list)
+  expect_true(all(!(as.character(relfil_ion_list$cut_ions) %in% colnames(peak_df_merged))))
+
+  expect_equal(peak_df_merged[peak_df_merged$Compound == "153", "102623_UM1850B_ANGDT_71_1_5007"], 2158.4)
+  
+    
+  expected_merged <- read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple_merged.csv"), skip = 2) %>%
+    as.data.frame() %>%
+    select(-`...2`, -`...3`)
+  expected_merged <- expected_merged[expected_merged$Compound %in% names(relfil_ion_list$merge_groups), ]
+  
+  merged_results_rows <- peak_df_merged[peak_df_merged$Compound %in% names(relfil_ion_list$merge_groups), ] %>%
+    select(-mz, -rt, -kmd)
+    
+  # all(merged_results_rows == expected_merged)
+  
+  # dim <- c()
+  # for(i in 1:nrow(merged_results_rows)) {
+  #   dim <- c(dim, all(expected_merged[i, ] == merged_results_rows[i, ]))
+  #   print(all(expected_merged[i, ] == merged_results_rows[i, ]))
+  # }
+  # table(dim)
+  # merged_results_rows$Compound[which(dim == FALSE)]
+  
+  # merged_results_rows[2, "102623_UM1849B_ANG18_70_1_5021"] == expected_merged[2, "102623_UM1849B_ANG18_70_1_5021"]
+  # print(merged_results_rows[2, "102623_UM1849B_ANG18_70_1_5021"], digits = 10)
+  # print(expected_merged[2, "102623_UM1849B_ANG18_70_1_5021"], digits = 10)
+  
+  # group_avgs %>%
+  #   filter(Compound == "1059") %>%
+  #   select(Compound, Biological_Group, average)
+})
+
+############################################
+####       filter 2: group/blank        ####
+############################################
+
+test_that("group/blank filtering works correctly", {
+  # the blank filter is passed merged peaks from filter 1 (mistmatched peaks)
+  peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
+  colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
+  colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
+
+  peak_df <- initialize_data(peak_df)
+  
+  sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
+  meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
+  
+  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
+    filter(Biological_Group != "NA") %>%
+    select(Injection, Sample_Code, Biological_Group) 
+  
+  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  
+  group_avgs <- filter_blank(peak_df_relfil, full_meta)
+  
+  #  ang <- read.csv("tests/exttestdata/output_ANG18 monoculture.csv", header=FALSE)
+  #  colnames(ang) <- c("Compound")
+  #  class(ang$Compound)
+  #  length(ang$Compound)
+   
+  # group_filter_list$`ANG18 monoculture`
+  # length(group_filter_list$`ANG18 monoculture`)
+  
+  # all(as.character(ang$Compound) == group_filter_list$`ANG18 monoculture`)
+  
+  # angdt <- read.csv("tests/exttestdata/output_ANGDT monoculture", header=FALSE)
+  # colnames(angdt) <- c("Compound")
+  # length(angdt$Compound)
+   
+  # length(group_filter_list$`ANGDT monoculture`)
+  
+  # all(as.character(angdt$Compound) == group_filter_list$`ANGDT monoculture`)
+  # angdt$Compound[220:274]
+  # group_filter_list$`ANGDT monoculture`[220:273]
+  
+  # msdata_g <- read.csv("tests/exttestdata/msdata_blankfilterg.csv") %>%
+  #   rename(Compound = X)
+   
+})
+
