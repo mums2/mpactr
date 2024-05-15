@@ -111,3 +111,37 @@ test_that("group/blank filtering works correctly", {
   expect_true(all(round(group_avgs$average, digits = 5) == round(error_prop$average, digits = 5)))
 })
 
+test_that("parse_ion_list return the correct compounds for each group", {
+  peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
+  colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
+  colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
+
+  peak_df <- initialize_data(peak_df)
+  
+  sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
+  meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
+  
+  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
+    filter(Biological_Group != "NA") %>%
+    select(Injection, Sample_Code, Biological_Group) 
+  
+  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  
+  group_avgs <- filter_blank(peak_df_relfil, full_meta)
+  group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
+
+  ang_18 <- read.csv(here::here("tests/exttestdata/output_ANG18 monoculture.csv"), header = FALSE)
+  angdt <- read.csv(here::here("tests/exttestdata/output_ANGDT monoculture"), header = FALSE)
+  blanks <- read.csv(here::here("tests/exttestdata/output_Blanks"), header = FALSE)  
+  coculture <- read.csv(here::here("tests/exttestdata/output_Coculture"), header = FALSE)
+  jc1 <- read.csv(here::here("tests/exttestdata/output_JC1 monoculture"), header = FALSE)
+  jc28 <- read.csv(here::here("tests/exttestdata/output_JC28 monoculture"), header = FALSE)
+
+
+  expect_true(all(group_filter_list$`ANG18 monoculture` == as.character(ang_18$V1)))
+  expect_true(all(group_filter_list$`ANGDT monoculture` == as.character(angdt$V1)))
+  expect_true(all(group_filter_list$`Blanks` == as.character(blanks$V1)))
+  expect_true(all(group_filter_list$`Coculture` == as.character(coculture$V1)))
+  expect_true(all(group_filter_list$`JC28 monoculture` == as.character(jc28$V1)))
+  expect_true(all(group_filter_list$`JC28 monoculture` == as.character(jc28$V1)))
+})
