@@ -103,29 +103,11 @@ test_that("group/blank filtering works correctly", {
   peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
   group_avgs <- filter_blank(peak_df_relfil, full_meta)
-  
-  #  ang <- read.csv("tests/exttestdata/output_ANG18 monoculture.csv", header=FALSE)
-  #  colnames(ang) <- c("Compound")
-  #  class(ang$Compound)
-  #  length(ang$Compound)
-   
-  # group_filter_list$`ANG18 monoculture`
-  # length(group_filter_list$`ANG18 monoculture`)
-  
-  # all(as.character(ang$Compound) == group_filter_list$`ANG18 monoculture`)
-  
-  # angdt <- read.csv("tests/exttestdata/output_ANGDT monoculture", header=FALSE)
-  # colnames(angdt) <- c("Compound")
-  # length(angdt$Compound)
-   
-  # length(group_filter_list$`ANGDT monoculture`)
-  
-  # all(as.character(angdt$Compound) == group_filter_list$`ANGDT monoculture`)
-  # angdt$Compound[220:274]
-  # group_filter_list$`ANGDT monoculture`[220:273]
-  
-  # msdata_g <- read.csv("tests/exttestdata/msdata_blankfilterg.csv") %>%
-  #   rename(Compound = X)
-   
+  error_prop <- read.csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"), header = TRUE)
+  colnames(error_prop) <- c("Compound", "mz", "rt", "biologicalGroup", "average")
+  error_prop$Compound <- as.character(error_prop$Compound)
+  error_prop <- error_prop[order(error_prop$Compound), ]
+  expect_true(all(group_avgs$Biological_Group == error_prop$biologicalGroup))
+  expect_true(all(round(group_avgs$average, digits = 5) == round(error_prop$average, digits = 5)))
 })
 
