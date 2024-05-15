@@ -301,3 +301,141 @@ cv_filter <- function(data_frame, metadata, cv_threshold, cv_param) {
     return(fail_cv)
   }
 }
+
+
+#insource ion filter
+identify_insource_ions <- function(data_frame) {
+  data_frame <- peak_df_filtered
+  rt_list <- unique(data_frame$rt)
+  
+  singleslist <- c()
+  insourcelist <- c()
+  clusterlist <- c()
+  clusterdfs <- c()
+  filtered_df <- data_frame[ , colnames(data_frame) %in% c("Compound", "mz", "rt")] #msdata_ind
+  ftrgrps <- list()
+  mergegroups <- list()
+  for (rt in rt_list) {
+    filtered_df <- data_frame[data_frame$rt == rt , colnames(data_frame) %in% c("Compound", "mz", "rt")]
+
+    if (nrow(filtered_df) == 1) {
+      singleslist <- c(singleslist, filtered_df$Compound)
+    }
+    else{ 
+      filtered_df2 <- data_frame[data_frame$rt == rt , !(colnames(data_frame) %in% c("Compound", "mz", "rt", "kmd"))]
+      filtered_df2<- as.data.frame(t(filtered_df2))
+      colnames(filtered_df2) <- filtered_df$Compound
+      corr <- stats::cor(filtered_df2, method = c("pearson"))
+      inverse_unique_corr <-  1 - (unname(corr)[ , 1][which(unname(corr)[ , 1] != 1)])
+
+    }
+  }
+}
+# R
+#            12       761
+# 12  1.0000000 0.7899264
+# 761 0.7899264 1.0000000
+# mpact
+#            12       761
+# 12  1.000000 0.751101
+# 761 0.751101 1.000000
+
+
+
+def decon(analysis_params, ionfilters):
+    """
+    Perform peak deconvolution on the data and update the ion filters and dictionary.
+    
+    This function reads in formatted data and performs peak deconvolution using the correlation clustering method. It
+    then groups peaks into clusters, generates a list of precursor and fragment ions, and updates the ion filters and
+    dictionary. Finally, the function writes the formatted data back out to disk.
+    
+    Parameters:
+        analysis_params (object): Analysis parameters.
+        ionfilters (dict): Dictionary of ion filters.
+    
+    Returns:
+        dict: Updated dictionary of ion filters.
+    """
+    # Read in data
+    # msdata_ind = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+    #                          sep=',', header=[2], index_col=[0, 1]).iloc[:, :1]
+    # rtlist = msdata_ind['Retention time (min)'].unique()
+    # msdata_ind = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+    #                          sep=',', header=[2], index_col=[0]).iloc[:, :2]
+    # msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+    #                      sep=',', header=[2], index_col=[0]).iloc[:, 2:]
+
+    # Initialize variables
+    # singleslist = []
+    # insourcelist = []
+    # clusterlist = []
+    # clusterdfs = []
+    # filtereddf = msdata_ind
+    # ftrgrps = {}
+    # mergegroups = {}
+
+    # Loop through retention times
+    for elem in rtlist:
+        # filtereddf = msdata_ind.loc[msdata_ind.iloc[:, 1] == elem, :] # Return a list for duplicates
+
+        # if len(filtereddf.index) == 1:
+        #     singleslist.append(filtereddf.index.to_list()[0])
+        else:
+            # Perform deconvolution
+            # unseplist = filtereddf.index.tolist()
+            # filtereddf2 = msdata.loc[unseplist, :].transpose()
+            # corr = filtereddf2.corr()
+            # corr2 = reformatcorr(corr)
+            linkage = spc.linkage(corr2, method='complete')
+            np.clip(linkage, 0, None, linkage)
+            idx = spc.fcluster(linkage, 1 - analysis_params.deconthresh, 'distance')
+
+            # Group peaks by cluster
+            decongroups = {}
+            for group in range(1, max(idx) + 1):
+                decongroups[group] = []
+            for peak in range(0, idx.shape[0]):
+                if peak < len(unseplist):
+                    decongroups[idx[peak]].append(unseplist[peak])
+
+            # Append groups to appropriate lists
+            for group in decongroups:
+                if len(decongroups[group]) == 1:
+                    singleslist.append(decongroups[group][0])
+                else:
+                    clusterlist.append(decongroups[group])
+                    tempdf = msdata_ind.loc[decongroups[group]].sort_values(by=['m/z'], ascending=False)
+                    if len(tempdf.index.to_list()) > 0:
+                        precursor = tempdf.index.to_list()[0]
+                        fragments = tempdf.index.to_list()[1:]
+                        singleslist.append(precursor)
+                        insourcelist += fragments
+                        clusterdfs.append(tempdf)
+                        mergegroups[precursor] = ionmerge(precursor, fragments)
+
+
+    # Write out data
+    msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+                         sep=',', header=[0, 1, 2], index_col=[0])
+    msdata = msdata.loc[singleslist]
+    msdata.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+                  header=True, index=True)
+
+    # Update ion filters
+    ionfilters['insource'] = ionfilter('', insourcelist)
+    ionfilters['insource'].merge = mergegroups
+
+    # Update ion dictionary
+    iondict = pd.read_csv(analysis_params.outputdir / 'iondict.csv', sep=',', header=[0], index_col=0)
+    iondict['pass_insource'] = ~iondict.index.isin(ionfilters['insource'].ions)
+    iondict.to_csv(analysis_params.outputdir / 'iondict.csv', header=True, index=True)
+    
+    # Convert ion filters to MSP format passes and prints errors
+    try:
+        mspwriter.convert_to_msp(ionfilters['insource'], analysis_params)
+    except Exception:
+        print('Error in MSP writer')
+        pass
+    
+    return ionfilters
