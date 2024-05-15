@@ -249,67 +249,42 @@ parse_ions_by_group <- function(group_stats, group_threshold = 0.01) {
     
 }
 
-# group_filter_list$`ANG18 monoculture` %in% group_stats$Compound
+apply_group_filter  <- function(data_frame, group_filter_list, group, remove_ions = TRUE) {
+  if(isFALSE(remove_ions)) {
+    return(data_frame)
+  }
 
-#lapply(biol_groups, \(x){which(x > group_threshold)})
+  ions <- group_filter_list[[group]]
+  data_frame <- data_frame[!(data_frame$Compound %in% ions), ]
+  return(data_frame)
 
-#group_filter_list$`ANG18 monoculture`
-#unique(unlist(group_filter_list))
-
-#lapply(group_filter_list, length)
-#712 + 286 + 796 + 370 + 534 + 249
-#length(unique(unlist(group_filter_list)))
+}
 
 
-# def groupfilter(group, msdata_blankfilterg, analysis_params):
+# def listfilter(msdata, ionlist, include):
 #     """
-#     Filters ions in msdata_blankfilterg based on presence in group.
+#     Filters msdata based on the ions in ionlist.
 
 #     Parameters:
-#         group (str): Group to filter by.
-#         msdata_blankfilterg (pandas.DataFrame): Dataframe to filter.
-#         analysis_params (object): Analysis parameters.
+#         msdata (pandas.DataFrame): Dataframe to filter.
+#         ionlist (list): List of ions to filter by.
+#         include (bool): If True, keep ions in ionlist. If False, remove ions in ionlist.
 
 #     Returns:
-#         list: List of filtered ions.
+#         pandas.DataFrame: Filtered dataframe.
 #     """
-#     # Filters ions based on group presence > 100 ions/abundance
-#     msdata_blankfilterg = msdata_blankfilterg[msdata_blankfilterg[group] > analysis_params.blankfilthresh]
-#     msdata_blankfilterg = msdata_blankfilterg.reset_index()
-#     # Returns filtered dataframe index as list
-#     groupfilterlist = msdata_blankfilterg.iloc[0:,0].tolist()
-#     return groupfilterlist
-      
-# def parsionlists(analysis_params):
-#    """
-#    Parses lists of ions present in each group.
-#
-#    Parameters:
-#        analysis_params (object): Analysis parameters.
-#
-#    Returns:
-#        dict: Dictionary of group ion lists.
-#    """
-#    msdata_blankfilterg = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_groupaverages.csv'), sep = ',', header = [0], index_col = [0, 1, 2, 3]).unstack()
-#    msdata_blankfilterg.columns = msdata_blankfilterg.columns.droplevel()
-#    msdata_blankfilterg['max'] = msdata_blankfilterg.max(numeric_only=True, axis=1)
-#    for column in msdata_blankfilterg:
-#        msdata_blankfilterg[column] = msdata_blankfilterg[column] / msdata_blankfilterg['max']
-#    msdata_blankfilterg = msdata_blankfilterg.drop(columns=['max'])
-#    biolgroups = msdata_blankfilterg.columns.tolist()
-    # groupionlists = {}
-    # for group in biolgroups:
-    #     groupionlists[group] = groupfilter(group, msdata_blankfilterg, analysis_params)
-    # return groupionlists
-
-# if analysis_params.grpave:
-#        stats.groupave(analysis_params)
-#        print('Parsing ion lists')
+#     if include:
+#         msdata = msdata[msdata.iloc[:, 0].isin(ionlist)] 
+#     else:
+#         msdata = msdata[~msdata.iloc[:, 0].isin(ionlist)]
+#     return msdata
 
 
-
-#         groupionlists = filter.parsionlists(analysis_params)
-# if analysis_params.blnkfltr:
+#     # if analysis_params.grpave:
+#     #     stats.groupave(analysis_params)
+#     #     print('Parsing ion lists')
+#     #     groupionlists = filter.parsionlists(analysis_params)
+#     if analysis_params.blnkfltr:
 #         msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'), sep=',', header=[0, 1, 2], index_col=None)
 #         msdata = filter.listfilter(msdata, groupionlists[analysis_params.blnkgrp], False)
 #         msdata = msdata.drop(analysis_params.blnkgrp, axis=1, level=0)
