@@ -129,7 +129,7 @@ merge_ions <- function(data_frame, ion_filter_list) {
 
 # blank filter
 # the current expected metadata format as input
-#full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
+# full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
 #  filter(Biological_Group != "NA") %>%
 #  select(Injection, Sample_Code, Biological_Group) 
 
@@ -218,7 +218,6 @@ filter_blank <- function(data_frame, metadata) {
 # parse ions by group
 parse_ions_by_group <- function(group_stats, group_threshold = 0.01) {
 #  groups <- unique(group_stats$Biological_Group)
-  group_stats <- group_avgs
   
   group_stats_tbl <- group_stats %>%
     mutate(Compound = as.numeric(Compound)) %>%
@@ -261,34 +260,44 @@ apply_group_filter  <- function(data_frame, group_filter_list, group, remove_ion
 }
 
 
-# def listfilter(msdata, ionlist, include):
-#     """
-#     Filters msdata based on the ions in ionlist.
 
-#     Parameters:
-#         msdata (pandas.DataFrame): Dataframe to filter.
-#         ionlist (list): List of ions to filter by.
-#         include (bool): If True, keep ions in ionlist. If False, remove ions in ionlist.
+### CV filter
+cv_filter <- function(data_frame, metadata, cv_threshold, cv_param) {
+    # if mismatch and merge and group filters (with remove_ions == TRUE) 
+    # are selected, this is expecting the filtered df as input
 
-#     Returns:
-#         pandas.DataFrame: Filtered dataframe.
-#     """
-#     if include:
-#         msdata = msdata[msdata.iloc[:, 0].isin(ionlist)] 
-#     else:
-#         msdata = msdata[~msdata.iloc[:, 0].isin(ionlist)]
-#     return msdata
+  # extract feature sample (rows are features, columns are samples)
+  ft <- as.data.frame(data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))])
+  rownames(ft) <- as.character(ft$Compound)
+  ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
+  
+  # transpose so rows are samples and columns are features
+  ft_t <- as.data.frame(t(ft))
+  
+  # make sure metadata rows in the same order as ft_t rownames
+  metadata <- metadata[order(match(metadata$Injection, rownames(ft_t))), ]
+  metadata$Injection <- as.factor(metadata$Injection)
+  metadata$Sample_Code <- as.factor(metadata$Sample_Code)
+  metadata$Biological_Group <- as.factor(metadata$Biological_Group)
+  
+  ft_t <- cbind(ft_t, metadata[, c("Sample_Code", "Biological_Group")])
+  
+  cv <- ft_t %>%
+    pivot_longer(cols = c(as.character(data_frame$Compound[1]):as.character(tail(data_frame$Compound, 1))), names_to = "Compound") %>%
+    group_by(Compound, Sample_Code, Biological_Group) %>%
+    summarise(cv = if_else(mean(value) != 0, sd(value) / mean(value), NA_real_)) %>%
+    ungroup() %>%
+    group_by(Compound) %>%
+    summarise(mean_cv = mean(cv, na.rm = TRUE),
+              median_cv = median(cv, na.rm = TRUE))
 
+  if (cv_param == "mean") {
+    fail_cv <- cv$Compound[!(cv$mean_cv < cv_threshold)]
+    return(fail_cv)
+  }
 
-#     # if analysis_params.grpave:
-#     #     stats.groupave(analysis_params)
-#     #     print('Parsing ion lists')
-#     #     groupionlists = filter.parsionlists(analysis_params)
-#     if analysis_params.blnkfltr:
-#         msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'), sep=',', header=[0, 1, 2], index_col=None)
-#         msdata = filter.listfilter(msdata, groupionlists[analysis_params.blnkgrp], False)
-#         msdata = msdata.drop(analysis_params.blnkgrp, axis=1, level=0)
-#         msdata.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'), header=True, index=False)
-#         iondict = pd.read_csv(analysis_params.outputdir / 'iondict.csv', sep=',', header=[0], index_col=0)
-#         iondict['pass_blnkfil'] = ~iondict.index.isin(groupionlists[analysis_params.blnkgrp])
-#         iondict.to_csv(analysis_params.outputdir / 'iondict.csv', header=True, index=True)
+  if (cv_param == "median") {
+    fail_cv <- cv$Compound[!(cv$median_cv < cv_threshold)]
+    return(fail_cv)
+  }
+}

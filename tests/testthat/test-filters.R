@@ -173,3 +173,34 @@ test_that("Group filter filters out groups correctly",
   peak_df_filtered <- apply_group_filter(peak_df_relfil, group_filter_list, "Blanks", remove_ions = FALSE)
   expect_true(all(peak_df_filtered == peak_df_relfil))
 })
+
+############################################
+####        filter 3: CV filter         ####
+############################################
+
+test_that("cv_filter return the correct number of ions failing cv filter", {
+  peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
+  colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
+  colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
+
+  peak_df <- initialize_data(peak_df)
+  
+  sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
+  meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
+  
+  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
+    filter(Biological_Group != "NA") %>%
+    select(Injection, Sample_Code, Biological_Group) 
+  
+  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  
+  group_avgs <- filter_blank(peak_df_relfil, full_meta)
+  group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
+  peak_df_filtered <- apply_group_filter(peak_df_relfil, group_filter_list, "Blanks", remove_ions = TRUE)
+  ions_failing_cv_mean <- cv_filter(peak_df_filtered, full_meta, cv_threshold = 0.2, cv_param = c("mean"))
+  ions_failing_cv_median <- cv_filter(peak_df_filtered, full_meta, cv_threshold = 0.2, cv_param = c("median"))
+
+  expect_equal(length(ions_failing_cv_median), 61)
+  expect_equal(length(ions_failing_cv_mean), 86)
+  
+})
