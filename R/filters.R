@@ -125,23 +125,27 @@ merge_ions <- function(data_frame, ion_filter_list) {
 # }
 
 
-
-
 # blank filter
 # the current expected metadata format as input
 # full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
 #  filter(Biological_Group != "NA") %>%
 #  select(Injection, Sample_Code, Biological_Group) 
 
+data_frame <- peak_df_relfil
+metadata <- full_meta
+
 filter_blank <- function(data_frame, metadata) {
   
   # extract feature sample (rows are features, columns are samples)
+  data_frame <- peak_df_relfil
+  metadata <- full_meta
   ft <- as.data.frame(data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))])
   rownames(ft) <- as.character(ft$Compound)
   ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
   
   # transpose so rows are samples and columns are features
-  ft_t <- as.data.frame(t(ft))
+  ft_t <- as.data.frame(t(ft)) 
+  # ft_t <- tibble::rownames_to_column(ft_t, var = "filename")
   
   # make sure metadata rows in the same order as ft_t rownames
   metadata <- metadata[order(match(metadata$Injection, rownames(ft_t))), ]
@@ -149,7 +153,9 @@ filter_blank <- function(data_frame, metadata) {
   metadata$Sample_Code <- as.factor(metadata$Sample_Code)
   metadata$Biological_Group <- as.factor(metadata$Biological_Group)
   
-  ft_t <- cbind(ft_t, metadata[, c("Sample_Code", "Biological_Group")])
+  # ft_t <- cbind(ft_t, metadata[, c("Sample_Code", "Biological_Group")])
+
+  ft_t2 <- head(merge(ft_t, metadata, by.x = "filename", by.y = "Injection", all.X = TRUE))
   
   # calculate RSD for biological and technical groups
   biol_stats <- ft_t %>% 
@@ -176,15 +182,112 @@ filter_blank <- function(data_frame, metadata) {
   return(group_stats)
 }
 
+# 05/15/2024
+filter_blank_2 <- function(data_frame, metadata) {
+
+  # extract feature sample (rows are features, columns are samples)
+  data_frame <- peak_df_relfil
+  metadata <- full_meta
+  ft <- as.data.frame(data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))])
+  rownames(ft) <- as.character(ft$Compound)
+  ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
+  row_count <- nrow(metadata)
+  injections <- metadata$Injection
+  injection_sample_code_dict <- vector(mode ="list", length = row_count)
+  names(injection_sample_code_dict) <- injections
+  injection_biol_group_dict <- vector(mode ="list", length = row_count)
+  names(injection_biol_group_dict) <- injections
+  for(index in 1:row_count)
+  {
+    injection_sample_code_dict[[metadata$Injection[[index]]]] <- metadata$Sample_Code[[index]]
+    injection_biol_group_dict[[metadata$Injection[[index]]]] <- metadata$Biological_Group[[index]]
+  }
+  sample_codes <- unique(meta_data$Sample_Code)
+  column_count <- ncol(ft)
+  list_of_rows_for_computation <- vector(mode ="list", length = length(sample_codes))
+  names(list_of_rows_for_computation) <- sample_codes
+  for(i in 1:column_count)
+  {
+    injection <- colnames(ft)[i]
+    sample_code <- injection_sample_code_dict[[injection]]
+    list_of_rows_for_computation[[sample_code]] <- c(list_of_rows_for_computation[[sample_code]], i)
+  }
+  average <- c()
+  biol_RSD <- c()
+  biol_n <- c()
+  for(i in 1:nrow(ft))
+  {
+    column_name <-
+    ft[i,]
+  }
+
+
+}
+
+
+full_meta$Injection[which(full_meta$Biological_Group == "Blanks")]
+metadata$Biological_Group
+unique_groups <- vector(mode="list", length = length(unique(full_meta$Biological_Group)))
+names(unique_groups) <- unique(full_meta$Biological_Group)
+lapply(names(unique_groups), function(x)
+{
+  unique_groups[[x]] <<- sapply(ft_t[which(rownames(ft_t) %in% full_meta$Injection[which(full_meta$Biological_Group == x)]), ], function(y) {
+    
+    list("average" = mean(y),
+         "BiolRSD" = ifelse(mean(y) != 0, sd(y) / mean(y), NA_real_),
+         "bioln" = length(y))
+  })
+})
+
+full_meta$paste(full_meta$Biological_Group, full_meta$Sample_Code, sep = "_")
+dict <- split(full_meta, 1:nrow(full_meta))
+
+
+unique_tech <- vector(mode="list", length = length(unique(full_meta$Sample_Code)))
+names(unique_tech) <- unique(full_meta$Sample_Code)
+lapply(names(unique_tech), function(x)
+{
+  unique_tech[[x]] <- sapply(ft_t[which(rownames(ft_t) %in% full_meta$Injection[which(full_meta$Biological_Group == x)]), ], function(y) {
+
+    sample_code_x <- full_meta$Sample_Code[full_meta$Injection == x]
+
+     list("average" = mean(y),
+         "sd" = ifelse(mean(y) != 0, sd(y) / mean(y), NA_real_),
+         "n" = length(y))
+    
+    list("average" = mean(y),
+         "sd" = ifelse(mean(y) != 0, sd(y) / mean(y), NA_real_),
+         "n" = length(y))
+    
+
+  })
+})
+
+
+
+
+
+# Sample Code and Biological groups "Loop"
+# Where Sample Code == Biological groups ?
+
+# Row names are groups
+# Columns names are Compounds
+#
+group_mean <- data.frame(nrow = length(unique(full_meta$Biological_Group)), ncol = length(data_frame$Compound))
+
+
+compounds <- vector(mode = "list", length(data_frame$Compound))
+
+
 # tidy approach:
-#biol_stats <- ft_t %>% 
+#biol_stats <- ft_t %>%
 #      pivot_longer(cols = c(as.character(peak_df$Compound[1]):as.character(tail(peak_df$Compound, 1))), names_to = "Compound") %>%
 #      group_by(Compound, Biological_Group) %>%
 #      summarise(average = mean(value),
 #                biolRSD = if_else(average != 0, sd(value) / mean(value), 0),
 #                bioln = n()) %>%
 #      ungroup()
-#      
+#
 #tech_stats <- ft_t %>%
 #  pivot_longer(cols = c(as.character(peak_df$Compound[1]):as.character(tail(peak_df$Compound, 1))), names_to = "Compound") %>%
 #  group_by(Compound, Sample_Code, Biological_Group) %>%
@@ -194,18 +297,18 @@ filter_blank <- function(data_frame, metadata) {
 #  group_by(Compound, Biological_Group) %>%
 #  summarise(techRSD = mean(sd),
 #            techn = mean(n))
-#  
+#
 #  group_stats <- biol_stats %>%
 #  left_join(tech_stats, by = c("Compound", "Biological_Group"))
 
 
 # Reshape approach - unstabe *in progress*
-# stats::reshape(data = ft_t,
-#                direction = "long",
-#                varying = which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1)),
-#                v.names = colnames(ft_t)[which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1))],
-#                idvar = c("Injection", "Sample_Code", "Biological_Group")
-# )
+stats::reshape(data = ft_t,
+               direction = "long",
+               varying = which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1)),
+               v.names = colnames(ft_t)[which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1))],
+               idvar = c("Injection", "Sample_Code", "Biological_Group")
+)
 
 # stats::reshape(data = ft_t,
 #                direction = "long",
@@ -342,100 +445,100 @@ identify_insource_ions <- function(data_frame) {
 
 
 
-def decon(analysis_params, ionfilters):
-    """
-    Perform peak deconvolution on the data and update the ion filters and dictionary.
+# def decon(analysis_params, ionfilters):
+#     """
+#     Perform peak deconvolution on the data and update the ion filters and dictionary.
     
-    This function reads in formatted data and performs peak deconvolution using the correlation clustering method. It
-    then groups peaks into clusters, generates a list of precursor and fragment ions, and updates the ion filters and
-    dictionary. Finally, the function writes the formatted data back out to disk.
+#     This function reads in formatted data and performs peak deconvolution using the correlation clustering method. It
+#     then groups peaks into clusters, generates a list of precursor and fragment ions, and updates the ion filters and
+#     dictionary. Finally, the function writes the formatted data back out to disk.
     
-    Parameters:
-        analysis_params (object): Analysis parameters.
-        ionfilters (dict): Dictionary of ion filters.
+#     Parameters:
+#         analysis_params (object): Analysis parameters.
+#         ionfilters (dict): Dictionary of ion filters.
     
-    Returns:
-        dict: Updated dictionary of ion filters.
-    """
-    # Read in data
-    # msdata_ind = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-    #                          sep=',', header=[2], index_col=[0, 1]).iloc[:, :1]
-    # rtlist = msdata_ind['Retention time (min)'].unique()
-    # msdata_ind = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-    #                          sep=',', header=[2], index_col=[0]).iloc[:, :2]
-    # msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-    #                      sep=',', header=[2], index_col=[0]).iloc[:, 2:]
+#     Returns:
+#         dict: Updated dictionary of ion filters.
+#     """
+#     # Read in data
+#     # msdata_ind = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+#     #                          sep=',', header=[2], index_col=[0, 1]).iloc[:, :1]
+#     # rtlist = msdata_ind['Retention time (min)'].unique()
+#     # msdata_ind = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+#     #                          sep=',', header=[2], index_col=[0]).iloc[:, :2]
+#     # msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+#     #                      sep=',', header=[2], index_col=[0]).iloc[:, 2:]
 
-    # Initialize variables
-    # singleslist = []
-    # insourcelist = []
-    # clusterlist = []
-    # clusterdfs = []
-    # filtereddf = msdata_ind
-    # ftrgrps = {}
-    # mergegroups = {}
+#     # Initialize variables
+#     # singleslist = []
+#     # insourcelist = []
+#     # clusterlist = []
+#     # clusterdfs = []
+#     # filtereddf = msdata_ind
+#     # ftrgrps = {}
+#     # mergegroups = {}
 
-    # Loop through retention times
-    for elem in rtlist:
-        # filtereddf = msdata_ind.loc[msdata_ind.iloc[:, 1] == elem, :] # Return a list for duplicates
+#     # Loop through retention times
+#     for elem in rtlist:
+#         # filtereddf = msdata_ind.loc[msdata_ind.iloc[:, 1] == elem, :] # Return a list for duplicates
 
-        # if len(filtereddf.index) == 1:
-        #     singleslist.append(filtereddf.index.to_list()[0])
-        else:
-            # Perform deconvolution
-            # unseplist = filtereddf.index.tolist()
-            # filtereddf2 = msdata.loc[unseplist, :].transpose()
-            # corr = filtereddf2.corr()
-            # corr2 = reformatcorr(corr)
-            linkage = spc.linkage(corr2, method='complete')
-            np.clip(linkage, 0, None, linkage)
-            idx = spc.fcluster(linkage, 1 - analysis_params.deconthresh, 'distance')
+#         # if len(filtereddf.index) == 1:
+#         #     singleslist.append(filtereddf.index.to_list()[0])
+#         else:
+#             # Perform deconvolution
+#             # unseplist = filtereddf.index.tolist()
+#             # filtereddf2 = msdata.loc[unseplist, :].transpose()
+#             # corr = filtereddf2.corr()
+#             # corr2 = reformatcorr(corr)
+#             linkage = spc.linkage(corr2, method='complete')
+#             np.clip(linkage, 0, None, linkage)
+#             idx = spc.fcluster(linkage, 1 - analysis_params.deconthresh, 'distance')
 
-            # Group peaks by cluster
-            decongroups = {}
-            for group in range(1, max(idx) + 1):
-                decongroups[group] = []
-            for peak in range(0, idx.shape[0]):
-                if peak < len(unseplist):
-                    decongroups[idx[peak]].append(unseplist[peak])
+#             # Group peaks by cluster
+#             decongroups = {}
+#             for group in range(1, max(idx) + 1):
+#                 decongroups[group] = []
+#             for peak in range(0, idx.shape[0]):
+#                 if peak < len(unseplist):
+#                     decongroups[idx[peak]].append(unseplist[peak])
 
-            # Append groups to appropriate lists
-            for group in decongroups:
-                if len(decongroups[group]) == 1:
-                    singleslist.append(decongroups[group][0])
-                else:
-                    clusterlist.append(decongroups[group])
-                    tempdf = msdata_ind.loc[decongroups[group]].sort_values(by=['m/z'], ascending=False)
-                    if len(tempdf.index.to_list()) > 0:
-                        precursor = tempdf.index.to_list()[0]
-                        fragments = tempdf.index.to_list()[1:]
-                        singleslist.append(precursor)
-                        insourcelist += fragments
-                        clusterdfs.append(tempdf)
-                        mergegroups[precursor] = ionmerge(precursor, fragments)
+#             # Append groups to appropriate lists
+#             for group in decongroups:
+#                 if len(decongroups[group]) == 1:
+#                     singleslist.append(decongroups[group][0])
+#                 else:
+#                     clusterlist.append(decongroups[group])
+#                     tempdf = msdata_ind.loc[decongroups[group]].sort_values(by=['m/z'], ascending=False)
+#                     if len(tempdf.index.to_list()) > 0:
+#                         precursor = tempdf.index.to_list()[0]
+#                         fragments = tempdf.index.to_list()[1:]
+#                         singleslist.append(precursor)
+#                         insourcelist += fragments
+#                         clusterdfs.append(tempdf)
+#                         mergegroups[precursor] = ionmerge(precursor, fragments)
 
 
-    # Write out data
-    msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-                         sep=',', header=[0, 1, 2], index_col=[0])
-    msdata = msdata.loc[singleslist]
-    msdata.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-                  header=True, index=True)
+#     # Write out data
+#     msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+#                          sep=',', header=[0, 1, 2], index_col=[0])
+#     msdata = msdata.loc[singleslist]
+#     msdata.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+#                   header=True, index=True)
 
-    # Update ion filters
-    ionfilters['insource'] = ionfilter('', insourcelist)
-    ionfilters['insource'].merge = mergegroups
+#     # Update ion filters
+#     ionfilters['insource'] = ionfilter('', insourcelist)
+#     ionfilters['insource'].merge = mergegroups
 
-    # Update ion dictionary
-    iondict = pd.read_csv(analysis_params.outputdir / 'iondict.csv', sep=',', header=[0], index_col=0)
-    iondict['pass_insource'] = ~iondict.index.isin(ionfilters['insource'].ions)
-    iondict.to_csv(analysis_params.outputdir / 'iondict.csv', header=True, index=True)
+#     # Update ion dictionary
+#     iondict = pd.read_csv(analysis_params.outputdir / 'iondict.csv', sep=',', header=[0], index_col=0)
+#     iondict['pass_insource'] = ~iondict.index.isin(ionfilters['insource'].ions)
+#     iondict.to_csv(analysis_params.outputdir / 'iondict.csv', header=True, index=True)
     
-    # Convert ion filters to MSP format passes and prints errors
-    try:
-        mspwriter.convert_to_msp(ionfilters['insource'], analysis_params)
-    except Exception:
-        print('Error in MSP writer')
-        pass
+#     # Convert ion filters to MSP format passes and prints errors
+#     try:
+#         mspwriter.convert_to_msp(ionfilters['insource'], analysis_params)
+#     except Exception:
+#         print('Error in MSP writer')
+#         pass
     
-    return ionfilters
+#     return ionfilters
