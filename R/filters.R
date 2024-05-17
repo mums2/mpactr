@@ -131,8 +131,8 @@ merge_ions <- function(data_frame, ion_filter_list) {
 #  filter(Biological_Group != "NA") %>%
 #  select(Injection, Sample_Code, Biological_Group) 
 
-data_frame <- peak_df_relfil
-metadata <- full_meta
+# data_frame <- peak_df_relfil
+# metadata <- full_meta
 
 filter_blank <- function(data_frame, metadata) {
   
@@ -225,44 +225,41 @@ filter_blank_2 <- function(data_frame, metadata) {
 }
 
 
-full_meta$Injection[which(full_meta$Biological_Group == "Blanks")]
-metadata$Biological_Group
-unique_groups <- vector(mode="list", length = length(unique(full_meta$Biological_Group)))
-names(unique_groups) <- unique(full_meta$Biological_Group)
-lapply(names(unique_groups), function(x)
-{
-  unique_groups[[x]] <<- sapply(ft_t[which(rownames(ft_t) %in% full_meta$Injection[which(full_meta$Biological_Group == x)]), ], function(y) {
-    
-    list("average" = mean(y),
-         "BiolRSD" = ifelse(mean(y) != 0, sd(y) / mean(y), NA_real_),
-         "bioln" = length(y))
-  })
-})
+## allison - testing a combination of apply funs and by to calculate group statistics
+rsd <- function(values) {
+  ifelse(mean(values) != 0, (sd(values) / mean(values)), NA_real_)
+}
 
-full_meta$paste(full_meta$Biological_Group, full_meta$Sample_Code, sep = "_")
-dict <- split(full_meta, 1:nrow(full_meta))
+groups_stats_list <- vector(mode="list", length = length(unique(metadata$Biological_Group)))
+names(groups_stats_list) <- unique(metadata$Biological_Group)
+lapply(names(groups_stats_list), 
+      function(x) {
+        dat <- ft_t[which(rownames(ft_t) %in% 
+                                metadata$Injection[which(metadata$Biological_Group == x)]), ]
 
+        tech_lvls <- as.factor(metadata$Sample_Code[which(rownames(dat) == metadata$Injection)])
+        
+        groups_stats_list[[x]]$Compound <<- colnames(dat)
+        groups_stats_list[[x]]$Biological_Group <<- c(rep(x, ncol(dat)))
+        groups_stats_list[[x]]$average <<- unlist(lapply(dat, mean))
+        groups_stats_list[[x]]$BiolRSD <<- unlist(lapply(dat, rsd))
+        groups_stats_list[[x]]$bioln <<- unlist(lapply(dat, length))
+        groups_stats_list[[x]]$techRSD <<- unlist(lapply(lapply(dat, 
+              function(x) {
+                by(x, tech_lvls, rsd)}),
+          mean))
+        groups_stats_list[[x]]$techn <<- unlist(lapply(lapply(dat, 
+              function(x) {
+                by(x, tech_lvls, length)}),
+          mean))
+        
+        
+        
+      }
+    )
 
-unique_tech <- vector(mode="list", length = length(unique(full_meta$Sample_Code)))
-names(unique_tech) <- unique(full_meta$Sample_Code)
-lapply(names(unique_tech), function(x)
-{
-  unique_tech[[x]] <- sapply(ft_t[which(rownames(ft_t) %in% full_meta$Injection[which(full_meta$Biological_Group == x)]), ], function(y) {
-
-    sample_code_x <- full_meta$Sample_Code[full_meta$Injection == x]
-
-     list("average" = mean(y),
-         "sd" = ifelse(mean(y) != 0, sd(y) / mean(y), NA_real_),
-         "n" = length(y))
-    
-    list("average" = mean(y),
-         "sd" = ifelse(mean(y) != 0, sd(y) / mean(y), NA_real_),
-         "n" = length(y))
-    
-
-  })
-})
-
+group_stats <- data.table::rbindlist(lapply(groups_stats_list, as.data.frame))
+group_stats <- group_stats[order(group_stats$Compound, decreasing = FALSE)]
 
 
 
@@ -303,12 +300,12 @@ compounds <- vector(mode = "list", length(data_frame$Compound))
 
 
 # Reshape approach - unstabe *in progress*
-stats::reshape(data = ft_t,
-               direction = "long",
-               varying = which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1)),
-               v.names = colnames(ft_t)[which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1))],
-               idvar = c("Injection", "Sample_Code", "Biological_Group")
-)
+# stats::reshape(data = ft_t,
+#                direction = "long",
+#                varying = which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1)),
+#                v.names = colnames(ft_t)[which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1))],
+#                idvar = c("Injection", "Sample_Code", "Biological_Group")
+# )
 
 # stats::reshape(data = ft_t,
 #                direction = "long",
