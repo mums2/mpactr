@@ -226,8 +226,6 @@ filter_blank_2 <- function(data_frame, metadata) {
 # metadata <- full_meta
 filter_blank_3 <- function(data_frame, metadata) {
   # extract feature sample (rows are features, columns are samples)
-  # data_frame <- peak_df_relfil
-  # metadata <- full_meta
   ft <- as.data.frame(data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))])
   rownames(ft) <- as.character(ft$Compound)
   ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
@@ -238,9 +236,6 @@ filter_blank_3 <- function(data_frame, metadata) {
   
   # make sure metadata rows in the same order as ft_t rownames
   metadata <- metadata[order(match(metadata$Injection, rownames(ft_t))), ]
-  # metadata$Injection <- as.factor(metadata$Injection)
-  # metadata$Sample_Code <- as.factor(metadata$Sample_Code)
-  # metadata$Biological_Group <- as.factor(metadata$Biological_Group)
   
   groups_stats_list <- vector(mode="list", length = length(unique(metadata$Biological_Group)))
   names(groups_stats_list) <- unique(metadata$Biological_Group)
@@ -273,87 +268,18 @@ filter_blank_3 <- function(data_frame, metadata) {
 
   return(group_stats)
 }
-# ## allison - testing a combination of apply funs and by to calculate group statistics
-# rsd <- function(values) {
-#   ifelse(mean(values) != 0, (sd(values) / mean(values)), NA_real_)
-# }
-
-# groups_stats_list <- vector(mode="list", length = length(unique(metadata$Biological_Group)))
-# names(groups_stats_list) <- unique(metadata$Biological_Group)
-# lapply(names(groups_stats_list), 
-#       function(x) {
-#         dat <- ft_t[which(rownames(ft_t) %in% 
-#                                 metadata$Injection[which(metadata$Biological_Group == x)]), ]
-
-#         tech_lvls <- as.factor(metadata$Sample_Code[which(rownames(dat) == metadata$Injection)])
-        
-#         groups_stats_list[[x]]$Compound <<- colnames(dat)
-#         groups_stats_list[[x]]$Biological_Group <<- c(rep(x, ncol(dat)))
-#         groups_stats_list[[x]]$average <<- unlist(lapply(dat, mean))
-#         groups_stats_list[[x]]$BiolRSD <<- unlist(lapply(dat, rsd))
-#         groups_stats_list[[x]]$bioln <<- unlist(lapply(dat, length))
-#         groups_stats_list[[x]]$techRSD <<- unlist(lapply(lapply(dat, 
-#               function(x) {
-#                 by(x, tech_lvls, rsd)}),
-#           mean))
-#         groups_stats_list[[x]]$techn <<- unlist(lapply(lapply(dat, 
-#               function(x) {
-#                 by(x, tech_lvls, length)}),
-#           mean))
-        
-        
-        
-#       }
-#     )
-
-# group_stats <- data.table::rbindlist(lapply(groups_stats_list, as.data.frame))
-# group_stats <- group_stats[order(group_stats$Compound, decreasing = FALSE)]
-
-
-
-# tidy approach:
-#biol_stats <- ft_t %>%
-#      pivot_longer(cols = c(as.character(peak_df$Compound[1]):as.character(tail(peak_df$Compound, 1))), names_to = "Compound") %>%
-#      group_by(Compound, Biological_Group) %>%
-#      summarise(average = mean(value),
-#                biolRSD = if_else(average != 0, sd(value) / mean(value), 0),
-#                bioln = n()) %>%
-#      ungroup()
-#
-#tech_stats <- ft_t %>%
-#  pivot_longer(cols = c(as.character(peak_df$Compound[1]):as.character(tail(peak_df$Compound, 1))), names_to = "Compound") %>%
-#  group_by(Compound, Sample_Code, Biological_Group) %>%
-#  summarise(sd = if_else(mean(value) != 0, sd(value) / mean(value), 0),
-#            n = n()) %>%
-#  ungroup() %>%
-#  group_by(Compound, Biological_Group) %>%
-#  summarise(techRSD = mean(sd),
-#            techn = mean(n))
-#
-#  group_stats <- biol_stats %>%
-#  left_join(tech_stats, by = c("Compound", "Biological_Group"))
-
-
-# Reshape approach - unstabe *in progress*
-# stats::reshape(data = ft_t,
-#                direction = "long",
-#                varying = which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1)),
-#                v.names = colnames(ft_t)[which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1))],
-#                idvar = c("Injection", "Sample_Code", "Biological_Group")
-# )
-
-# stats::reshape(data = ft_t,
-#                direction = "long",
-#                varying = which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1)),
-#                v.names = colnames(ft_t)[which(colnames(ft_t) == peak_df$Compound[1]):which(colnames(ft_t) == tail(peak_df$Compound, 1))],
-#                timevar = c("Injection", "Sample_Code", "Biological_Group"))
-
-# ft_t_sub <- ft_t %>% select(`1`, `2`, `3`, Biological_Group, Sample_Code)
 
 # parse ions by group
 parse_ions_by_group <- function(group_stats, group_threshold = 0.01) {
-#  groups <- unique(group_stats$Biological_Group)
   
+  # if we pass group_stats_list instead of group_stats (data_frame)
+  # we would use lines 284-288 in place of the tidy-version (290-297)
+  # avgs <- lapply(groups_stats_list, function(x){ 
+  #                                     x[[vars]]}
+  #      )
+  # avgs_df <- data.table::cbindlist(lapply(avgs, as.data.frame))
+  # group_stats_tbl <- t(as.data.frame(do.call(cbind, avgs_df)))
+
   group_stats_tbl <- group_stats %>%
     mutate(Compound = as.numeric(Compound)) %>%
     arrange(Compound, desc = TRUE) %>%
