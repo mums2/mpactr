@@ -460,8 +460,9 @@ identify_insource_ions <- function(data_frame) {
       filtered_df2 <- data_frame[data_frame$rt == rt , !(colnames(data_frame) %in% c("Compound", "mz", "rt", "kmd"))]
       filtered_df2<- as.data.frame(t(filtered_df2))
       colnames(filtered_df2) <- filtered_df$Compound
-      corr <- stats::cor(filtered_df2, method = c("pearson"))
+      corr <- stats::cor(filtered_df2, method = c("pearson")) # why correlate 
       inverse_unique_corr <-  1 - (unname(corr)[ , 1][which(unname(corr)[ , 1] != 1)])
+      cluster <- hclust(inverse_unique_corr, method = "complete") # why cluster the correlated intensities and not just the intensities 
 
     }
   }
@@ -474,6 +475,18 @@ identify_insource_ions <- function(data_frame) {
 #            12       761
 # 12  1.000000 0.751101
 # 761 0.751101 1.000000
+
+# 0, 0.248899
+
+test_df2 <- data_frame[which(data_frame$rt == data_frame[data_frame$Compound == "12", "rt"] ), !(colnames(data_frame) %in% c("Compound", "mz", "rt", "kmd"))]
+test_df2 <- as.data.frame(t(test_df2))
+colnames(test_df2) <- test_df2$Compound
+corr <- stats::cor(test_df2, method = c("pearson"))
+x <- 
+inverse_unique_corr <-  1 - (unname(corr)[ , 1][which(unname(corr)[ , 1] != 1)])
+cluster <- hclust(inverse_unique_corr, method = "complete")
+
+hclust(test_df2, method = "complete")
 
 
 
@@ -522,55 +535,58 @@ identify_insource_ions <- function(data_frame) {
 #             # filtereddf2 = msdata.loc[unseplist, :].transpose()
 #             # corr = filtereddf2.corr()
 #             # corr2 = reformatcorr(corr)
-#             linkage = spc.linkage(corr2, method='complete')
-#             np.clip(linkage, 0, None, linkage)
-#             idx = spc.fcluster(linkage, 1 - analysis_params.deconthresh, 'distance')
-
-#             # Group peaks by cluster
-#             decongroups = {}
-#             for group in range(1, max(idx) + 1):
-#                 decongroups[group] = []
-#             for peak in range(0, idx.shape[0]):
-#                 if peak < len(unseplist):
-#                     decongroups[idx[peak]].append(unseplist[peak])
-
-#             # Append groups to appropriate lists
-#             for group in decongroups:
-#                 if len(decongroups[group]) == 1:
-#                     singleslist.append(decongroups[group][0])
-#                 else:
-#                     clusterlist.append(decongroups[group])
-#                     tempdf = msdata_ind.loc[decongroups[group]].sort_values(by=['m/z'], ascending=False)
-#                     if len(tempdf.index.to_list()) > 0:
-#                         precursor = tempdf.index.to_list()[0]
-#                         fragments = tempdf.index.to_list()[1:]
-#                         singleslist.append(precursor)
-#                         insourcelist += fragments
-#                         clusterdfs.append(tempdf)
-#                         mergegroups[precursor] = ionmerge(precursor, fragments)
 
 
-#     # Write out data
-#     msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-#                          sep=',', header=[0, 1, 2], index_col=[0])
-#     msdata = msdata.loc[singleslist]
-#     msdata.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-#                   header=True, index=True)
 
-#     # Update ion filters
-#     ionfilters['insource'] = ionfilter('', insourcelist)
-#     ionfilters['insource'].merge = mergegroups
+    #         linkage = spc.linkage(corr2, method='complete')
+    #         np.clip(linkage, 0, None, linkage)
+    #         idx = spc.fcluster(linkage, 1 - analysis_params.deconthresh, 'distance')
 
-#     # Update ion dictionary
-#     iondict = pd.read_csv(analysis_params.outputdir / 'iondict.csv', sep=',', header=[0], index_col=0)
-#     iondict['pass_insource'] = ~iondict.index.isin(ionfilters['insource'].ions)
-#     iondict.to_csv(analysis_params.outputdir / 'iondict.csv', header=True, index=True)
+    #         # Group peaks by cluster
+    #         decongroups = {}
+    #         for group in range(1, max(idx) + 1):
+    #             decongroups[group] = []
+    #         for peak in range(0, idx.shape[0]):
+    #             if peak < len(unseplist):
+    #                 decongroups[idx[peak]].append(unseplist[peak])
+
+    #         # Append groups to appropriate lists
+    #         for group in decongroups:
+    #             if len(decongroups[group]) == 1:
+    #                 singleslist.append(decongroups[group][0])
+    #             else:
+    #                 clusterlist.append(decongroups[group])
+    #                 tempdf = msdata_ind.loc[decongroups[group]].sort_values(by=['m/z'], ascending=False)
+    #                 if len(tempdf.index.to_list()) > 0:
+    #                     precursor = tempdf.index.to_list()[0]
+    #                     fragments = tempdf.index.to_list()[1:]
+    #                     singleslist.append(precursor)
+    #                     insourcelist += fragments
+    #                     clusterdfs.append(tempdf)
+    #                     mergegroups[precursor] = ionmerge(precursor, fragments)
+
+
+    # # Write out data
+    # msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+    #                      sep=',', header=[0, 1, 2], index_col=[0])
+    # msdata = msdata.loc[singleslist]
+    # msdata.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
+    #               header=True, index=True)
+
+    # # Update ion filters
+    # ionfilters['insource'] = ionfilter('', insourcelist)
+    # ionfilters['insource'].merge = mergegroups
+
+    # # Update ion dictionary
+    # iondict = pd.read_csv(analysis_params.outputdir / 'iondict.csv', sep=',', header=[0], index_col=0)
+    # iondict['pass_insource'] = ~iondict.index.isin(ionfilters['insource'].ions)
+    # iondict.to_csv(analysis_params.outputdir / 'iondict.csv', header=True, index=True)
     
-#     # Convert ion filters to MSP format passes and prints errors
-#     try:
-#         mspwriter.convert_to_msp(ionfilters['insource'], analysis_params)
-#     except Exception:
-#         print('Error in MSP writer')
-#         pass
+    # # Convert ion filters to MSP format passes and prints errors
+    # try:
+    #     mspwriter.convert_to_msp(ionfilters['insource'], analysis_params)
+    # except Exception:
+    #     print('Error in MSP writer')
+    #     pass
     
-#     return ionfilters
+    # return ionfilters
