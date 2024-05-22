@@ -226,7 +226,8 @@ filter_blank_2 <- function(data_frame, metadata) {
 # metadata <- full_meta
 filter_blank_3 <- function(data_frame, metadata) {
   # extract feature sample (rows are features, columns are samples)
-  ft <- as.data.frame(data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))])
+  ft <- data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))]
+  
   rownames(ft) <- as.character(ft$Compound)
   ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
   
@@ -235,7 +236,7 @@ filter_blank_3 <- function(data_frame, metadata) {
   # ft_t <- tibble::rownames_to_column(ft_t, var = "filename")
   
   # make sure metadata rows in the same order as ft_t rownames
-  metadata <- metadata[order(match(metadata$Injection, rownames(ft_t))), ]
+  # metadata <- metadata[order(match(metadata$Injection, rownames(ft_t))), ]
   
   groups_stats_list <- vector(mode="list", length = length(unique(metadata$Biological_Group)))
   names(groups_stats_list) <- unique(metadata$Biological_Group)
@@ -247,7 +248,7 @@ filter_blank_3 <- function(data_frame, metadata) {
           tech_lvls <- as.factor(metadata$Sample_Code[which(rownames(dat) %in% metadata$Injection)])
           
           groups_stats_list[[x]]$Compound <<- colnames(dat)
-          groups_stats_list[[x]]$Biological_Group <<- c(rep(x, ncol(dat)))
+          groups_stats_list[[x]]$Biological_Group <<- rep(x, ncol(dat))
           groups_stats_list[[x]]$average <<- unlist(lapply(dat, mean))
           groups_stats_list[[x]]$BiolRSD <<- unlist(lapply(dat, rsd))
           groups_stats_list[[x]]$bioln <<- unlist(lapply(dat, length))
@@ -268,6 +269,31 @@ filter_blank_3 <- function(data_frame, metadata) {
 
   return(group_stats)
 }
+
+# microbenchmark::microbenchmark(filter_blank(peak_df_relfil, full_meta), filter_blank_3(peak_df_relfil, full_meta))
+# library(data.table)
+# data_table <- data.table(peak_df_relfil)
+# metadata <- full_meta
+
+#' @import data.table
+filter_blank_4 <- function(data_table, metadata) {
+  b <- data.table::melt(data_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)[
+    metadata, on = .(sample = Injection)][
+      , .(average = mean(intensity), BiolRSD = rsd(intensity), Bioln = length(intensity)), by = .(Compound, Biological_Group)]
+  
+  t <- melt(data_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)[
+    metadata, on = .(sample = Injection)][
+      , .(sd = rsd(intensity), n = length(intensity)), by = .(Compound, Biological_Group, Sample_Code)][
+        , .(techRSD = mean(sd), techn = mean(n)), by = .(Compound, Biological_Group)]
+
+  group_stats <- b[t, on = .(Compound, Biological_Group)]
+  setorder(group_stats, Compound, Biological_Group)
+  
+  return(group_stats)
+}
+
+# filter_blank_4(data.table(peak_df_relfil), full_meta)
+# microbenchmark::microbenchmark(filter_blank(data_frame, metadata), filter_blank_3(data_frame, metadata), filter_blank_4(data_frame, metadata), times = 1)
 
 # parse ions by group
 parse_ions_by_group <- function(group_stats, group_threshold = 0.01) {
@@ -363,7 +389,7 @@ cv_filter <- function(data_frame, metadata, cv_threshold, cv_param) {
   }
 }
 
-
+# data_frame <- peak_df_filtered
 #insource ion filter
 identify_insource_ions <- function(data_frame) {
   data_frame <- peak_df_filtered
@@ -387,6 +413,8 @@ identify_insource_ions <- function(data_frame) {
       filtered_df2<- as.data.frame(t(filtered_df2))
       colnames(filtered_df2) <- filtered_df$Compound
       corr <- stats::cor(filtered_df2, method = c("pearson")) # why correlate 
+      sim <- 1 - corr
+      hclust(sim, method = "complete")
       inverse_unique_corr <-  1 - (unname(corr)[ , 1][which(unname(corr)[ , 1] != 1)])
       cluster <- hclust(inverse_unique_corr, method = "complete") # why cluster the correlated intensities and not just the intensities 
 
@@ -404,15 +432,20 @@ identify_insource_ions <- function(data_frame) {
 
 # 0, 0.248899
 
-test_df2 <- data_frame[which(data_frame$rt == data_frame[data_frame$Compound == "12", "rt"] ), !(colnames(data_frame) %in% c("Compound", "mz", "rt", "kmd"))]
-test_df2 <- as.data.frame(t(test_df2))
-colnames(test_df2) <- test_df2$Compound
-corr <- stats::cor(test_df2, method = c("pearson"))
-x <- 
-inverse_unique_corr <-  1 - (unname(corr)[ , 1][which(unname(corr)[ , 1] != 1)])
-cluster <- hclust(inverse_unique_corr, method = "complete")
+# test_df2 <- data_frame %>%
+#   filter(rt == data_frame[data_frame$Compound == "12", "rt"]) %>%
+#   select(-mz, -rt, -kmd) %>%
+#   column_to_rownames(var = "Compound") %>%
+#   t() %>%
+#   as.data.frame()
 
-hclust(test_df2, method = "complete")
+# corr <- stats::cor(test_df2, method = c("pearson"))
+# sim <- as.matrix(1 - corr)
+# hclust(sim, method = "complete")
+
+# dist <- dist(corr, method = "euclidian")
+# cluster <- hclust(dist, method = "complete")
+
 
 
 

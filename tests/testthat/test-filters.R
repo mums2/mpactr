@@ -141,6 +141,34 @@ test_that("group/blank filtering3 works correctly", {
   expect_true(all(round(group_avgs$average, digits = 5) == round(error_prop$average, digits = 5)))
 })
 
+test_that("blank_filter_4 works correctly", {
+  # the blank filter is passed merged peaks from filter 1 (mistmatched peaks)
+  peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
+  colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
+  colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
+
+  peak_df <- initialize_data(peak_df)
+  
+  sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
+  meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
+  
+  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
+    filter(Biological_Group != "NA") %>%
+    select(Injection, Sample_Code, Biological_Group) 
+  
+  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  
+  group_avgs <- filter_blank_4(data.table(peak_df_relfil), full_meta)
+  error_prop <- read.csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"), header = TRUE)
+  colnames(error_prop) <- c("Compound", "mz", "rt", "biologicalGroup", "average")
+  error_prop$Compound <- as.character(error_prop$Compound)
+  error_prop <- error_prop[order(error_prop$Compound, error_prop$biologicalGroup), ]
+  
+  expect_true(all(group_avgs$Biological_Group %in% error_prop$biologicalGroup))
+  
+  # group_avgs <- group_avgs[order(group_avgs$Compound, group_avgs$Biological_Group), ]
+  expect_true(all(round(group_avgs$average, digits = 5) == round(error_prop$average, digits = 5)))
+})
 
 test_that("parse_ion_list return the correct compounds for each group", {
   peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
