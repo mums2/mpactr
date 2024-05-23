@@ -111,28 +111,6 @@ merge_ions <- function(data_frame, ion_filter_list) {
   return(data_frame)
   }
 
-# peak_table <- peak_df %>%
-#   select(-mz, -rt, -kmd) %>%
-#   column_to_rownames(var = "Compound") %>%
-#   t() %>%
-#   as.data.frame()
-  
-# p2 <- peak_table
-
-# for (ion in names(ion_filter_list$merge_groups)) {
-#   p2[ , ion]  <- apply(p2[ , c(ion, relfil_ion_list$merge_groups[["1188"]])], 1, sum)
-#   p2[, as.character(relfil_ion_list$merge_groups[["1188"]])] <- NULL
-# }
-
-
-# blank filter
-# the current expected metadata format as input
-# full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
-#  filter(Biological_Group != "NA") %>%
-#  select(Injection, Sample_Code, Biological_Group) 
-
-# data_frame <- peak_df_relfil
-# metadata <- full_meta
 
 filter_blank <- function(data_frame, metadata) {
   
@@ -389,163 +367,50 @@ cv_filter <- function(data_frame, metadata, cv_threshold, cv_param) {
   }
 }
 
+# identify_insource_ions(peak_df_filtered, 0.95)
 # data_frame <- peak_df_filtered
 #insource ion filter
-identify_insource_ions <- function(data_frame) {
-  data_frame <- peak_df_filtered
+filter_insource_ions <- function(data_frame, cluster_threshold) {
   rt_list <- unique(data_frame$rt)
   
-  singleslist <- c()
   insourcelist <- c()
-  clusterlist <- c()
-  clusterdfs <- c()
-  filtered_df <- data_frame[ , colnames(data_frame) %in% c("Compound", "mz", "rt")] #msdata_ind
+  df_meta <- data_frame[ , colnames(data_frame) %in% c("Compound", "mz", "rt")] #msdata_ind
   ftrgrps <- list()
   mergegroups <- list()
   for (rt in rt_list) {
     filtered_df <- data_frame[data_frame$rt == rt , colnames(data_frame) %in% c("Compound", "mz", "rt")]
 
-    if (nrow(filtered_df) == 1) {
-      singleslist <- c(singleslist, filtered_df$Compound)
-    }
-    else{ 
+    if (nrow(filtered_df) != 1) {
       filtered_df2 <- data_frame[data_frame$rt == rt , !(colnames(data_frame) %in% c("Compound", "mz", "rt", "kmd"))]
       filtered_df2<- as.data.frame(t(filtered_df2))
       colnames(filtered_df2) <- filtered_df$Compound
       corr <- stats::cor(filtered_df2, method = c("pearson")) # why correlate 
-      sim <- 1 - corr
-      hclust(sim, method = "complete")
-      inverse_unique_corr <-  1 - (unname(corr)[ , 1][which(unname(corr)[ , 1] != 1)])
-      cluster <- hclust(inverse_unique_corr, method = "complete") # why cluster the correlated intensities and not just the intensities 
+      dist <- dist(corr, method = "euclidian")
+      cluster <- hclust(dist, method = "complete")
+      groups_idx <- cutree(cluster, h = 1 - cluster_threshold)
+      
+      decon_groups <- vector("list", max(groups_idx))
+      
+      for(i in 1:length(decon_groups)){
+        decon_groups[[i]] <- names(which(groups_idx == i))
+      }
 
+      for(group in 1:length(decon_groups))
+      {
+        if(length(decon_groups[[i]]) != 1)
+        {
+
+          temp_df <- df_meta[df_meta$Compound %in% decon_groups[[i]],]
+          temp_df <- temp_df[order(temp_df$mz, decreasing = TRUE), ]
+          fragments_to_remove <- temp_df$Compound[2:nrow(temp_df)]
+          insourcelist <- c(insourcelist, fragments_to_remove)
+          # singleslist <- c(fragments_to_remove)
+        }
+      }      
     }
   }
+
+  # remove ions in insourcelist from data_frame 
+  #- ask MB if dropping fragments without merging intensity is ok
+  return(data_frame[!(data_frame$Compound %in% insourcelist), ])
 }
-# R
-#            12       761
-# 12  1.0000000 0.7899264
-# 761 0.7899264 1.0000000
-# mpact
-#            12       761
-# 12  1.000000 0.751101
-# 761 0.751101 1.000000
-
-# 0, 0.248899
-
-# test_df2 <- data_frame %>%
-#   filter(rt == data_frame[data_frame$Compound == "12", "rt"]) %>%
-#   select(-mz, -rt, -kmd) %>%
-#   column_to_rownames(var = "Compound") %>%
-#   t() %>%
-#   as.data.frame()
-
-# corr <- stats::cor(test_df2, method = c("pearson"))
-# sim <- as.matrix(1 - corr)
-# hclust(sim, method = "complete")
-
-# dist <- dist(corr, method = "euclidian")
-# cluster <- hclust(dist, method = "complete")
-
-
-
-
-# def decon(analysis_params, ionfilters):
-#     """
-#     Perform peak deconvolution on the data and update the ion filters and dictionary.
-    
-#     This function reads in formatted data and performs peak deconvolution using the correlation clustering method. It
-#     then groups peaks into clusters, generates a list of precursor and fragment ions, and updates the ion filters and
-#     dictionary. Finally, the function writes the formatted data back out to disk.
-    
-#     Parameters:
-#         analysis_params (object): Analysis parameters.
-#         ionfilters (dict): Dictionary of ion filters.
-    
-#     Returns:
-#         dict: Updated dictionary of ion filters.
-#     """
-#     # Read in data
-#     # msdata_ind = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-#     #                          sep=',', header=[2], index_col=[0, 1]).iloc[:, :1]
-#     # rtlist = msdata_ind['Retention time (min)'].unique()
-#     # msdata_ind = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-#     #                          sep=',', header=[2], index_col=[0]).iloc[:, :2]
-#     # msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-#     #                      sep=',', header=[2], index_col=[0]).iloc[:, 2:]
-
-#     # Initialize variables
-#     # singleslist = []
-#     # insourcelist = []
-#     # clusterlist = []
-#     # clusterdfs = []
-#     # filtereddf = msdata_ind
-#     # ftrgrps = {}
-#     # mergegroups = {}
-
-#     # Loop through retention times
-#     for elem in rtlist:
-#         # filtereddf = msdata_ind.loc[msdata_ind.iloc[:, 1] == elem, :] # Return a list for duplicates
-
-#         # if len(filtereddf.index) == 1:
-#         #     singleslist.append(filtereddf.index.to_list()[0])
-#         else:
-#             # Perform deconvolution
-#             # unseplist = filtereddf.index.tolist()
-#             # filtereddf2 = msdata.loc[unseplist, :].transpose()
-#             # corr = filtereddf2.corr()
-#             # corr2 = reformatcorr(corr)
-
-
-
-    #         linkage = spc.linkage(corr2, method='complete')
-    #         np.clip(linkage, 0, None, linkage)
-    #         idx = spc.fcluster(linkage, 1 - analysis_params.deconthresh, 'distance')
-
-    #         # Group peaks by cluster
-    #         decongroups = {}
-    #         for group in range(1, max(idx) + 1):
-    #             decongroups[group] = []
-    #         for peak in range(0, idx.shape[0]):
-    #             if peak < len(unseplist):
-    #                 decongroups[idx[peak]].append(unseplist[peak])
-
-    #         # Append groups to appropriate lists
-    #         for group in decongroups:
-    #             if len(decongroups[group]) == 1:
-    #                 singleslist.append(decongroups[group][0])
-    #             else:
-    #                 clusterlist.append(decongroups[group])
-    #                 tempdf = msdata_ind.loc[decongroups[group]].sort_values(by=['m/z'], ascending=False)
-    #                 if len(tempdf.index.to_list()) > 0:
-    #                     precursor = tempdf.index.to_list()[0]
-    #                     fragments = tempdf.index.to_list()[1:]
-    #                     singleslist.append(precursor)
-    #                     insourcelist += fragments
-    #                     clusterdfs.append(tempdf)
-    #                     mergegroups[precursor] = ionmerge(precursor, fragments)
-
-
-    # # Write out data
-    # msdata = pd.read_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-    #                      sep=',', header=[0, 1, 2], index_col=[0])
-    # msdata = msdata.loc[singleslist]
-    # msdata.to_csv(analysis_params.outputdir / (analysis_params.filename.stem + '_formatted.csv'),
-    #               header=True, index=True)
-
-    # # Update ion filters
-    # ionfilters['insource'] = ionfilter('', insourcelist)
-    # ionfilters['insource'].merge = mergegroups
-
-    # # Update ion dictionary
-    # iondict = pd.read_csv(analysis_params.outputdir / 'iondict.csv', sep=',', header=[0], index_col=0)
-    # iondict['pass_insource'] = ~iondict.index.isin(ionfilters['insource'].ions)
-    # iondict.to_csv(analysis_params.outputdir / 'iondict.csv', header=True, index=True)
-    
-    # # Convert ion filters to MSP format passes and prints errors
-    # try:
-    #     mspwriter.convert_to_msp(ionfilters['insource'], analysis_params)
-    # except Exception:
-    #     print('Error in MSP writer')
-    #     pass
-    
-    # return ionfilters

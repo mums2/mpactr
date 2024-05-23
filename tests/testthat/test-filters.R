@@ -263,3 +263,36 @@ test_that("cv_filter return the correct number of ions failing cv filter", {
   expect_equal(length(ions_failing_cv_mean), 86)
   
 })
+
+############################################
+####   filter 4: Insource ion filter    ####
+############################################
+
+test_that("filter_insouce_ions filters correctly",
+{
+  peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
+  colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
+  colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
+
+  peak_df <- initialize_data(peak_df)
+  
+  sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
+  meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
+  
+  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
+    filter(Biological_Group != "NA") %>%
+    select(Injection, Sample_Code, Biological_Group) 
+  
+  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  
+  group_avgs <- filter_blank(peak_df_relfil, full_meta)
+  group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
+  peak_df_filtered <- apply_group_filter(peak_df_relfil, group_filter_list, "Blanks", remove_ions = TRUE)
+  peak_df_filter_insc <- filter_insource_ions(peak_df_filtered, 0.95)
+
+  insource_ion_expected_list <- c(38, 204, 214, 993, 270, 1003, 271, 294, 331, 349, 382,
+   447, 498, 1233, 644, 1307, 677, 675, 689,
+   690, 688, 758, 985, 982, 981, 1297, 1311)
+  expect_true(nrow(peak_df_filtered) - nrow(peak_df_filter_insc) == 27)
+  expect_true(all(!(insource_ion_expected_list %in% peak_df_filter_insc$Compound)))
+})
