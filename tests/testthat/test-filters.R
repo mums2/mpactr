@@ -28,7 +28,7 @@ test_that("mismatched peaks filter works", {
   sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
   meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
   
-  relfil_ion_list <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = FALSE)
+  relfil_ion_list <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = FALSE)
 
   expected_cut_ions <- read.csv(here::here("tests/exttestdata/cut_ions.csv"), header = FALSE)
   expected_cut_ions <- as.integer(expected_cut_ions$V1)
@@ -46,9 +46,9 @@ test_that("merge_ions correctly updates intensity values and columns", {
   sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
   meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
   
-  relfil_ion_list <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = FALSE)
+  relfil_ion_list <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = FALSE)
   
-  peak_df_merged <- merge_ions(peak_df, relfil_ion_list)
+  peak_df_merged <- merge_ions(data.table(peak_df), relfil_ion_list)
   expect_true(all(!(as.character(relfil_ion_list$cut_ions) %in% colnames(peak_df_merged))))
 
   expect_equal(peak_df_merged[peak_df_merged$Compound == "153", "102623_UM1850B_ANGDT_71_1_5007"], 2158.4)
@@ -100,7 +100,7 @@ test_that("group/blank filtering works correctly", {
     filter(Biological_Group != "NA") %>%
     select(Injection, Sample_Code, Biological_Group) 
   
-  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
   group_avgs <- filter_blank(peak_df_relfil, full_meta)
   error_prop <- read.csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"), header = TRUE)
@@ -127,7 +127,7 @@ test_that("group/blank filtering3 works correctly", {
     filter(Biological_Group != "NA") %>%
     select(Injection, Sample_Code, Biological_Group) 
   
-  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
   group_avgs <- filter_blank_3(peak_df_relfil, full_meta)
   error_prop <- read.csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"), header = TRUE)
@@ -156,7 +156,7 @@ test_that("blank_filter_4 works correctly", {
     filter(Biological_Group != "NA") %>%
     select(Injection, Sample_Code, Biological_Group) 
   
-  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
   group_avgs <- filter_blank_4(data.table(peak_df_relfil), full_meta)
   error_prop <- read.csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"), header = TRUE)
@@ -184,7 +184,7 @@ test_that("parse_ion_list return the correct compounds for each group", {
     filter(Biological_Group != "NA") %>%
     select(Injection, Sample_Code, Biological_Group) 
   
-  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
   group_avgs <- filter_blank(peak_df_relfil, full_meta)
   group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
@@ -220,7 +220,7 @@ test_that("Group filter filters out groups correctly",
     filter(Biological_Group != "NA") %>%
     select(Injection, Sample_Code, Biological_Group) 
   
-  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
   group_avgs <- filter_blank(peak_df_relfil, full_meta)
   group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
@@ -251,7 +251,7 @@ test_that("cv_filter return the correct number of ions failing cv filter", {
     filter(Biological_Group != "NA") %>%
     select(Injection, Sample_Code, Biological_Group) 
   
-  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
   group_avgs <- filter_blank(peak_df_relfil, full_meta)
   group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
@@ -283,7 +283,7 @@ test_that("filter_insouce_ions filters correctly",
     filter(Biological_Group != "NA") %>%
     select(Injection, Sample_Code, Biological_Group) 
   
-  peak_df_relfil <- check_mismatched_peaks(peak_df, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
+  peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
   group_avgs <- filter_blank(peak_df_relfil, full_meta)
   group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
