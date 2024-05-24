@@ -2,18 +2,18 @@
 
 
 
-#' @params data_frame with first three columns: Compound, mz, rt
-solvent_blank_filter <- function(data_frame, sample_to_filter)
+#' @params data_table with first three columns: Compound, mz, rt
+solvent_blank_filter <- function(data_table, sample_to_filter)
 {
-  result <- apply(data_frame[ , sample_to_filter, drop = FALSE], 1, function(x) {sum(x) <= 0})
-  return(data_frame[result, !names(data_frame) %in% sample_to_filter])
+  result <- apply(data_table[ , sample_to_filter, drop = FALSE], 1, function(x) {sum(x) <= 0})
+  return(data_table[result, !names(data_table) %in% sample_to_filter])
 }
 
 
 
 # add params: df
-check_mismatched_peaks <- function(data_frame, ringwin, isowin, trwin, max_iso_shift, merge_peaks) {
-
+#' @param data_table a data.table 
+check_mismatched_peaks <- function(data_table, ringwin, isowin, trwin, max_iso_shift, merge_peaks) {
 ion_filter_list <- list()
 current_rt <- 0
 current_mass <- 0
@@ -22,10 +22,10 @@ kmd_diff <- 0
 cut_ions <- c() # list
 merge_groups <- list() # dictonary
 
-  data_frame <- data_frame[order(data_frame$mz, decreasing = FALSE), ]
-  number_of_rows <- nrow(data_frame)
+  data_table <- data_table[order(data_table$mz, decreasing = FALSE), ]
+  number_of_rows <- nrow(data_table)
   for(i in seq_along(1:number_of_rows)) {
-    current_feature <- data_frame[i, c("Compound", "mz", "rt")]
+    current_feature <- data_table[i, c("Compound", "mz", "rt")]
     current_rt <- current_feature$rt
     current_mass <- current_feature$mz
     current_ion <- current_feature$Compound
@@ -40,24 +40,24 @@ merge_groups <- list() # dictonary
         {
           break
         }
-        if(data_frame$Compound[j] %in% cut_ions) {
+        if(data_table$Compound[j] %in% cut_ions) {
           next
         }
 
         if(current_ion == 1248)
         {
           print("stop")
-           if( data_frame$Compound[j] == 1250)
+           if( data_table$Compound[j] == 1250)
           {print("stop")}
         }
-        mass_diff <- data_frame$mz[j] - current_mass
+        mass_diff <- data_table$mz[j] - current_mass
         kmd_diff <- mass_diff - floor(mass_diff)
 
         if (abs(mass_diff) > max_iso_shift - 0.4) { # BL  - why 0.4??
           break
         }
 
-        rt_diff <- data_frame$rt[j] - current_rt
+        rt_diff <- data_table$rt[j] - current_rt
         ring_band <- floor(abs(mass_diff) * (1/ringwin)) %% (1/ringwin)
         double_band <- kmd_diff - .5004 -
         (floor(mass_diff) * .007) # BL - why 0.500 and 0.007?
@@ -66,8 +66,8 @@ merge_groups <- list() # dictonary
            (mass_diff <= max_iso_shift - 0.4) &&
            (ring_band == 0 ||
             double_band < isowin)) {
-            cut_ions <- c(cut_ions, data_frame$Compound[j])
-            merge_groups[[as.character(current_ion)]] <- c(merge_groups[[as.character(current_ion)]], data_frame$Compound[j])
+            cut_ions <- c(cut_ions, data_table$Compound[j])
+            merge_groups[[as.character(current_ion)]] <- c(merge_groups[[as.character(current_ion)]], data_table$Compound[j])
         }
       }
     }
@@ -77,47 +77,31 @@ merge_groups <- list() # dictonary
   ion_filter_list[["merge_groups"]] <- merge_groups
   
   if (isTRUE(merge_peaks)) {
-    #data_frame_merged <- data_frame[which(!(data_frame$Compound %in% cut_ions)), ]
-    #return(as.data.frame(data_frame_merged[order(data_frame_merged$Compound, decreasing = FALSE), ]))
-    return(merge_ions(data_frame, ion_filter_list))
+    #data_table_merged <- data_table[which(!(data_table$Compound %in% cut_ions)), ]
+    #return(as.data.frame(data_table_merged[order(data_table_merged$Compound, decreasing = FALSE), ]))
+    return(merge_ions(data_table, ion_filter_list))
   }
   return(ion_filter_list)
 
 }
-
-merge_ions <- function(data_frame, ion_filter_list) {
-  ion_dat <- data_frame %>%
-    select(Compound, mz, rt, kmd) %>%
-    mutate(Compound = as.character(Compound))
-  
-  dat <- data_frame %>%
-    select(-mz, -rt, -kmd) %>%
-    tibble::column_to_rownames(var = "Compound") %>%
-    t() %>%
-    as.data.frame()
+# data_table <- data.table(peak_df)
+# ion_filter_list <- relfil_ion_list
+merge_ions <- function(data_table, ion_filter_list) {  
+  dat <- melt(data_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)
 
   for (ion in names(ion_filter_list$merge_groups)) {
-    dat[, ion] <- apply(dat[, c(ion,
-                                ion_filter_list$merge_groups[[ion]])], 1, sum)
-    dat[, as.character(ion_filter_list$merge_groups[[ion]])] <- NULL
+    dat <- dat[Compound %in% c(ion, ion_filter_list$merge_groups[[ion]]), intensity:=sum(intensity), by = .(sample)]
   }
- 
-  data_frame <- dat %>%
-    t() %>%
-    as.data.frame() %>%
-    tibble::rownames_to_column(var = "Compound") %>%
-    left_join(ion_dat, by = "Compound")
-
-  return(data_frame)
+  return( dcast(dtm, Compound + mz + kmd + rt ~ sample, value.var = "intensity")[
+    (!Compound %in% ion_filter_list$cut_ions), ])
   }
 
-
-filter_blank <- function(data_frame, metadata) {
+filter_blank <- function(data_table, metadata) {
   
   # extract feature sample (rows are features, columns are samples)
-  # data_frame <- peak_df_relfil
+  # data_table <- peak_df_relfil
   # metadata <- full_meta
-  ft <- as.data.frame(data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))])
+  ft <- as.data.frame(data_table[ , !(colnames(data_table) %in% c("mz", "rt", "kmd"))])
   rownames(ft) <- as.character(ft$Compound)
   ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
   
@@ -135,7 +119,7 @@ filter_blank <- function(data_frame, metadata) {
 
   # calculate RSD for biological and technical groups
   biol_stats <- ft_t %>% 
-    pivot_longer(cols = c(as.character(data_frame$Compound[1]):as.character(tail(data_frame$Compound, 1))), names_to = "Compound") %>%
+    pivot_longer(cols = c(as.character(data_table$Compound[1]):as.character(tail(data_table$Compound, 1))), names_to = "Compound") %>%
     group_by(Compound, Biological_Group) %>%
     summarise(average = mean(value),
               biolRSD = if_else(average != 0, sd(value) / mean(value), 0),
@@ -143,7 +127,7 @@ filter_blank <- function(data_frame, metadata) {
     ungroup()
   
   tech_stats <- ft_t %>%
-    pivot_longer(cols = c(as.character(data_frame$Compound[1]):as.character(tail(data_frame$Compound, 1))), names_to = "Compound") %>%
+    pivot_longer(cols = c(as.character(data_table$Compound[1]):as.character(tail(data_table$Compound, 1))), names_to = "Compound") %>%
     group_by(Compound, Sample_Code, Biological_Group) %>%
     summarise(sd = if_else(mean(value) != 0, sd(value) / mean(value), 0),
               n = n()) %>%
@@ -159,12 +143,12 @@ filter_blank <- function(data_frame, metadata) {
 }
 
 # 05/15/2024
-filter_blank_2 <- function(data_frame, metadata) {
+filter_blank_2 <- function(data_table, metadata) {
 
   # extract feature sample (rows are features, columns are samples)
-  data_frame <- peak_df_relfil
+  data_table <- peak_df_relfil
   metadata <- full_meta
-  ft <- as.data.frame(data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))])
+  ft <- as.data.frame(data_table[ , !(colnames(data_table) %in% c("mz", "rt", "kmd"))])
   rownames(ft) <- as.character(ft$Compound)
   ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
   row_count <- nrow(metadata)
@@ -200,11 +184,11 @@ filter_blank_2 <- function(data_frame, metadata) {
 
 }
 
-# data_frame <- peak_df_relfil
+# data_table <- peak_df_relfil
 # metadata <- full_meta
-filter_blank_3 <- function(data_frame, metadata) {
+filter_blank_3 <- function(data_table, metadata) {
   # extract feature sample (rows are features, columns are samples)
-  ft <- data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))]
+  ft <- data_table[ , !(colnames(data_table) %in% c("mz", "rt", "kmd"))]
   
   rownames(ft) <- as.character(ft$Compound)
   ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
@@ -271,12 +255,12 @@ filter_blank_4 <- function(data_table, metadata) {
 }
 
 # filter_blank_4(data.table(peak_df_relfil), full_meta)
-# microbenchmark::microbenchmark(filter_blank(data_frame, metadata), filter_blank_3(data_frame, metadata), filter_blank_4(data_frame, metadata), times = 1)
+# microbenchmark::microbenchmark(filter_blank(data_table, metadata), filter_blank_3(data_table, metadata), filter_blank_4(data_table, metadata), times = 1)
 
 # parse ions by group
 parse_ions_by_group <- function(group_stats, group_threshold = 0.01) {
   
-  # if we pass group_stats_list instead of group_stats (data_frame)
+  # if we pass group_stats_list instead of group_stats (data_table)
   # we would use lines 284-288 in place of the tidy-version (290-297)
   # avgs <- lapply(groups_stats_list, function(x){ 
   #                                     x[[vars]]}
@@ -313,26 +297,26 @@ parse_ions_by_group <- function(group_stats, group_threshold = 0.01) {
     
 }
 
-apply_group_filter  <- function(data_frame, group_filter_list, group, remove_ions = TRUE) {
+apply_group_filter  <- function(data_table, group_filter_list, group, remove_ions = TRUE) {
   if(isFALSE(remove_ions)) {
-    return(data_frame)
+    return(data_table)
   }
 
   ions <- group_filter_list[[group]]
-  data_frame <- data_frame[!(data_frame$Compound %in% ions), ]
-  return(data_frame)
+  data_table <- data_table[!(data_table$Compound %in% ions), ]
+  return(data_table)
 
 }
 
 
 
 ### CV filter
-cv_filter <- function(data_frame, metadata, cv_threshold, cv_param) {
+cv_filter <- function(data_table, metadata, cv_threshold, cv_param) {
     # if mismatch and merge and group filters (with remove_ions == TRUE) 
     # are selected, this is expecting the filtered df as input
 
   # extract feature sample (rows are features, columns are samples)
-  ft <- as.data.frame(data_frame[ , !(colnames(data_frame) %in% c("mz", "rt", "kmd"))])
+  ft <- as.data.frame(data_table[ , !(colnames(data_table) %in% c("mz", "rt", "kmd"))])
   rownames(ft) <- as.character(ft$Compound)
   ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
   
@@ -348,7 +332,7 @@ cv_filter <- function(data_frame, metadata, cv_threshold, cv_param) {
   ft_t <- cbind(ft_t, metadata[, c("Sample_Code", "Biological_Group")])
   
   cv <- ft_t %>%
-    pivot_longer(cols = c(as.character(data_frame$Compound[1]):as.character(tail(data_frame$Compound, 1))), names_to = "Compound") %>%
+    pivot_longer(cols = c(as.character(data_table$Compound[1]):as.character(tail(data_table$Compound, 1))), names_to = "Compound") %>%
     group_by(Compound, Sample_Code, Biological_Group) %>%
     summarise(cv = if_else(mean(value) != 0, sd(value) / mean(value), NA_real_)) %>%
     ungroup() %>%
@@ -368,20 +352,20 @@ cv_filter <- function(data_frame, metadata, cv_threshold, cv_param) {
 }
 
 # identify_insource_ions(peak_df_filtered, 0.95)
-# data_frame <- peak_df_filtered
+# data_table <- peak_df_filtered
 #insource ion filter
-filter_insource_ions <- function(data_frame, cluster_threshold) {
-  rt_list <- unique(data_frame$rt)
+filter_insource_ions <- function(data_table, cluster_threshold) {
+  rt_list <- unique(data_table$rt)
   
   insourcelist <- c()
-  df_meta <- data_frame[ , colnames(data_frame) %in% c("Compound", "mz", "rt")] #msdata_ind
+  df_meta <- data_table[ , colnames(data_table) %in% c("Compound", "mz", "rt")] #msdata_ind
   ftrgrps <- list()
   mergegroups <- list()
   for (rt in rt_list) {
-    filtered_df <- data_frame[data_frame$rt == rt , colnames(data_frame) %in% c("Compound", "mz", "rt")]
+    filtered_df <- data_table[data_table$rt == rt , colnames(data_table) %in% c("Compound", "mz", "rt")]
 
     if (nrow(filtered_df) != 1) {
-      filtered_df2 <- data_frame[data_frame$rt == rt , !(colnames(data_frame) %in% c("Compound", "mz", "rt", "kmd"))]
+      filtered_df2 <- data_table[data_table$rt == rt , !(colnames(data_table) %in% c("Compound", "mz", "rt", "kmd"))]
       filtered_df2<- as.data.frame(t(filtered_df2))
       colnames(filtered_df2) <- filtered_df$Compound
       corr <- stats::cor(filtered_df2, method = c("pearson")) # why correlate 
@@ -410,7 +394,7 @@ filter_insource_ions <- function(data_frame, cluster_threshold) {
     }
   }
 
-  # remove ions in insourcelist from data_frame 
+  # remove ions in insourcelist from data_table 
   #- ask MB if dropping fragments without merging intensity is ok
-  return(data_frame[!(data_frame$Compound %in% insourcelist), ])
+  return(data_table[!(data_table$Compound %in% insourcelist), ])
 }
