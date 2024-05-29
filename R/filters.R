@@ -92,7 +92,7 @@ merge_ions <- function(data_table, ion_filter_list) {
   for (ion in names(ion_filter_list$merge_groups)) {
     dat <- dat[Compound %in% c(ion, ion_filter_list$merge_groups[[ion]]), intensity:=sum(intensity), by = .(sample)]
   }
-  return( dcast(dtm, Compound + mz + kmd + rt ~ sample, value.var = "intensity")[
+  return( dcast(dat, Compound + mz + kmd + rt ~ sample, value.var = "intensity")[
     (!Compound %in% ion_filter_list$cut_ions), ])
   }
 
@@ -311,52 +311,81 @@ apply_group_filter  <- function(data_table, group_filter_list, group, remove_ion
 
 
 ### CV filter
-cv_filter <- function(data_table, metadata, cv_threshold, cv_param) {
-    # if mismatch and merge and group filters (with remove_ions == TRUE) 
-    # are selected, this is expecting the filtered df as input
+# data_table <- peak_df_filtered
+# metadata <- full_meta
+cv_filter_2 <- function(data_table, metadata, cv_threshold, cv_param) {
+  cv <- data.table::melt(data_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)[
+    data.table(metadata), on = .(sample = Injection)][
+      , .(cv = rsd(intensity)), by = .(Compound, Biological_Group, Sample_Code)][
+        , .(mean_cv = mean(cv, na.rm = TRUE), median_cv = median(cv, na.rm = TRUE)), by = .(Compound)]
 
-  # extract feature sample (rows are features, columns are samples)
-  ft <- as.data.frame(data_table[ , !(colnames(data_table) %in% c("mz", "rt", "kmd"))])
-  rownames(ft) <- as.character(ft$Compound)
-  ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
-  
-  # transpose so rows are samples and columns are features
-  ft_t <- as.data.frame(t(ft))
-  
-  # make sure metadata rows in the same order as ft_t rownames
-  metadata <- metadata[order(match(metadata$Injection, rownames(ft_t))), ]
-  metadata$Injection <- as.factor(metadata$Injection)
-  metadata$Sample_Code <- as.factor(metadata$Sample_Code)
-  metadata$Biological_Group <- as.factor(metadata$Biological_Group)
-  
-  ft_t <- cbind(ft_t, metadata[, c("Sample_Code", "Biological_Group")])
-  
-  cv <- ft_t %>%
-    pivot_longer(cols = c(as.character(data_table$Compound[1]):as.character(tail(data_table$Compound, 1))), names_to = "Compound") %>%
-    group_by(Compound, Sample_Code, Biological_Group) %>%
-    summarise(cv = if_else(mean(value) != 0, sd(value) / mean(value), NA_real_)) %>%
-    ungroup() %>%
-    group_by(Compound) %>%
-    summarise(mean_cv = mean(cv, na.rm = TRUE),
-              median_cv = median(cv, na.rm = TRUE))
-
-  if (cv_param == "mean") {
-    fail_cv <- cv$Compound[!(cv$mean_cv < cv_threshold)]
-    return(fail_cv)
-  }
-
-  if (cv_param == "median") {
-    fail_cv <- cv$Compound[!(cv$median_cv < cv_threshold)]
-    return(fail_cv)
-  }
+    if (cv_param == "mean") {
+      fail_cv <- cv[mean_cv > cv_threshold, Compound]
+      return(fail_cv)
+    }
+    if (cv_param == "median") {
+       fail_cv <- cv[median_cv > cv_threshold, Compound]
+      return(fail_cv)
+    }
 }
 
+# cv_filter <- function(data_table, metadata, cv_threshold, cv_param) {
+#     # if mismatch and merge and group filters (with remove_ions == TRUE)
+#     # are selected, this is expecting the filtered df as input
+#
+#
+#
+#   # extract feature sample (rows are features, columns are samples)
+#   data_table <- data.frame(data_table)
+#   ft <- data_table[ , !(colnames(data_table) %in% c("mz", "rt", "kmd"))]
+#   rownames(ft) <- as.character(ft$Compound)
+#   ft <- ft[ , !(colnames(ft) %in% c("Compound"))]
+#
+#   # transpose so rows are samples and columns are features
+#   ft_t <- as.data.frame(t(ft))
+#
+#   # make sure metadata rows in the same order as ft_t rownames
+#   metadata <- metadata[order(match(metadata$Injection, rownames(ft_t))), ]
+#   metadata$Injection <- as.factor(metadata$Injection)
+#   metadata$Sample_Code <- as.factor(metadata$Sample_Code)
+#   metadata$Biological_Group <- as.factor(metadata$Biological_Group)
+#
+#   ft_t <- cbind(ft_t, metadata[, c("Sample_Code", "Biological_Group")])
+#
+#   cv <- ft_t %>%
+#     pivot_longer(cols = c(as.character(data_table$Compound[1]):as.character(tail(data_table$Compound, 1))), names_to = "Compound") %>%
+#     group_by(Compound, Sample_Code, Biological_Group) %>%
+#     summarise(cv = if_else(mean(value) != 0, sd(value) / mean(value), NA_real_)) %>%
+#     ungroup() %>%
+#     group_by(Compound) %>%
+#     summarise(mean_cv = mean(cv, na.rm = TRUE),
+#               median_cv = median(cv, na.rm = TRUE))
+#
+#   if (cv_param == "mean") {
+#     fail_cv <- cv$Compound[!(cv$mean_cv < cv_threshold)]
+#     return(fail_cv)
+#   }
+#
+#   if (cv_param == "median") {
+#     fail_cv <- cv$Compound[!(cv$median_cv < cv_threshold)]
+#     return(fail_cv)
+#   }
+# }
+
+
+filter_insource_ions_2 <- function(data_table, cluster_threshold) {
+
+}
 # identify_insource_ions(peak_df_filtered, 0.95)
-# data_table <- peak_df_filtered
+# data_table <- data.frame(peak_df_filtered)
 #insource ion filter
 filter_insource_ions <- function(data_table, cluster_threshold) {
   rt_list <- unique(data_table$rt)
-  
+
+  # rt <- Compounds
+  # filter out all than or equal to 1
+  #
+
   insourcelist <- c()
   df_meta <- data_table[ , colnames(data_table) %in% c("Compound", "mz", "rt")] #msdata_ind
   ftrgrps <- list()
@@ -364,7 +393,7 @@ filter_insource_ions <- function(data_table, cluster_threshold) {
   for (rt in rt_list) {
     filtered_df <- data_table[data_table$rt == rt , colnames(data_table) %in% c("Compound", "mz", "rt")]
 
-    if (nrow(filtered_df) != 1) {
+    if (nrow(filtered_df) != 1) { # Do no need
       filtered_df2 <- data_table[data_table$rt == rt , !(colnames(data_table) %in% c("Compound", "mz", "rt", "kmd"))]
       filtered_df2<- as.data.frame(t(filtered_df2))
       colnames(filtered_df2) <- filtered_df$Compound
@@ -375,16 +404,15 @@ filter_insource_ions <- function(data_table, cluster_threshold) {
       
       decon_groups <- vector("list", max(groups_idx))
       
-      for(i in 1:length(decon_groups)){
-        decon_groups[[i]] <- names(which(groups_idx == i))
-      }
+      # for(i in 1:length(decon_groups)){
+      #   decon_groups[[i]] <- names(which(groups_idx == i))
+      # }
 
       for(group in 1:length(decon_groups))
       {
-        if(length(decon_groups[[i]]) != 1)
+        if(length(decon_groups[[group]]) != 1)
         {
-
-          temp_df <- df_meta[df_meta$Compound %in% decon_groups[[i]],]
+          temp_df <- df_meta[df_meta$Compound %in% decon_groups[[group]],]
           temp_df <- temp_df[order(temp_df$mz, decreasing = TRUE), ]
           fragments_to_remove <- temp_df$Compound[2:nrow(temp_df)]
           insourcelist <- c(insourcelist, fragments_to_remove)
@@ -398,3 +426,83 @@ filter_insource_ions <- function(data_table, cluster_threshold) {
   #- ask MB if dropping fragments without merging intensity is ok
   return(data_table[!(data_table$Compound %in% insourcelist), ])
 }
+
+# 454 rows
+#
+uniqueN(data_table, by = c("rt"))
+
+data_table <- peak_df_filtered
+rt_list <- data_table[ , .(counts = .N), by = .(rt)]
+
+
+# [
+#   counts > 1, rt]
+
+# n <- data_table[rt %in% rt_list, ]
+nm <- melt(data_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)
+
+nm[ , .(counts = .N), by = .(rt)]
+
+[
+  , .(corr = corr_fun(.SD, 0.95)), by = .(rt)]
+
+nm$corr
+
+nm[ , isMultiple := sapply(nm$corr, function(x)
+{
+  any(as.numeric(table(x)) > 1)
+})][isMultiple == TRUE]
+
+data_table[ , cor:= corr_fun(.SD, 0.95), by = .(rt)][
+  cor ==TRUE ]
+group_1 <- data_table[rt == data_table[ , rt][2], ]
+
+corr_fun <- function(group_1, cluster_threshold = 0.95) {
+  # return(rep(TRUE, nrow(group_1)))
+  if (nrow(group_1) <= 1) {
+    return(TRUE)
+  }
+  
+  dat <- melt(group_1, id.vars = c("Compound", "mz", "kmd"), 
+              variable.name = "sample", value.name = "intensity", variable.factor = FALSE)[ 
+                                                                                           , c("Compound", "sample", "intensity")]
+  data <- dcast(dat, sample ~ Compound, value.var = "intensity")
+  data[ , c("sample"):=NULL]
+  corr <- stats::cor(data, method = c("pearson"))
+  dist <- dist(corr, method = "euclidian")
+  cluster <- hclust(dist, method = "complete")
+  cut_tree <- cutree(cluster, h = 1 - cluster_threshold)
+  
+  x <- as.data.table(cut_tree, keep.rownames = "Compound")[
+    , Compound:=as.numeric(Compound)][
+      group_1, on = .(Compound = Compound)][
+        , keep:=cluster_max(mz), by = .(cut_tree) 
+      ]
+  
+  return(x$keep)
+}
+
+  cluster_max <- function(mz) {
+    keep = rep(FALSE, length(mz))
+    
+    keep[which.max(mz)] <- TRUE
+    
+    return(keep)
+  }
+  
+
+data.table("compound" = names(cut_tree),
+           "clusters" = as.numeric(cut_tree))
+
+l <- data_table[ , .(cor = corr_fun(.SD, 0.95)), by = .(rt)]
+l[ , isMultiple := sapply(l$cor, function(x)
+{
+  any(as.numeric(table(x)) > 1)
+})][isMultiple == TRUE]
+
+names(l$cor[[1]])
+
+for (i in 1:nrow(l)) {
+  
+}
+
