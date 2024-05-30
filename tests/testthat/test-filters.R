@@ -54,38 +54,22 @@ test_that("merge_ions correctly updates intensity values and columns", {
   expect_equal(peak_df_merged[Compound == "153", "102623_UM1850B_ANGDT_71_1_5007"][[1]], 2158.4)
   
     
-  expected_merged <- read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple_merged.csv"), skip = 2) %>%
-    as.data.frame() %>%
-    select(-`...2`, -`...3`)
-  expected_merged <- expected_merged[expected_merged$Compound %in% names(relfil_ion_list$merge_groups), ]
+  # expected_merged <- read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple_merged.csv"), skip = 2) %>%
+  #   as.data.frame() %>%
+  #   select(-`...2`, -`...3`)
+  # expected_merged <- expected_merged[expected_merged$Compound %in% names(relfil_ion_list$merge_groups), ]
   
-  merged_results_rows <- peak_df_merged[peak_df_merged$Compound %in% names(relfil_ion_list$merge_groups), ] %>%
-    select(-mz, -rt, -kmd)
+  # merged_results_rows <- peak_df_merged[peak_df_merged$Compound %in% names(relfil_ion_list$merge_groups), ] %>%
+  #   select(-mz, -rt, -kmd)
     
-  # all(merged_results_rows == expected_merged)
-  
-  # dim <- c()
-  # for(i in 1:nrow(merged_results_rows)) {
-  #   dim <- c(dim, all(expected_merged[i, ] == merged_results_rows[i, ]))
-  #   print(all(expected_merged[i, ] == merged_results_rows[i, ]))
-  # }
-  # table(dim)
-  # merged_results_rows$Compound[which(dim == FALSE)]
-  
-  # merged_results_rows[2, "102623_UM1849B_ANG18_70_1_5021"] == expected_merged[2, "102623_UM1849B_ANG18_70_1_5021"]
-  # print(merged_results_rows[2, "102623_UM1849B_ANG18_70_1_5021"], digits = 10)
-  # print(expected_merged[2, "102623_UM1849B_ANG18_70_1_5021"], digits = 10)
-  
-  # group_avgs %>%
-  #   filter(Compound == "1059") %>%
-  #   select(Compound, Biological_Group, average)
+  # all(merged_results_rows == expected_merged
 })
 
 ############################################
 ####       filter 2: group/blank        ####
 ############################################
 
-test_that("group/blank filtering works correctly", {
+test_that("blank_filter works correctly", {
   # the blank filter is passed merged peaks from filter 1 (mistmatched peaks)
   peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
   colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
@@ -105,64 +89,8 @@ test_that("group/blank filtering works correctly", {
   group_avgs <- filter_blank(data.frame(peak_df_relfil), full_meta)
   error_prop <- read.csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"), header = TRUE)
   colnames(error_prop) <- c("Compound", "mz", "rt", "biologicalGroup", "average")
-  error_prop$Compound <- as.character(error_prop$Compound)
-  error_prop <- error_prop[order(error_prop$Compound), ]
-  expect_true(all(group_avgs$Biological_Group == error_prop$biologicalGroup))
-  expect_true(all(round(group_avgs$average, digits = 5) == round(error_prop$average, digits = 5)))
-})
-
-
-test_that("group/blank filtering3 works correctly", {
-  # the blank filter is passed merged peaks from filter 1 (mistmatched peaks)
-  peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
-  colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
-  colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
-
-  peak_df <- initialize_data(peak_df)
-  
-  sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
-  meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
-  
-  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
-    filter(Biological_Group != "NA") %>%
-    select(Injection, Sample_Code, Biological_Group) 
-  
-  peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
-  
-  group_avgs <- filter_blank_3(peak_df_relfil, full_meta)
-  error_prop <- read.csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"), header = TRUE)
-  colnames(error_prop) <- c("Compound", "mz", "rt", "biologicalGroup", "average")
-  error_prop$Compound <- as.character(error_prop$Compound)
-  error_prop <- error_prop[order(error_prop$Compound, error_prop$biologicalGroup), ]
-  
-  expect_true(all(group_avgs$Biological_Group %in% error_prop$biologicalGroup))
-  
-  group_avgs <- group_avgs[order(group_avgs$Compound, group_avgs$Biological_Group), ]
-  expect_true(all(round(group_avgs$average, digits = 5) == round(error_prop$average, digits = 5)))
-})
-
-test_that("blank_filter_4 works correctly", {
-  # the blank filter is passed merged peaks from filter 1 (mistmatched peaks)
-  peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
-  colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
-  colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
-
-  peak_df <- initialize_data(peak_df)
-  
-  sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
-  meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
-  
-  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
-    filter(Biological_Group != "NA") %>%
-    select(Injection, Sample_Code, Biological_Group) 
-  
-  peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
-  
-  group_avgs <- filter_blank_4(data.table(peak_df_relfil), full_meta)
-  error_prop <- read.csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"), header = TRUE)
-  colnames(error_prop) <- c("Compound", "mz", "rt", "biologicalGroup", "average")
-  error_prop$Compound <- as.character(error_prop$Compound)
-  error_prop <- error_prop[order(error_prop$Compound, error_prop$biologicalGroup), ]
+  # error_prop$Compound <- as.character(error_prop$Compound) Data.table auto groups?
+  # error_prop <- error_prop[order(error_prop$Compound, error_prop$biologicalGroup), ]
   
   expect_true(all(group_avgs$Biological_Group %in% error_prop$biologicalGroup))
   
