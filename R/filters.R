@@ -1,5 +1,9 @@
-# TODO Generate a class-like structure for the tree-plot
-
+# TODO: Generate a class-like structure for the tree-plot
+# TODO: Add filter step to CV filter
+# TODO: Outline data flow through CV filter - gdj
+# TODO: Outline data flow through blank filter - arm
+# TODO: Compare CV filter (with, without solvent blanks, solvent and media blanks as 1 group - need data)
+# TODO: Outline data flow through filters (both as we see in mpact and how we envision mpactR)
 
 
 #' @params data_table with first three columns: Compound, mz, rt
