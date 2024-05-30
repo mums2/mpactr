@@ -80,13 +80,13 @@ test_that("blank_filter works correctly", {
   sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
   meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
   
-  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
-    filter(Biological_Group != "NA") %>%
-    select(Injection, Sample_Code, Biological_Group) 
+  full_meta <- data.table(sample_df)[meta, on = .(Sample_Code)][
+    is.na(Biological_Group) == FALSE, ][
+    , .(Injection, Sample_Code, Biological_Group)]
   
   peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
-  group_avgs <- filter_blank(data.frame(peak_df_relfil), full_meta)
+  group_avgs <- filter_blank(peak_df_relfil, full_meta)
   error_prop <- read.csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"), header = TRUE)
   colnames(error_prop) <- c("Compound", "mz", "rt", "biologicalGroup", "average")
   # error_prop$Compound <- as.character(error_prop$Compound) Data.table auto groups?
@@ -108,9 +108,9 @@ test_that("parse_ion_list return the correct compounds for each group", {
   sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
   meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
   
-  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
-    filter(Biological_Group != "NA") %>%
-    select(Injection, Sample_Code, Biological_Group) 
+  full_meta <- data.table(sample_df)[meta, on = .(Sample_Code)][
+    is.na(Biological_Group) == FALSE, ][
+    , .(Injection, Sample_Code, Biological_Group)]
   
   peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
@@ -124,7 +124,7 @@ test_that("parse_ion_list return the correct compounds for each group", {
   jc1 <- read.csv(here::here("tests/exttestdata/output_JC1 monoculture"), header = FALSE)
   jc28 <- read.csv(here::here("tests/exttestdata/output_JC28 monoculture"), header = FALSE)
 
-
+  expect_false(all(sapply(group_filter_list, is.null)))
   expect_true(all(group_filter_list$`ANG18 monoculture` == as.character(ang_18$V1)))
   expect_true(all(group_filter_list$`ANGDT monoculture` == as.character(angdt$V1)))
   expect_true(all(group_filter_list$`Blanks` == as.character(blanks$V1)))
@@ -144,10 +144,10 @@ test_that("Group filter filters out groups correctly",
   sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
   meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
   
-  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
-    filter(Biological_Group != "NA") %>%
-    select(Injection, Sample_Code, Biological_Group) 
-  
+  full_meta <- data.table(sample_df)[meta, on = .(Sample_Code)][
+    is.na(Biological_Group) == FALSE, ][
+    , .(Injection, Sample_Code, Biological_Group)]
+
   peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
   group_avgs <- filter_blank(peak_df_relfil, full_meta)
@@ -161,38 +161,7 @@ test_that("Group filter filters out groups correctly",
   expect_true(all(peak_df_filtered == peak_df_relfil))
 })
 
-############################################
-####        filter 3: CV filter         ####
-############################################
-
-# test_that("cv_filter return the correct number of ions failing cv filter", {
-#   peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
-#   colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
-#   colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
-#
-#   peak_df <- initialize_data(peak_df)
-#
-#   sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
-#   meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
-#
-#   full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
-#     filter(Biological_Group != "NA") %>%
-#     select(Injection, Sample_Code, Biological_Group)
-#
-#   peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
-#
-#   group_avgs <- filter_blank(data.frame(peak_df_relfil), full_meta)
-#   group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
-#   peak_df_filtered <- apply_group_filter(peak_df_relfil, group_filter_list, "Blanks", remove_ions = TRUE)
-#   ions_failing_cv_mean <- cv_filter(peak_df_filtered, full_meta, cv_threshold = 0.2, cv_param = c("mean"))
-#   ions_failing_cv_median <- cv_filter(peak_df_filtered, full_meta, cv_threshold = 0.2, cv_param = c("median"))
-#
-#   expect_equal(length(ions_failing_cv_median), 61)
-#   expect_equal(length(ions_failing_cv_mean), 86)
-#
-# })
-
-test_that("cv_filter2 return the correct number of ions failing cv filter", {
+test_that("cv_filter return the correct number of ions failing cv filter", {
   peak_df <- readr::read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"), skip = 2)
   colnames(peak_df)[which(colnames(peak_df) %in% c("m/z"))] <- "mz"
   colnames(peak_df)[which(colnames(peak_df) %in% c("Retention time (min)"))] <- "rt"
@@ -202,17 +171,17 @@ test_that("cv_filter2 return the correct number of ions failing cv filter", {
   sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
   meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
 
-  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
-    filter(Biological_Group != "NA") %>%
-    select(Injection, Sample_Code, Biological_Group)
+  full_meta <- data.table(sample_df)[meta, on = .(Sample_Code)][
+    is.na(Biological_Group) == FALSE, ][
+    , .(Injection, Sample_Code, Biological_Group)]
 
   peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
 
-  group_avgs <- filter_blank(data.frame(peak_df_relfil), full_meta)
+  group_avgs <- filter_blank(peak_df_relfil, full_meta)
   group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
   peak_df_filtered <- apply_group_filter(peak_df_relfil, group_filter_list, "Blanks", remove_ions = TRUE)
-  ions_failing_cv_mean <- cv_filter_2(peak_df_filtered, full_meta, cv_threshold = 0.2, cv_param = c("mean"))
-  ions_failing_cv_median <- cv_filter_2(peak_df_filtered, full_meta, cv_threshold = 0.2, cv_param = c("median"))
+  ions_failing_cv_mean <- cv_filter(peak_df_filtered, full_meta, cv_threshold = 0.2, cv_param = c("mean"))
+  ions_failing_cv_median <- cv_filter(peak_df_filtered, full_meta, cv_threshold = 0.2, cv_param = c("median"))
 
   expect_equal(length(ions_failing_cv_median), 61)
   expect_equal(length(ions_failing_cv_mean), 86)
@@ -234,16 +203,17 @@ test_that("filter_insouce_ions filters correctly",
   sample_df <- readr::read_csv(here::here("tests/exttestdata/102623 samplelist.csv"))
   meta <- readr::read_csv(here::here("tests/exttestdata/102623 metadata simple.csv"))
   
-  full_meta <- sample_df %>% left_join(meta, by = "Sample_Code") %>%
-    filter(Biological_Group != "NA") %>%
-    select(Injection, Sample_Code, Biological_Group) 
+  full_meta <- data.table(sample_df)[meta, on = .(Sample_Code)][
+    is.na(Biological_Group) == FALSE, ][
+    , .(Injection, Sample_Code, Biological_Group)]
   
   peak_df_relfil <- check_mismatched_peaks(data.table(peak_df), ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
-  group_avgs <- filter_blank(data.frame(peak_df_relfil), full_meta)
+  group_avgs <- filter_blank(peak_df_relfil, full_meta)
   group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
   peak_df_filtered <- apply_group_filter(peak_df_relfil, group_filter_list, "Blanks", remove_ions = TRUE)
   peak_df_filter_insc <- filter_insource_ions(peak_df_filtered, 0.95)
+  peak_df_filter_insc_pat <- filter_insouce_ions_pat(peak_df_filtered, 0.95)
 
   insource_ion_expected_list <- c(38, 204, 214, 993, 270, 1003, 271, 294, 331, 349, 382,
    447, 498, 1233, 644, 1307, 677, 675, 689,
