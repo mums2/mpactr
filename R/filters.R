@@ -96,10 +96,7 @@ merge_ions <- function(data_table, ion_filter_list) {
     (!Compound %in% ion_filter_list$cut_ions), ])
   }
 
-# microbenchmark::microbenchmark(filter_blank(peak_df_relfil, full_meta), filter_blank_3(peak_df_relfil, full_meta))
-# library(data.table)
-# data_table <- data.table(peak_df_relfil)
-# metadata <- full_meta
+
 
 #' @import data.table
 filter_blank <- function(data_table, metadata) {
@@ -170,152 +167,14 @@ cv_filter <- function(data_table, metadata, cv_threshold, cv_param) {
     }
 }
 
-cv_filter_2 <- function(data_table, metadata, cv_threshold, cv_param) {
-  cv <- data.table::melt(data_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)[
-    data.table(metadata), on = .(sample = Injection)][
-      , .(cv = rsd(intensity)), by = .(Compound, Biological_Group, Sample_Code)][
-        , .(mean_cv = mean(cv, na.rm = TRUE), median_cv = median(cv, na.rm = TRUE)), by = .(Compound)]
-
-    if (cv_param == "mean") {
-      fail_cv <- cv[mean_cv > cv_threshold, Compound]
-      return(fail_cv)
-    }
-    if (cv_param == "median") {
-       fail_cv <- cv[median_cv > cv_threshold, Compound]
-      return(fail_cv)
-    }
-}
-# identify_insource_ions(peak_df_filtered, 0.95)
-# data_table <- data.frame(peak_df_filtered)
-#insource ion filter
-
-
-filter_insource_ions_1 <- function(data_table, cluster_threshold) {
-  rt_list <- unique(data_table$rt)
-
-  insourcelist <- c()
-  df_meta <- data_table[ , colnames(data_table) %in% c("Compound", "mz", "rt")] #msdata_ind
-  ftrgrps <- list()
-  mergegroups <- list()
-  for (rt in rt_list) {
-    filtered_df <- data_table[data_table$rt == rt , colnames(data_table) %in% c("Compound", "mz", "rt")]
-
-    if (nrow(filtered_df) != 1) { # Do no need
-      filtered_df2 <- data_table[data_table$rt == rt , !(colnames(data_table) %in% c("Compound", "mz", "rt", "kmd"))]
-      filtered_df2<- as.data.frame(t(filtered_df2))
-      colnames(filtered_df2) <- filtered_df$Compound
-      corr <- stats::cor(filtered_df2, method = c("pearson")) # why correlate
-      dist <- dist(corr, method = "euclidian")
-      cluster <- hclust(dist, method = "complete")
-      groups_idx <- cutree(cluster, h = 1 - cluster_threshold)
-
-      decon_groups <- vector("list", max(groups_idx))
-      
-      for(i in 1:length(decon_groups)){
-        decon_groups[[i]] <- names(which(groups_idx == i))
-      }
-
-      for(group in 1:length(decon_groups))
-      {
-        if(length(decon_groups[[group]]) != 1)
-        {
-          temp_df <- df_meta[df_meta$Compound %in% decon_groups[[group]],]
-          temp_df <- temp_df[order(temp_df$mz, decreasing = TRUE), ]
-          fragments_to_remove <- temp_df$Compound[2:nrow(temp_df)]
-          insourcelist <- c(insourcelist, fragments_to_remove)
-          # singleslist <- c(fragments_to_remove)
-        }
-      }
-    }
-  }
-
-  # remove ions in insourcelist from data_table
-  #- ask MB if dropping fragments without merging intensity is ok
-  return(data_table[!(data_table$Compound %in% insourcelist), ])
-}
-# microbenchmark(filter_insource_ions_1(peak_df_filtered, 0.95),
-#                filter_insource_ions_1(peak_df_filtered, 0.95),
-#                 fi(peak_df_filtered, 0.95), times = 10)
-
-filter_insource_ions <- function(data_table, cluster_threshold) {
-  rt_list <- data_table[ , .(counts = .N), by = .(rt)][
-    counts > 1, rt]
-
-  n <- data_table[rt %in% rt_list, ]
-  nm <- melt(n, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity",
-             variable.factor = FALSE)[
-    , .(corr = corr_fun(.SD, cluster_threshold)), by = .(rt)]
-
-  data_table_filtered <- data_table[!(Compound %in% nm[ , corr]), ]
-
-  return(data_table_filtered)
-}
-
-# group_1 <- data_table[rt == data_table[ , rt][2], ]
-# group_1 <- nm[rt == nm[ , rt][1], ]
-corr_fun <- function(group_1, cluster_threshold = 0.95) {
-  # return(rep(TRUE, nrow(group_1)))
-  # dat <- melt(group_1, id.vars = c("Compound", "mz", "kmd"),
-  #             variable.name = "sample", value.name = "intensity", variable.factor = FALSE)[
-  #                                                                                          , c("Compound", "sample", "intensity")]
-  data <- dcast(group_1, sample ~ Compound, value.var = "intensity")
-  data[ , c("sample"):=NULL]
-  corr <- stats::cor(data, method = c("pearson"))
-  dist <- dist(corr, method = "euclidian")
-  cluster <- hclust(dist, method = "complete")
-  cut_tree <- cutree(cluster, h = 1 - cluster_threshold)
-  # Determine which values to cut
-
-  cluster_table <- group_1[ , .SD[1], by = Compound][
-     , .(Compound, mz)][
-      ,Compound := as.character(Compound)][
-        as.data.table(cut_tree, keep.rownames = "Compound"), on = .(Compound = Compound)][
-        , keep:=cluster_max(mz), by = .(cut_tree)]
-
-  fragments_to_remove <- cluster_table[keep == FALSE , Compound]
-  return(fragments_to_remove)
-
-  # x <- as.data.table(cut_tree, keep.rownames = "Compound")[
-  #   , Compound:=as.numeric(Compound)][
-  #     group_1, on = .(Compound = Compound)][
-  #       , keep:=cluster_max(mz), by = .(cut_tree)
-  #     ]
-  #
-  # return(x$keep)
-}
-
-
-
-# [
-#   counts > 1, rt]
-
-# n <- data_table[rt %in% rt_list, ]
-# nm <- melt(data_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)
-#
-# nm[ , .(counts = .N), by = .(rt)]
-#
-# # [, .(corr = corr_fun(.SD, 0.95)), by = .(rt)]
-#
-# nm$corr
-# #
-# nm <- nm[ , isMultiple := sapply(nm$corr, function(x)
-# {
-#   any(as.numeric(table(x)) > 1)
-# })][isMultiple == TRUE, ]
-# #
-# data_table[ , cor:= corr_fun(.SD, 0.95), by = .(rt)][
-#   cor ==TRUE ]
-# group_1 <- data_table[rt == data_table[ , rt][2], ]
-
-# data_table <- peak_df_filtered
-filter_insouce_ions_pat <- function(data_table, cluster_threshold) {
-  data_table_filterd <- data_table[ , cor:= corr_fun_pat(.SD, 0.95), by = .(rt)][
+filter_insouce_ions <- function(data_table, cluster_threshold) {
+  data_table_filterd <- data_table[ , cor:= deconvolute_correlation(.SD, 0.95), by = .(rt)][
   cor ==TRUE, ]
 
   return(data_table_filterd)
 }
 # filter_insouce_ions_pat(data_table, 0.95)
-corr_fun_pat <- function(group_1, cluster_threshold = 0.95) {
+deconvolute_correlation <- function(group_1, cluster_threshold = 0.95) {
   # return(rep(TRUE, nrow(group_1)))
   if (nrow(group_1) <= 1) {
     return(TRUE)
@@ -340,17 +199,10 @@ corr_fun_pat <- function(group_1, cluster_threshold = 0.95) {
   return(x$keep)
 }
 
-  cluster_max <- function(mz) {
+cluster_max <- function(mz) {
     keep = rep(FALSE, length(mz))
 
     keep[which.max(mz)] <- TRUE
 
     return(keep)
   }
-#
-# microbenchmark(filter_insource_ions(peak_df_filtered, 0.95),
-#                filter_insouce_ions_pat(peak_df_filtered, 0.95),
-#                times = 1)
-#
-# library(profvis)
-# profvis::profvis({filter_insource_ions(peak_df_filtered, 0.95)})

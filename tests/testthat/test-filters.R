@@ -212,8 +212,7 @@ test_that("filter_insouce_ions filters correctly",
   group_avgs <- filter_blank(peak_df_relfil, full_meta)
   group_filter_list <- parse_ions_by_group(group_avgs, group_threshold = 0.01)
   peak_df_filtered <- apply_group_filter(peak_df_relfil, group_filter_list, "Blanks", remove_ions = TRUE)
-  peak_df_filter_insc <- filter_insource_ions(peak_df_filtered, 0.95)
-  peak_df_filter_insc_pat <- filter_insouce_ions_pat(peak_df_filtered, 0.95)
+  peak_df_filter_insc <- filter_insouce_ions(peak_df_filtered, 0.95)
 
   insource_ion_expected_list <- c(38, 204, 214, 993, 270, 1003, 271, 294, 331, 349, 382,
    447, 498, 1233, 644, 1307, 677, 675, 689,
