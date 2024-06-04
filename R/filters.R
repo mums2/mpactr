@@ -33,10 +33,6 @@ merge_groups <- list() # dictonary
     current_rt <- current_feature$rt
     current_mass <- current_feature$mz
     current_ion <- current_feature$Compound
-  if(current_ion == 1248)
-        {
-          print("stop")
-        }
     if (!(current_ion %in% cut_ions))
     {
       for(j in (i + 1):number_of_rows) {
@@ -46,13 +42,6 @@ merge_groups <- list() # dictonary
         }
         if(data_table$Compound[j] %in% cut_ions) {
           next
-        }
-
-        if(current_ion == 1248)
-        {
-          print("stop")
-           if( data_table$Compound[j] == 1250)
-          {print("stop")}
         }
         mass_diff <- data_table$mz[j] - current_mass
         kmd_diff <- mass_diff - floor(mass_diff)
