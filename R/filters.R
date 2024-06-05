@@ -1,7 +1,7 @@
-# TODO: Generate a class-like structure for the tree-plot
-# TODO: Add filter step to CV filter
-# TODO: Outline data flow through CV filter - gdj
-# TODO: Outline data flow through blank filter - arm
+# TODO: Finish qc_graph_pactr classs to generate a class-like structure for the tree-plot
+# TODO: fix summary class test failures
+# TODO: create ui R commands for filters
+
 # TODO: Compare CV filter (with, without solvent blanks, solvent and media blanks as 1 group - need data)
 # TODO: Outline data flow through filters (both as we see in mpact and how we envision mpactR)
 

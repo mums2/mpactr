@@ -95,3 +95,41 @@ test_that("apply_group_filter removes the correct ions", {
     filter_class$mpactr_data$peak_table$Compound)))
 })
 
+test_that("cv_filter filters out data properly", {
+  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
+                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peak =
+    TRUE)
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+  filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
+  filter_class_median <- filter_class$clone(deep = TRUE)
+  filter_class$cv_filter(cv_threshold = 0.2, cv_params = c("mean"))
+  expect_equal(filter_class$logger[["cv_failed_ions-failed_ions"]], 86)
+  filter_class_median$cv_filter(cv_threshold = 0.2, cv_params = "median")
+  expect_equal(filter_class_median$logger[["cv_failed_ions-failed_ions"]], 61)
+
+})
+
+test_that("filter_inscource_ions filters out data properly", {
+mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
+                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peak =
+    TRUE)
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+  filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
+  filter_class$filter_insource_ions(cluster_threshold = 0.95)
+
+  insource_ion_expected_list <- c(38, 204, 214, 993, 270, 1003, 271, 294, 331, 349, 382,
+   447, 498, 1233, 644, 1307, 677, 675, 689,
+   690, 688, 758, 985, 982, 981, 1297, 1311)
+  expect_true(filter_class$logger[["insource_filter_failed"]] == 27)
+  expect_true(all(!(insource_ion_expected_list %in% filter_class$mpactr_data$peak_table$Compound)))
+})
+
+

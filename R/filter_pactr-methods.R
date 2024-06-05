@@ -53,6 +53,9 @@ filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, t
     private$merge_ions(ion_filter_list)
   }
 
+  # self$logger[["check_mismatch_peaks_summary"]] <-  merged_peak_string
+  self$logger[["mispicked_summary"]] <- summary$new(filter = "mispicked", failed_ions = cut_ions,
+                              passed_ions = self$mpactr_data$peak_data$Compound)
   number_of_failing_ions <- number_of_input_ions - nrow(self$mpactr_data$peak_table)
   remaining_ions <- nrow(self$mpactr_data$peak_table)
   merged_peak_string <- paste0("merge peaks was set to: ", merge_peaks, ", ", number_of_failing_ions,
@@ -61,9 +64,9 @@ filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, t
     merged_peak_string <- paste0("merge peaks was set to: ", merge_peaks, ", ", number_of_failing_ions,
                                  " failing peaks were removed. ", remaining_ions, " remain")
   }
-  self$logger[["check_mismtach_peaks_summary"]] <- merged_peak_string
   print(merged_peak_string)
 })
+
 filter_pactr$set("public", "filter_blank", function() {
   b <- data.table::melt(self$mpactr_data$peak_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
     "sample", value.name = "intensity", variable.factor = FALSE)[
@@ -79,6 +82,7 @@ filter_pactr$set("public", "filter_blank", function() {
   setorder(group_stats, Compound, Biological_Group)
   self$logger[["group_filter-group_stats"]] <- group_stats
 })
+
 filter_pactr$set("public", "parse_ions_by_group", function(group_threshold = 0.01) {
   group_avgs <- dcast(self$logger[["group_filter-group_stats"]], Compound ~ Biological_Group, value.var = "average")
 
@@ -94,6 +98,7 @@ filter_pactr$set("public", "parse_ions_by_group", function(group_threshold = 0.0
   group_filter_list <- lapply(biol_groups, \(x) { names(x)[which(x > group_threshold)] })
   self$logger[["group_filter-failing_list"]] <- group_filter_list
 })
+
 filter_pactr$set("public", "apply_group_filter", function(group, remove_ions = TRUE) {
   number_of_input_ions <- nrow(self$mpactr_data$peak_table)
   if (isFALSE(remove_ions)) {
@@ -110,6 +115,7 @@ filter_pactr$set("public", "apply_group_filter", function(group, remove_ions = T
   self$logger[["group_filter_summary"]] <- group_peak_string
   print(group_peak_string)
 })
+
 filter_pactr$set("private", "merge_ions", function(ion_filter_list) {
   dat <- melt(self$mpactr_data$peak_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)
 
@@ -118,4 +124,76 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list) {
   }
   self$mpactr_data$peak_table <- dcast(dat, Compound + mz + kmd + rt ~ sample, value.var = "intensity")[
     (!Compound %in% ion_filter_list$cut_ions),]
+})
+
+filter_pactr$set("public", "cv_filter", function(cv_threshold, cv_params) {
+  cv <- data.table::melt(self$mpactr_data$peak_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
+    "sample", value.name = "intensity", variable.factor = FALSE)[
+    self$mpactr_data$meta_data, on = .(sample = Injection)][
+      , .(cv = rsd(intensity)), by = .(Compound, Biological_Group, Sample_Code)][
+        , .(mean_cv = mean(cv, na.rm = TRUE), median_cv = median(cv, na.rm = TRUE)), by = .(Compound)]
+
+    if (cv_params == "mean") {
+      self$logger[["cv_failed_ions"]] <-cv[mean_cv > cv_threshold, Compound]
+    }
+    if (cv_params == "median") {
+       self$logger[["cv_failed_ions"]] <- cv[median_cv > cv_threshold, Compound]
+    }
+
+    self$mpactr_data$peak_table <- self$mpactr_data$peak_table[setdiff
+                                                                     (self$mpactr_data$peak_table$Compound,
+                                                                      self$logger[["cv_failed_ions"]]), ]
+
+    failed_ions <- length(self$logger[["cv_failed_ions"]])
+    succeed_ions <- nrow(self$mpactr_data$peak_table)
+    self$logger[["cv_failed_ions-failed_ions"]] <- failed_ions
+    self$logger[["cv_failed_ions-succeed_ions"]] <- succeed_ions
+    cv_summary <- paste0(length(self$logger[["cv_failed_ions"]]), " ion failed cv filtering.",
+                           nrow(self$mpactr_data$peak_table), " ion remain.")
+})
+
+filter_pactr$set("private", "deconvolute_correlation", function(group_1, cluster_threshold = 0.95) {
+  # return(rep(TRUE, nrow(group_1)))
+  if (nrow(group_1) <= 1) {
+    return(TRUE)
+  }
+
+  dat <- melt(group_1, id.vars = c("Compound", "mz", "kmd"),
+              variable.name = "sample", value.name = "intensity", variable.factor = FALSE)[
+                                                                                           , c("Compound", "sample", "intensity")]
+  data <- dcast(dat, sample ~ Compound, value.var = "intensity")
+  data[ , c("sample"):=NULL]
+  corr <- stats::cor(data, method = c("pearson"))
+  dist <- dist(corr, method = "euclidian")
+  cluster <- hclust(dist, method = "complete")
+  cut_tree <- cutree(cluster, h = 1 - cluster_threshold)
+
+  x <- as.data.table(cut_tree, keep.rownames = "Compound")[
+    , Compound:=as.numeric(Compound)][
+      group_1, on = .(Compound = Compound)][
+        , keep:=private$cluster_max(mz), by = .(cut_tree)
+      ]
+
+  return(x$keep)
+})
+
+filter_pactr$set("private", "cluster_max", function(mz) {
+  keep <- rep(FALSE, length(mz))
+  keep[which.max(mz)] <- TRUE
+  return(keep)
+})
+
+filter_pactr$set("public", "filter_insource_ions", function(cluster_threshold = 0.95) {
+  number_import_ions <- (self$mpactr_data$peak_table)
+
+  self$mpactr_data$peak_table <- self$mpactr_data$peak_table[ ,
+    cor:= private$deconvolute_correlation(.SD, cluster_threshold), by = .(rt)][cor ==TRUE, ]
+
+  number_ions_remain <- nrow(self$mpactr_data$peak_table)
+  number_ions_removed <- number_import_ions - number_ions_remain
+  self$logger[["insource_filter_summary"]] <- summary$new(filter = "decon", failed_ions = number_ions_removed,
+                              passed_ions = self$mpactr_data$peak_table$Compound)
+
+  insource_summary <- paste0(number_import_ions, " ions failed insource ion filter. ", number_ions_remain, " ions
+  remain.")
 })
