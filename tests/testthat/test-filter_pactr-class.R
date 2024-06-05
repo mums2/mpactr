@@ -1,0 +1,97 @@
+test_that("test that filter_pactr-class constructs properly", {
+  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
+                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  expect_true(all(class(filter_class) == c("filter_pactr", "R6")))
+  expect_equal(address(mpactr_class), address(filter_class$mpactr_data))
+})
+
+test_that("test that check_mistmatched_peaks works properly with filter_pactr-class data", {
+  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
+                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peak =
+    TRUE)
+
+  expected_cut_ions <- read.csv(here::here("tests/exttestdata/cut_ions.csv"), header = FALSE)
+  expected_cut_ions <- as.integer(expected_cut_ions$V1)
+
+  expect_equal(filter_class$logger[["check_mismatched_peaks"]][["cut_ions"]], expected_cut_ions)
+  expect_equal(filter_class$mpactr_data$peak_table[Compound == "153",
+                                                   "102623_UM1850B_ANGDT_71_1_5007"][[1]], 2158.4)
+  expect_equal(nrow(filter_class$mpactr_data$peak_table), 1233)
+  expect_equal(address(mpactr_class), address(filter_class$mpactr_data))
+  expect_equal(mpactr_class$peak_table, filter_class$mpactr_data$peak_table)
+})
+
+test_that("blank filter works correctly", {
+  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
+                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peak =
+    TRUE)
+  filter_class$filter_blank()
+
+  error_prop <- read.csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"), header = TRUE)
+  colnames(error_prop) <- c("Compound", "mz", "rt", "biologicalGroup", "average")
+  # error_prop$Compound <- as.character(error_prop$Compound) Data.table auto groups?
+  # error_prop <- error_prop[order(error_prop$Compound, error_prop$biologicalGroup), ]
+
+  expect_true(all(filter_class$logger[["group_filter-group_stats"]]$Biological_Group %in%
+                    error_prop$biologicalGroup))
+
+  # group_avgs <- group_avgs[order(group_avgs$Compound, group_avgs$Biological_Group), ]
+  expect_true(all(round(filter_class$logger[["group_filter-group_stats"]]$average,
+                        digits = 5) == round(error_prop$average, digits = 5)))
+})
+
+test_that("parse_ions_by_group flags the correct ions", {
+  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
+                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peak =
+    TRUE)
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+
+  ang_18 <- read.csv(here::here("tests/exttestdata/output_ANG18 monoculture.csv"), header = FALSE)
+  angdt <- read.csv(here::here("tests/exttestdata/output_ANGDT monoculture"), header = FALSE)
+  blanks <- read.csv(here::here("tests/exttestdata/output_Blanks"), header = FALSE)
+  coculture <- read.csv(here::here("tests/exttestdata/output_Coculture"), header = FALSE)
+  jc1 <- read.csv(here::here("tests/exttestdata/output_JC1 monoculture"), header = FALSE)
+  jc28 <- read.csv(here::here("tests/exttestdata/output_JC28 monoculture"), header = FALSE)
+  group_filter_list <- filter_class$logger[["group_filter-failing_list"]]
+
+  expect_false(all(sapply(group_filter_list, is.null)))
+  expect_true(all(group_filter_list$`ANG18 monoculture` == as.character(ang_18$V1)))
+  expect_true(all(group_filter_list$`ANGDT monoculture` == as.character(angdt$V1)))
+  expect_true(all(group_filter_list$`Blanks` == as.character(blanks$V1)))
+  expect_true(all(group_filter_list$`Coculture` == as.character(coculture$V1)))
+  expect_true(all(group_filter_list$`JC28 monoculture` == as.character(jc28$V1)))
+  expect_true(all(group_filter_list$`JC28 monoculture` == as.character(jc28$V1)))
+
+})
+
+test_that("apply_group_filter removes the correct ions", {
+
+ mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
+                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peak =
+    TRUE)
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+
+  filter_class$apply_group_filter("Blanks", remove_ions = FALSE)
+  expect_equal(nrow(filter_class$mpactr_data$peak_table), 1233)
+
+  filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
+  expect_true(all(!(filter_class$logger[["group_filter-failing_list"]]$Blanks %in%
+    filter_class$mpactr_data$peak_table$Compound)))
+})
+
