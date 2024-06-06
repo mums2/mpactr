@@ -1,5 +1,4 @@
 # TODO: Finish qc_graph_pactr classs to generate a class-like structure for the tree-plot
-# TODO: fix summary class test failures
 # TODO: create ui R commands for filters
 
 # TODO: Compare CV filter (with, without solvent blanks, solvent and media blanks as 1 group - need data)

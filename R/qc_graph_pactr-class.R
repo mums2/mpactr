@@ -1,29 +1,28 @@
 graph_qc_pactr <- R6Class("graph_qc_pactr", public = list(
-  mpactr_data = NA,
-  initialize = function(mpactr){
-    self$mpactr_data <- mpactr
+  filter_pactr_data = NA,
+  initialize = function(filter_pactr){
+    self$filter_pactr_data = filter_pactr
   },
-  bar_graph = function()
+  generate_QC_Summary = function()
   {
-    # Graph a bar graph
-    # self$mpactr_data graph
+    # logger[["list_of_summaries"]] < c("cv_filter_summary", "in_source_ion_summary")
+    # cv_filtered failed x ions
+    # blank filter failed x ions?
   },
-  volcano_plot = function()
+  create_QC_Tree_Plot = function()
   {
-    # Graph a volcano_plot
-    # self$mpactr_data graph
+
   }
 ))
 
-# env <- new.env(HASH = TRUE)
-# env["statistic_one"] <- 
-# env["statistic_two"] <- 
-# env["statistic_three"] <-
-# env["statistics_four"] <- list_of_compounds_effected
 
-# x <- function(x)
-# {
-#   data1 <- env["statistic_one"] 
-# }
-# I could also give this class the mpact object and use this to call all of the filters on the mpact data.
-# That might be more efficent
+ # be more efficent
+# overall QC summary
+  # ions failing X filter
+# graph tree plot
+  # compound, status: mismatch, group, cv, decon, pass
+# 1 mismatch
+# 2 pass
+# 3 pass
+
+

@@ -4,6 +4,7 @@ filter_pactr <- R6Class("filter_pactr", public = list(
   initialize = function(mpactr) {
     self$mpactr_data <- mpactr
     self$logger <- new.env(hash = TRUE)
+    self$logger[["list_of_summaries"]] <- list()
   }
   )
 )

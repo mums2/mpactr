@@ -2,3 +2,4 @@
 
 import(data.table)
 importFrom(R6,R6Class)
+importFrom(readr,read_csv)
