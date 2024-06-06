@@ -1,3 +1,4 @@
+####  filter 1: mismatched peaks    ###
 filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, trwin, max_iso_shift, merge_peaks) {
   print(paste0("Checking ", nrow(self$mpactr_data$peak_table), " peaks for mismatches."))
 
@@ -65,6 +66,17 @@ filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, t
   self$logger[["mispicked_summary"]]$summmarize
 })
 
+filter_pactr$set("private", "merge_ions", function(ion_filter_list) {
+  dat <- melt(self$mpactr_data$peak_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)
+
+  for (ion in names(ion_filter_list$merge_groups)) {
+    dat <- dat[Compound %in% c(ion, ion_filter_list$merge_groups[[ion]]), intensity := sum(intensity), by = .(sample)]
+  }
+  self$mpactr_data$peak_table <- dcast(dat, Compound + mz + kmd + rt ~ sample, value.var = "intensity")[
+    (!Compound %in% ion_filter_list$cut_ions),]
+})
+
+####  filter 2: group filter    ###
 filter_pactr$set("public", "filter_blank", function() {
   b <- data.table::melt(self$mpactr_data$peak_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
     "sample", value.name = "intensity", variable.factor = FALSE)[
@@ -114,16 +126,7 @@ filter_pactr$set("public", "apply_group_filter", function(group, remove_ions = T
   self$logger[["group_summary"]]$summmarize
 })
 
-filter_pactr$set("private", "merge_ions", function(ion_filter_list) {
-  dat <- melt(self$mpactr_data$peak_table, id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)
-
-  for (ion in names(ion_filter_list$merge_groups)) {
-    dat <- dat[Compound %in% c(ion, ion_filter_list$merge_groups[[ion]]), intensity := sum(intensity), by = .(sample)]
-  }
-  self$mpactr_data$peak_table <- dcast(dat, Compound + mz + kmd + rt ~ sample, value.var = "intensity")[
-    (!Compound %in% ion_filter_list$cut_ions),]
-})
-# Either mean or median
+####  filter 3: cv filter    ###
 filter_pactr$set("public", "cv_filter", function(cv_threshold, cv_params) {
   input_ions <- self$mpactr_data$peak_table$Compound
   stopifnot("You can only use mean or median as a cv_parameters" = any(cv_params == c("mean", "median")))
@@ -147,6 +150,21 @@ filter_pactr$set("public", "cv_filter", function(cv_threshold, cv_params) {
                                                      failed_ions = failed_ions,
                                                      passed_ions = self$mpactr_data$peak_table$Compound)
     self$logger[["cv_filter_summary"]]$summarize()
+})
+
+####  filter 4: insource ions   ###
+
+filter_pactr$set("public", "filter_insource_ions", function(cluster_threshold = 0.95) {t
+  input_ions <- self$mpactr_data$peak_table$Compound
+
+  self$mpactr_data$peak_table <- self$mpactr_data$peak_table[ ,
+    cor:= private$deconvolute_correlation(.SD, cluster_threshold), by = .(rt)][cor ==TRUE, ]
+
+  self$logger[["insource_filter_summary"]] <- summary$new(filter = "decon",
+                                                          failed_ions = setdiff(input_ions, self$mpactr_data$peak_table$Compound),
+                                                          passed_ions = self$mpactr_data$peak_table$Compound)
+
+  self$logger[["insource_filter_summary"]]$summarize()
 })
 
 filter_pactr$set("private", "deconvolute_correlation", function(group_1, cluster_threshold = 0.95) {
@@ -178,17 +196,4 @@ filter_pactr$set("private", "cluster_max", function(mz) {
   keep <- rep(FALSE, length(mz))
   keep[which.max(mz)] <- TRUE
   return(keep)
-})
-
-filter_pactr$set("public", "filter_insource_ions", function(cluster_threshold = 0.95) {t
-  input_ions <- self$mpactr_data$peak_table$Compound
-
-  self$mpactr_data$peak_table <- self$mpactr_data$peak_table[ ,
-    cor:= private$deconvolute_correlation(.SD, cluster_threshold), by = .(rt)][cor ==TRUE, ]
-
-  self$logger[["insource_filter_summary"]] <- summary$new(filter = "decon",
-                                                          failed_ions = setdiff(input_ions, self$mpactr_data$peak_table$Compound),
-                                                          passed_ions = self$mpactr_data$peak_table$Compound)
-
-  self$logger[["insource_filter_summary"]]$summarize()
 })
