@@ -16,6 +16,8 @@ test_that("test that check_mistmatched_peaks works properly with filter_pactr-cl
   expect_equal(nrow(filter_class$mpactr_data$peak_table), 1233)
   expect_equal(address(mpactr_class), address(filter_class$mpactr_data))
   expect_equal(mpactr_class$peak_table, filter_class$mpactr_data$peak_table)
+  expect_false(is.null(filter_class$logger$list_of_summaries$mispicked))
+  expect_equal(class(filter_class$logger$list_of_summaries$mispicked), c("summary", "R6"))
 })
 
 ####  filter 2: group filter    ###
@@ -87,6 +89,9 @@ test_that("apply_group_filter removes the correct ions", {
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
   expect_true(all(!(filter_class$logger[["group_filter-failing_list"]]$Blanks %in%
     filter_class$mpactr_data$peak_table$Compound)))
+
+  expect_false(is.null(filter_class$logger$list_of_summaries$group))
+  expect_equal(class(filter_class$logger$list_of_summaries$group), c("summary", "R6"))
 })
 
 ####  filter 3: cv filter    ###
@@ -102,18 +107,20 @@ test_that("cv_filter filters out data properly", {
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
   filter_class_median <- filter_class$clone(deep = TRUE)
   filter_class$cv_filter(cv_threshold = 0.2, cv_params = c("mean"))
-  cv_filter_passed_ions <- filter_class$logger[["cv_filter_summary"]]$passed_ions
-  expect_equal(length(filter_class$logger[["cv_filter_summary"]]$failed_ions), 86)
+  cv_filter_passed_ions <- filter_class$logger[["list_of_summaries"]]$replicability$passed_ions
+  expect_equal(length(filter_class$logger[["list_of_summaries"]]$replicability$failed_ions), 86)
   filter_class_median$cv_filter(cv_threshold = 0.2, cv_params = c("median"))
-  cv_filter_passed_ions_median <- filter_class_median$logger[["cv_filter_summary"]]$passed_ions
-  expect_equal(length(filter_class_median$logger[["cv_filter_summary"]]$failed_ions), 61)
+  cv_filter_passed_ions_median <- filter_class_median$logger[["list_of_summaries"]]$replicability$passed_ions
+  expect_equal(length(filter_class_median$logger[["list_of_summaries"]]$replicability$failed_ions), 61)
   expect_false(length(cv_filter_passed_ions) == length(cv_filter_passed_ions_median))
 
+  expect_false(is.null(filter_class$logger$list_of_summaries$replicability))
+  expect_equal(class(filter_class$logger$list_of_summaries$replicability), c("summary", "R6"))
 })
 
 ####  filter 4: insource ions    ###
 test_that("filter_inscource_ions filters out data properly", {
-mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
+  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
                              here::here("tests/exttestdata/102623_metadata_correct.csv"))
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
@@ -127,8 +134,12 @@ mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable cocult
   insource_ion_expected_list <- c(38, 204, 214, 993, 270, 1003, 271, 294, 331, 349, 382,
    447, 498, 1233, 644, 1307, 677, 675, 689,
    690, 688, 758, 985, 982, 981, 1297, 1311)
-  expect_true(length(filter_class$logger[["insource_filter_summary"]]$failed_ions) == 27)
+  expect_true(length(filter_class$logger[["list_of_summaries"]]$insource$failed_ions) == 27)
   expect_true(all(!(insource_ion_expected_list %in% filter_class$mpactr_data$peak_table$Compound)))
+
+  expect_false(is.null(filter_class$logger$list_of_summaries$insource))
+  expect_true(is.null(filter_class$logger$list_of_summaries$replicability))
+  expect_equal(class(filter_class$logger$list_of_summaries$insource), c("summary", "R6"))
 })
 
 

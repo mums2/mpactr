@@ -6,4 +6,7 @@ test_that("test that filter_pactr-class constructs properly", {
   expect_true(all(class(filter_class) == c("filter_pactr", "R6")))
   expect_equal(address(mpactr_class), address(filter_class$mpactr_data))
   expect_true(exists("list_of_summaries", filter_class$logger))
+  expect_true(all(names(filter_class$logger[["list_of_summaries"]]) ==
+                c("mispicked","group", "replicability", "insource")))
+  expect_true(all(sapply(filter_class$logger[["list_of_summaries"]], is.null) == TRUE))
 })
