@@ -1,3 +1,15 @@
+# TODO: Compare CV filter (with, without solvent blanks, solvent and media blanks as 1 group - need data)
+
+# TODO: make peak_table and meta_data private - greg
+# TODO: get funs for peak_table and meta_data - greg
+
+# TODO: add documentation/ determine exported funs - allison 
+# TODO: Add github actions (R CHECK, LINTR, CODE COVERAGE) - greg
+# TODO: run check - both
+
+# TODO: workflow article/vignette 
+# TODO: benchmark speed on peak_table sizes
+
 #######################
 ### Mistatched peaks ##
 #######################
