@@ -23,3 +23,9 @@ test_that("qc plot returns a generates a plot", {
   plot <- plot_qc_tree(data)
   expect_equal(class(plot), c("gg", "ggplot"))
 })
+
+
+# import |>
+#   filter_mistmatch |>
+#   filter_group |>
+#   filter_insource_ions

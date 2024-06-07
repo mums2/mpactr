@@ -2,14 +2,15 @@ test_that("filter mismatch ions wrapper works as expected when merge_peaks is TR
   data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
                       here::here("tests/exttestdata/102623_metadata_correct.csv"))
 
-  data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+  data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
+                                      merge_peaks =
     TRUE)
 
   expected_cut_ions <- read_csv(here::here("tests/exttestdata/cut_ions.csv"), col_names = c("V1"), show_col_types = FALSE)
   expected_cut_ions <- as.integer(expected_cut_ions$V1)
 
-  expect_equal(data$logger[["check_mismatched_peaks"]][["cut_ions"]], expected_cut_ions)
-  expect_equal(nrow(data_mpactr), 1233)
+  expect_equal(data_mpactr$logger[["check_mismatched_peaks"]][["cut_ions"]], expected_cut_ions)
+  expect_equal(nrow(data_mpactr$mpactr_data$peak_table), 1233)
 })
 
 test_that("filter mismatch ions wrapper works as expected when merge_peaks is FALSE", {
@@ -19,7 +20,7 @@ test_that("filter mismatch ions wrapper works as expected when merge_peaks is FA
   data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     FALSE)
 
-  expect_equal(nrow(data_mpactr), 1303)
+  expect_equal(nrow(data_mpactr$mpactr_data$peak_table), 1303)
 })
 
 test_that("group filter wrapper works as expected", {
@@ -27,14 +28,14 @@ test_that("group filter wrapper works as expected", {
                         here::here("tests/exttestdata/102623_metadata_correct.csv"))
   data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
-  data_mpactr <- filter_group(data, 0.01, "Blanks", FALSE)
-  expect_equal(nrow(data_mpactr), 1233)
+  data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", FALSE)
+  expect_equal(nrow(data_mpactr$mpactr_data$peak_table), 1233)
 
-  data_mpactr <- filter_group(data, 0.01, "Blanks", TRUE)
-  expect_equal(nrow(data_mpactr), 484)
+  data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
+  expect_equal(nrow(data_mpactr$mpactr_data$peak_table), 484)
 
-  expect_true(all(!(data$logger[["group_filter-failing_list"]]$Blanks %in%
-    data_mpactr$Compound)))
+  expect_true(all(!(data_mpactr$logger[["group_filter-failing_list"]]$Blanks %in%
+    data_mpactr$mpactr_data$peak_table$Compound)))
 })
 
 test_that("filter cv filter wrapper works as expected with cv_params mean", {
@@ -43,10 +44,10 @@ test_that("filter cv filter wrapper works as expected with cv_params mean", {
 
   data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
-  data_mpactr <- filter_group(data, 0.01, "Blanks", TRUE)
-  data_mpactr <- filter_cv(data, 0.2 , "mean")
+  data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
+  data_mpactr <- filter_cv(data_mpactr, 0.2 , "mean")
 
-  expect_equal(length(data$logger[["list_of_summaries"]]$replicability$get_failed_ions()), 86)
+  expect_equal(length(data_mpactr$logger[["list_of_summaries"]]$replicability$get_failed_ions()), 86)
 })
 
 test_that("filter cv filter wrapper works as expected with cv_params median", {
@@ -55,10 +56,10 @@ test_that("filter cv filter wrapper works as expected with cv_params median", {
 
   data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
-  data_mpactr <- filter_group(data, 0.01, "Blanks", TRUE)
-  data_mpactr <- filter_cv(data, 0.2 , "median")
+  data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
+  data_mpactr <- filter_cv(data_mpactr, 0.2 , "median")
 
-  expect_equal(length(data$logger[["list_of_summaries"]]$replicability$get_failed_ions()), 61)
+  expect_equal(length(data_mpactr$logger[["list_of_summaries"]]$replicability$get_failed_ions()), 61)
 })
 
 test_that("filter insource ions wrapper works as expected", {
@@ -67,13 +68,13 @@ test_that("filter insource ions wrapper works as expected", {
 
   data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
-  data_mpactr <- filter_group(data, 0.01, "Blanks", TRUE)
-  data_mpactr <- filter_insource_ions(data, cluster_threshold = 0.95)
+  data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
+  data_mpactr <- filter_insource_ions(data_mpactr, cluster_threshold = 0.95)
 
   insource_ion_expected_list <- c(38, 204, 214, 993, 270, 1003, 271, 294, 331, 349, 382,
    447, 498, 1233, 644, 1307, 677, 675, 689,
    690, 688, 758, 985, 982, 981, 1297, 1311)
 
-  expect_true(length(data$logger[["list_of_summaries"]]$insource$get_failed_ions()) == 27)
-  expect_true(all(!(insource_ion_expected_list %in% data_mpactr$Compound)))
+  expect_true(length(data_mpactr$logger[["list_of_summaries"]]$insource$get_failed_ions()) == 27)
+  expect_true(all(!(insource_ion_expected_list %in% data_mpactr$mpactr_data$peak_table$Compound)))
 })
