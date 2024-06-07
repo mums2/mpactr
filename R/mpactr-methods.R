@@ -14,3 +14,11 @@ mpactr$set("private", "set_kmd", function()
 {
   self$peak_table[, kmd := mz - floor(mz)]
 })
+mpactr$set("public", "get_peak_table", function()
+{
+  return(self$peak_table)
+})
+mpactr$set("public", "get_meta_data", function()
+{
+  return(self$meta_data)
+})
