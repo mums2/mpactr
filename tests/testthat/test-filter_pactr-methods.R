@@ -11,11 +11,11 @@ test_that("test that check_mistmatched_peaks works properly with filter_pactr-cl
   expected_cut_ions <- as.integer(expected_cut_ions$V1)
 
   expect_equal(filter_class$logger[["check_mismatched_peaks"]][["cut_ions"]], expected_cut_ions)
-  expect_equal(filter_class$mpactr_data$peak_table[Compound == "153",
+  expect_equal(filter_class$mpactr_data$get_peak_table()[Compound == "153",
                                                    "102623_UM1850B_ANGDT_71_1_5007"][[1]], 2158.4)
-  expect_equal(nrow(filter_class$mpactr_data$peak_table), 1233)
+  expect_equal(nrow(filter_class$mpactr_data$get_peak_table()), 1233)
   expect_equal(address(mpactr_class), address(filter_class$mpactr_data))
-  expect_equal(mpactr_class$peak_table, filter_class$mpactr_data$peak_table)
+  expect_equal(mpactr_class$get_peak_table(), filter_class$mpactr_data$get_peak_table())
   expect_false(is.null(filter_class$logger$list_of_summaries$mispicked))
   expect_equal(class(filter_class$logger$list_of_summaries$mispicked), c("summary", "R6"))
 })
@@ -84,11 +84,11 @@ test_that("apply_group_filter removes the correct ions", {
   filter_class$parse_ions_by_group(group_threshold = 0.01)
 
   filter_class$apply_group_filter("Blanks", remove_ions = FALSE)
-  expect_equal(nrow(filter_class$mpactr_data$peak_table), 1233)
+  expect_equal(nrow(filter_class$mpactr_data$get_peak_table()), 1233)
 
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
   expect_true(all(!(filter_class$logger[["group_filter-failing_list"]]$Blanks %in%
-    filter_class$mpactr_data$peak_table$Compound)))
+    filter_class$mpactr_data$get_peak_table()$Compound)))
 
   expect_false(is.null(filter_class$logger$list_of_summaries$group))
   expect_equal(class(filter_class$logger$list_of_summaries$group), c("summary", "R6"))
@@ -135,7 +135,7 @@ test_that("filter_inscource_ions filters out data properly", {
    447, 498, 1233, 644, 1307, 677, 675, 689,
    690, 688, 758, 985, 982, 981, 1297, 1311)
   expect_true(length(filter_class$logger[["list_of_summaries"]]$insource$get_failed_ions()) == 27)
-  expect_true(all(!(insource_ion_expected_list %in% filter_class$mpactr_data$peak_table$Compound)))
+  expect_true(all(!(insource_ion_expected_list %in% filter_class$mpactr_data$get_peak_table()$Compound)))
 
   expect_false(is.null(filter_class$logger$list_of_summaries$insource))
   expect_true(is.null(filter_class$logger$list_of_summaries$replicability))

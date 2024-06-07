@@ -4,21 +4,25 @@ mpactr$set("public", "setup", function()
 })
 mpactr$set("private", "initialize_data", function()
 {
-  setnames(self$peak_table,
+  setnames(private$peak_table,
            c("m/z", "Retention time (min)"), c("mz", "rt"))
-  self$peak_table <- self$peak_table[which(rowSums(
-    self$peak_table[, .SD, .SDcols = self$meta_data$Injection]) > 0),]
+  private$peak_table <- private$peak_table[which(rowSums(
+    private$peak_table[, .SD, .SDcols = private$meta_data$Injection]) > 0),]
   private$set_kmd()
 })
 mpactr$set("private", "set_kmd", function()
 {
-  self$peak_table[, kmd := mz - floor(mz)]
+  private$peak_table[, kmd := mz - floor(mz)]
 })
 mpactr$set("public", "get_peak_table", function()
 {
-  return(self$peak_table)
+  return(private$peak_table)
+})
+mpactr$set("public", "set_peak_table", function(peak_table)
+{
+  private$peak_table <- peak_table
 })
 mpactr$set("public", "get_meta_data", function()
 {
-  return(self$meta_data)
+  return(private$meta_data)
 })

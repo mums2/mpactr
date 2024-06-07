@@ -16,8 +16,9 @@ graph_qc_pactr <- R6Class("graph_qc_pactr", public = list(
       cli::cli_abort("At least one ion fails multiple filters. Please check.")
     }
     
-    passed_ions_dt <- data.table("status" = rep("Passed", length(private$filter_pactr_data$mpactr_data$peak_table$Compound)),
-                    "compounds" = private$filter_pactr_data$mpactr_data$peak_table$Compound)
+    passed_ions_dt <- data.table("status" = rep("Passed", length
+     (private$filter_pactr_data$mpactr_data$get_peak_table()$Compound)),
+                    "compounds" = private$filter_pactr_data$mpactr_data$get_peak_table()$Compound)
                     
     private$filter_summarized <- rbind(passed_ions_dt, failed_ions_dt)
   },
