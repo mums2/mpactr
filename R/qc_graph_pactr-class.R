@@ -1,28 +1,44 @@
 graph_qc_pactr <- R6Class("graph_qc_pactr", public = list(
-  filter_pactr_data = NA,
-  initialize = function(filter_pactr){
-    self$filter_pactr_data = filter_pactr
+  initialize = function(filter_pactr) {
+    private$filter_pactr_data = filter_pactr
   },
   generate_QC_Summary = function()
   {
-    # logger[["list_of_summaries"]] < c("cv_filter_summary", "in_source_ion_summary")
-    # cv_filtered failed x ions
-    # blank filter failed x ions?
+    list_of_failed_ions <- lapply(private$filter_pactr_data$logger$list_of_summaries, function(x) {
+      x$get_failed_ions()
+    })
+    status <- gsub('[[:digit:]]+', '', names(unlist(list_of_failed_ions)))
+    compounds <- unlist(unname(list_of_failed_ions))
+
+    failed_ions_dt <- data.table(status, compounds)
+    
+    if (nrow(failed_ions_dt) != length(unique(failed_ions_dt$compounds))) {
+      cli::cli_abort("At least one ion fails multiple filters. Please check.")
+    }
+    
+    passed_ions_dt <- data.table("status" = rep("Passed", length(private$filter_pactr_data$mpactr_data$peak_table$Compound)),
+                    "compounds" = private$filter_pactr_data$mpactr_data$peak_table$Compound)
+                    
+    private$filter_summarized <- rbind(passed_ions_dt, failed_ions_dt)
   },
-  create_QC_Tree_Plot = function()
+  plot_QC_Tree = function()
   {
+    ion_counts <- private$filter_summarized[ , .(count = .N), by = status][
+       , percent := (count / sum(count) * 100)]
 
+    return(ggplot(ion_counts) +
+      aes(area = percent, fill = status) +
+      geom_treemap() +
+      geom_treemap_text(aes(label = paste(status, paste0(round(percent, 2), "%"), sep = "\n")), colour = "darkorchid1",
+      fontface = c("bold")) +
+      theme(legend.position = "none") +
+      scale_fill_viridis(option = "G", discrete = TRUE))
+  },
+  get_summarized_dt = function()
+  {
+    return(private$filter_summarized)
   }
+), private = list(
+    filter_summarized = NA,
+    filter_pactr_data = NA
 ))
-
-
- # be more efficent
-# overall QC summary
-  # ions failing X filter
-# graph tree plot
-  # compound, status: mismatch, group, cv, decon, pass
-# 1 mismatch
-# 2 pass
-# 3 pass
-
-
