@@ -4,7 +4,7 @@
 # TODO: get funs for peak_table and meta_data - greg (Done)
 
 # TODO: add documentation/ determine exported funs - allison 
-# TODO: Add github actions (R CHECK, LINTR, CODE COVERAGE) - greg
+# TODO: Add github actions (R CHECK, LINTR, CODE COVERAGE) - greg (Done)
 # TODO: run check - both
 
 # TODO: workflow article/vignette 

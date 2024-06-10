@@ -85,11 +85,11 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list) {
 filter_pactr$set("public", "filter_blank", function() {
   b <- data.table::melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
     "sample", value.name = "intensity", variable.factor = FALSE)[
-    data.table(filter_class$mpactr_data$get_meta_data()), on = .(sample = Injection)][
+    data.table(self$mpactr_data$get_meta_data()), on = .(sample = Injection)][
     , .(average = mean(intensity), BiolRSD = rsd(intensity), Bioln = length(intensity)), by = .(Compound, Biological_Group)]
 
   t <- data.table::melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)[
-    data.table(filter_class$mpactr_data$get_meta_data()), on = .(sample = Injection)][
+    data.table(self$mpactr_data$get_meta_data()), on = .(sample = Injection)][
     , .(sd = rsd(intensity), n = length(intensity)), by = .(Compound, Biological_Group, Sample_Code)][
     , .(techRSD = mean(sd), techn = mean(n)), by = .(Compound, Biological_Group)]
 
