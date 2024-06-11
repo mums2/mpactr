@@ -24,6 +24,7 @@ Imports:
     ggplot2,
     R6,
     readr,
+    stats,
     treemapify,
     viridis
 LazyData: true
