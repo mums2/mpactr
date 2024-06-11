@@ -14,11 +14,11 @@ mpactr$set("private", "set_kmd", function()
 {
   private$peak_table[, kmd := mz - floor(mz)]
 })
-mpactr$set("public", "get_peak_table", function()
+mpactr$set("public", "get_peak_table", function() # make a R facing accessor and make private?
 {
   return(private$peak_table)
 })
-mpactr$set("public", "set_peak_table", function(peak_table)
+mpactr$set("public", "set_peak_table", function(peak_table) 
 {
   private$peak_table <- peak_table
 })

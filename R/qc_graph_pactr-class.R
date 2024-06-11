@@ -2,6 +2,7 @@ graph_qc_pactr <- R6Class("graph_qc_pactr", public = list(
   initialize = function(filter_pactr) {
     private$filter_pactr_data = filter_pactr
   },
+ 
   generate_QC_Summary = function()
   {
     list_of_failed_ions <- lapply(private$filter_pactr_data$logger$list_of_summaries, function(x) {
@@ -27,13 +28,14 @@ graph_qc_pactr <- R6Class("graph_qc_pactr", public = list(
     ion_counts <- private$filter_summarized[ , .(count = .N), by = status][
        , percent := (count / sum(count) * 100)]
 
-    return(ggplot(ion_counts) +
-      aes(area = percent, fill = status) +
-      geom_treemap() +
-      geom_treemap_text(aes(label = paste(status, paste0(round(percent, 2), "%"), sep = "\n")), colour = "darkorchid1",
-      fontface = c("bold")) +
-      theme(legend.position = "none") +
-      scale_fill_viridis(option = "G", discrete = TRUE))
+    return(ggplot2::ggplot(ion_counts) +
+      ggplot2::aes(area = percent, fill = status) +
+      treemapify::geom_treemap() +
+      treemapify::geom_treemap_text(aes(label = paste(status, paste0(round(percent, 2), "%"), sep = "\n")), 
+                                    colour = "darkorchid1", 
+                                    fontface = c("bold")) +
+      ggplot2::theme(legend.position = "none") +
+      viridis::scale_fill_viridis(option = "G", discrete = TRUE))
   },
   get_summarized_dt = function()
   {

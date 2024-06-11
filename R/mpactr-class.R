@@ -1,7 +1,6 @@
 mpactr <- R6Class("mpactr", public = list(
   # Properties
 
-  # sample_list_csv = NA,
   # Constructor
   initialize = function(peak_table_path, meta_data_path) {
     private$peak_table = data.table(readr::read_csv(peak_table_path, skip = 2, show_col_types = FALSE))
