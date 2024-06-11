@@ -1,8 +1,4 @@
-# filter
-# failed_ions
-# passing_ions
-
-summary <- R6Class("summary", public = list(
+summary <- R6::R6Class("summary", public = list(
   initialize = function(filter, failed_ions, passed_ions)
   {
     stopifnot(any(class(filter) == "character"))

@@ -187,9 +187,9 @@ filter_pactr$set("private", "deconvolute_correlation", function(group_1, cluster
   data <- dcast(dat, sample ~ Compound, value.var = "intensity")
   data[ , c("sample"):=NULL]
   corr <- stats::cor(data, method = c("pearson"))
-  dist <- dist(corr, method = "euclidian")
-  cluster <- hclust(dist, method = "complete")
-  cut_tree <- cutree(cluster, h = 1 - cluster_threshold)
+  dist <- stats::dist(corr, method = "euclidian")
+  cluster <- stats::hclust(dist, method = "complete")
+  cut_tree <- stats::cutree(cluster, h = 1 - cluster_threshold)
 
   x <- as.data.table(cut_tree, keep.rownames = "Compound")[
     , Compound:=as.numeric(Compound)][

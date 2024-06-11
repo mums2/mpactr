@@ -18,7 +18,7 @@ mpactr$set("public", "get_peak_table", function()
 {
   return(private$peak_table)
 })
-mpactr$set("public", "set_peak_table", function(peak_table)
+mpactr$set("public", "set_peak_table", function(peak_table) # make a R facing accessor and make private?
 {
   private$peak_table <- peak_table
 })
