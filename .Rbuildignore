@@ -1,2 +1,4 @@
 ^vignettes/*_files$
 ^data-raw$
+^.*\.Rproj$
+^\.Rproj\.user$
