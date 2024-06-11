@@ -9,8 +9,7 @@ Authors@R: c(
             comment = c(ORCID = "0000-0002-6935-4275"))
             )
 Description: A fast tool for the correction of pre-processed tandem MS/MS features. 
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
