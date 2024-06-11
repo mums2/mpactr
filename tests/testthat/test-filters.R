@@ -2,7 +2,7 @@ test_that("filter mismatch ions wrapper works as expected when merge_peaks is TR
   data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
                       here::here("tests/exttestdata/102623_metadata_correct.csv"))
 
-  data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
+  data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
                                       merge_peaks = TRUE)
 
   expected_cut_ions <- read_csv(here::here("tests/exttestdata/cut_ions.csv"), col_names = c("V1"), show_col_types = FALSE)
@@ -16,7 +16,7 @@ test_that("filter mismatch ions wrapper works as expected when merge_peaks is FA
   data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
                       here::here("tests/exttestdata/102623_metadata_correct.csv"))
 
-  data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+  data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     FALSE)
 
   expect_equal(nrow(data_mpactr$mpactr_data$get_peak_table()), 1303)
@@ -25,7 +25,7 @@ test_that("filter mismatch ions wrapper works as expected when merge_peaks is FA
 test_that("group filter wrapper works as expected", {
   data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
                         here::here("tests/exttestdata/102623_metadata_correct.csv"))
-  data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+  data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", FALSE)
   expect_equal(nrow(data_mpactr$mpactr_data$get_peak_table()), 1233)
@@ -41,7 +41,7 @@ test_that("filter cv filter wrapper works as expected with cv_params mean", {
   data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
                         here::here("tests/exttestdata/102623_metadata_correct.csv"))
 
-  data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+  data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
   data_mpactr <- filter_cv(data_mpactr, 0.2 , "mean")
@@ -53,7 +53,7 @@ test_that("filter cv filter wrapper works as expected with cv_params median", {
   data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
                         here::here("tests/exttestdata/102623_metadata_correct.csv"))
 
-  data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+  data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
   data_mpactr <- filter_cv(data_mpactr, 0.2 , "median")
@@ -65,7 +65,7 @@ test_that("filter insource ions wrapper works as expected", {
   data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
                         here::here("tests/exttestdata/102623_metadata_correct.csv"))
 
-  data_mpactr <- filter_mismatch_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+  data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
   data_mpactr <- filter_insource_ions(data_mpactr, cluster_threshold = 0.95)

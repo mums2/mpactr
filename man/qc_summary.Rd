@@ -20,7 +20,7 @@ Parses an mpactr object and exracts a summary of all applied filters. Specifical
 data <- import_data("extdata/coculture_peak_table.csv", 
                     "extdata/metadata.csv")
 
-data_filter <- filter_mismatch_ions(data, 
+data_filter <- filter_mispicked_ions(data, 
                                     ringwin = 0.5, 
                                     isowin = 0.01, 
                                     trwin = 0.005, 

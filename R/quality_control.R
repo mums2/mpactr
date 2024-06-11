@@ -13,7 +13,7 @@
 #' data <- import_data("extdata/coculture_peak_table.csv", 
 #'                     "extdata/metadata.csv")
 #'
-#' data_filter <- filter_mismatch_ions(data, 
+#' data_filter <- filter_mispicked_ions(data, 
 #'                                     ringwin = 0.5, 
 #'                                     isowin = 0.01, 
 #'                                     trwin = 0.005, 
@@ -43,7 +43,7 @@ qc_summary <- function(mpactr_object)
 #' data <- import_data("extdata/coculture_peak_table.csv", 
 #'                     "extdata/metadata.csv")
 #'
-#' data_filter <- filter_mismatch_ions(data, 
+#' data_filter <- filter_mispicked_ions(data, 
 #'                                     ringwin = 0.5, 
 #'                                     isowin = 0.01, 
 #'                                     trwin = 0.005, 

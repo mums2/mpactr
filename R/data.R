@@ -9,6 +9,5 @@
 #'  \item{peak_table}{A feature table of class `data.table`}
 #'  \item{meta_data}{A `data.table` with associated sample metadata}
 #'  }
-#' @noRd
 #' @export 
 "CulturesData"

@@ -82,6 +82,7 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list) {
 })
 
 ####  filter 2: group filter    ###
+# Calculates statisics for each feature (rsd, n) accross biological groups and technical replicates
 filter_pactr$set("public", "filter_blank", function() {
   b <- data.table::melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
     "sample", value.name = "intensity", variable.factor = FALSE)[
@@ -98,6 +99,8 @@ filter_pactr$set("public", "filter_blank", function() {
   self$logger[["group_filter-group_stats"]] <- group_stats
 })
 
+# this function determines group ions above the group threshold given group statistics (see filter_blank).
+# The result is a list of ions by group whose relative abundance is greater than the threshold.
 filter_pactr$set("public", "parse_ions_by_group", function(group_threshold = 0.01) {
   group_avgs <- dcast(self$logger[["group_filter-group_stats"]], Compound ~ Biological_Group, value.var = "average")
 
@@ -114,6 +117,7 @@ filter_pactr$set("public", "parse_ions_by_group", function(group_threshold = 0.0
   self$logger[["group_filter-failing_list"]] <- group_filter_list
 })
 
+# Given a group name, removes flagged ions from the peak table.
 filter_pactr$set("public", "apply_group_filter", function(group, remove_ions = TRUE) {
   print(paste0("Parsing ", nrow(self$mpactr_data$get_peak_table()), " peaks based on the following biological groups: ", group))
   if (isFALSE(remove_ions)) {
@@ -200,6 +204,7 @@ filter_pactr$set("private", "deconvolute_correlation", function(group_1, cluster
   return(x$keep)
 })
 
+# Given a list of mz values, this function will determine which value has the largest mz and modify its "KEEP" Column.
 filter_pactr$set("private", "cluster_max", function(mz) {
   keep <- rep(FALSE, length(mz))
   keep[which.max(mz)] <- TRUE

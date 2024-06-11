@@ -17,7 +17,7 @@
 #' Mispicked ions filter
 #'
 #' @description
-#' `filter_mismatch_ions()` identifies ions that were incorrectly split into separate features during preprocessing. This filter checks the feature table for similar ions in terms of mass and retention time. Peaks found to be similar are merged into a single feature given `merge_peaks` is `TRUE`.
+#' `filter_mispicked_ions()` identifies ions that were incorrectly split into separate features during preprocessing. This filter checks the feature table for similar ions in terms of mass and retention time. Peaks found to be similar are merged into a single feature given `merge_peaks` is `TRUE`.
 #'
 #' @param mpact_object An `mpactr_object`. See [import_data()].
 #' @param ringwing Ringing mass window. Default = 0.5.
@@ -33,14 +33,14 @@
 #' data <- import_data("extdata/coculture_peak_table.csv", 
 #'                     "extdata/metadata.csv")
 #'
-#' data_filter <- filter_mismatch_ions(data,
+#' data_filter <- filter_mispicked_ions(data,
 #'                               ringwin = 0.5, 
 #'                               isowin = 0.01,
 #'                               trwin = 0.005,
 #'                               max_iso_shift = 3,
 #'                               remove_ions = TRUE)
 #'
-filter_mismatch_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
+filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
                                 merge_peaks = TRUE)
 {
   mpactr_object$check_mismatched_peaks(ringwin = ringwin, isowin = isowin, trwin = trwin, max_iso_shift = max_iso_shift,
