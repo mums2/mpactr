@@ -15,8 +15,8 @@
 #' @export 
 #'
 #' @examples 
-#' data <- import_data("extdata/coculture_peak_table.csv", 
-#'                     "extdata/metadata.csv")
+#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
+#'                       load(system.file('extdata', 'extdata/metadata.csv', package = 'mpactr')))
 #'
 import_data <- function(peak_table_file_path, meta_data_file_path)
 {

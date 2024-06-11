@@ -9,7 +9,10 @@
 #' @export 
 #'
 #' @examples 
-#' peak_table <- get_peak_table(mpactr_object)
+#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
+#'                       load(system.file('extdata', 'extdata/metadata.csv', package = 'mpactr')))
+#'
+#' peak_table <- get_peak_table(data)
 #'
 get_peak_table <- function(mpactr_object) {
   return(data.table::copy(mpactr_object$mpactr_data$get_peak_table()))
@@ -26,7 +29,10 @@ get_peak_table <- function(mpactr_object) {
 #' @export 
 #'
 #' @examples 
-#' meta_data <- get_meta_data(mpactr_object)
+#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
+#'                       load(system.file('extdata', 'extdata/metadata.csv', package = 'mpactr')))
+#'
+#' meta_data <- get_meta_data(data)
 #'
 get_meta_data <- function(mpactr_object) {
   return(data.table::copy(mpactr_object$mpactr_data$get_meta_data()))

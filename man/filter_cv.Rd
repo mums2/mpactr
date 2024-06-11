@@ -20,8 +20,8 @@ an \code{mpactr_object}
 \code{filter_cv()} removes feature ions that are found to be non-reproducible between technical inejction replicates. Replicability is assessed via mean or median coefficient of variation (CV) between technical replicates. As such, this fitler is expecting an input dataset with at least two replicate injections per sample.
 }
 \examples{
-data <- import_data("extdata/coculture_peak_table.csv", 
-                    "extdata/metadata.csv")
+data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
+                      load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
 
 data_filter <- filter_cv(data,
                               cv_threhold = 0.01, 

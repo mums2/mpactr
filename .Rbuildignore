@@ -2,4 +2,4 @@
 ^data-raw$
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^LICENSE\.md$
+^peaktable_flow.png

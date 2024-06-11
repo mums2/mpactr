@@ -16,6 +16,9 @@ a \code{data.table}
 \code{get_meta_data()} a wrapper function to return the meta data object of the given mpactr object.
 }
 \examples{
-meta_data <- get_meta_data(mpactr_object)
+data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
+                      load(system.file('extdata', 'extdata/metadata.csv', package = 'mpactr')))
+
+meta_data <- get_meta_data(data)
 
 }

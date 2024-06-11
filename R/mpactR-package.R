@@ -11,6 +11,7 @@
 #' @importFrom stats cutree
 #' @importFrom stats dist
 #' @importFrom stats hclust
+#' @importFrom stats sd
 #' @importFrom treemapify geom_treemap
 #' @importFrom treemapify geom_treemap_text
 #' @importFrom viridis scale_fill_viridis

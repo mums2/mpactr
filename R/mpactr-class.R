@@ -7,7 +7,6 @@ mpactr <- R6Class("mpactr", public = list(
     private$meta_data = data.table(readr::read_csv(meta_data_path, show_col_types = FALSE))
     stopifnot(any(class(private$peak_table) == "data.table"))
     stopifnot(any(class(private$meta_data) == "data.table"))
-    #self$sample_list_csv <- readr::read_csv(here::here(sample_list_path))
   }
 ),
   private = list(

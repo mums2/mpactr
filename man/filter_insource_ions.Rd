@@ -18,8 +18,8 @@ an \code{mpactr_object}
 \code{filter_insource_ions()} determines insource ion fragments deconvolution via hierarchical clustering. Highly correlated ions with the same retention times are identified and removed.
 }
 \examples{
-data <- import_data("extdata/coculture_peak_table.csv", 
-                    "extdata/metadata.csv")
+data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
+                      load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
 
 data_filter <- filter_insource_ions(data,
                               cluster_threhold = 0.95)

@@ -19,8 +19,8 @@
 #' @description
 #' `filter_mispicked_ions()` identifies ions that were incorrectly split into separate features during preprocessing. This filter checks the feature table for similar ions in terms of mass and retention time. Peaks found to be similar are merged into a single feature given `merge_peaks` is `TRUE`.
 #'
-#' @param mpact_object An `mpactr_object`. See [import_data()].
-#' @param ringwing Ringing mass window. Default = 0.5.
+#' @param mpactr_object An `mpactr_object`. See [import_data()].
+#' @param ringwin Ringing mass window. Default = 0.5.
 #' @param isowin Isotopic mass window. Defualt = 0.01.
 #' @param trwin A `numeric` denoting the retention time threhold for assessing if ions should be merged. Defulat = 0.005.
 #' @param max_iso_shift A `numeric`. Default = 3.
@@ -30,8 +30,8 @@
 #' @export 
 #'
 #' @examples 
-#' data <- import_data("extdata/coculture_peak_table.csv", 
-#'                     "extdata/metadata.csv")
+#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
+#'                       load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
 #'
 #' data_filter <- filter_mispicked_ions(data,
 #'                               ringwin = 0.5, 
@@ -67,8 +67,8 @@ filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, t
 #' @export 
 #'
 #' @examples 
-#' data <- import_data("extdata/coculture_peak_table.csv", 
-#'                     "extdata/metadata.csv")
+#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
+#'                       load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
 #'
 #' data_filter <- filter_group(data,
 #'                               group_threhold = 0.01, 
@@ -100,8 +100,8 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 #' @export 
 #'
 #' @examples 
-#' data <- import_data("extdata/coculture_peak_table.csv", 
-#'                     "extdata/metadata.csv")
+#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
+#'                       load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
 #'
 #' data_filter <- filter_cv(data,
 #'                               cv_threhold = 0.01, 
@@ -133,8 +133,8 @@ filter_cv <- function(mpactr_object, cv_threshold = 0.2, cv_param) {
 #' @export 
 #'
 #' @examples 
-#' data <- import_data("extdata/coculture_peak_table.csv", 
-#'                     "extdata/metadata.csv")
+#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
+#'                       load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
 #'
 #' data_filter <- filter_insource_ions(data,
 #'                               cluster_threhold = 0.95)
