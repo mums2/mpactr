@@ -33,14 +33,14 @@ an \code{mpactr_object}
 \code{filter_mispicked_ions()} identifies ions that were incorrectly split into separate features during preprocessing. This filter checks the feature table for similar ions in terms of mass and retention time. Peaks found to be similar are merged into a single feature given \code{merge_peaks} is \code{TRUE}.
 }
 \examples{
-data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
-                      load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
+data <- import_data(example("coculture_peak_table.csv"),
+                    example("metadata.csv"))
 
 data_filter <- filter_mispicked_ions(data,
                               ringwin = 0.5, 
                               isowin = 0.01,
                               trwin = 0.005,
                               max_iso_shift = 3,
-                              remove_ions = TRUE)
+                              merge_peaks = TRUE)
 
 }

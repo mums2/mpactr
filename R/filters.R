@@ -30,15 +30,15 @@
 #' @export 
 #'
 #' @examples 
-#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
-#'                       load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
+#' data <- import_data(example("coculture_peak_table.csv"),
+#'                     example("metadata.csv"))
 #'
 #' data_filter <- filter_mispicked_ions(data,
 #'                               ringwin = 0.5, 
 #'                               isowin = 0.01,
 #'                               trwin = 0.005,
 #'                               max_iso_shift = 3,
-#'                               remove_ions = TRUE)
+#'                               merge_peaks = TRUE)
 #'
 filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
                                 merge_peaks = TRUE)
@@ -67,11 +67,11 @@ filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, t
 #' @export 
 #'
 #' @examples 
-#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
-#'                       load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
+#' data <- import_data(example("coculture_peak_table.csv"),
+#'                     example("metadata.csv"))
 #'
 #' data_filter <- filter_group(data,
-#'                               group_threhold = 0.01, 
+#'                               group_threshold = 0.01,
 #'                               group_to_remove = "Blanks",
 #'                               remove_ions = TRUE)
 #'
@@ -99,16 +99,17 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 #' @return an `mpactr_object`
 #' @export 
 #'
-#' @examples 
-#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
-#'                       load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
+#' @examples
+#'
+#' data <- import_data(example("coculture_peak_table.csv"),
+#'                     example("metadata.csv"))
 #'
 #' data_filter <- filter_cv(data,
-#'                               cv_threhold = 0.01, 
+#'                               cv_threshold = 0.01,
 #'                               cv_param = "mean")
 #'
 #' data_filter <- filter_cv(data,
-#'                               cv_threhold = 0.01, 
+#'                               cv_threshold = 0.01,
 #'                               cv_param = "median")
 #'
 filter_cv <- function(mpactr_object, cv_threshold = 0.2, cv_param) {
@@ -133,11 +134,11 @@ filter_cv <- function(mpactr_object, cv_threshold = 0.2, cv_param) {
 #' @export 
 #'
 #' @examples 
-#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
-#'                       load(system.file('extdata', 'metadata.csv', package = 'mpactr')))
+#' data <- import_data(example("coculture_peak_table.csv"),
+#'                     example("metadata.csv"))
 #'
 #' data_filter <- filter_insource_ions(data,
-#'                               cluster_threhold = 0.95)
+#'                               cluster_threshold = 0.95)
 #'
 filter_insource_ions <- function(mpactr_object, cluster_threshold = 0.95) {
 

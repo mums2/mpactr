@@ -1,6 +1,6 @@
 test_that("import_data creates a proper mpactr and filter-pactr object", {
 
-  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+  data <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                       test_path("exttestdata", "102623_metadata_correct.csv"))
 
   expect_true(all(class(data) == c("filter_pactr", "R6")))

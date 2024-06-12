@@ -16,8 +16,8 @@ a \code{data.table}
 \code{get_peak_table()} a wrapper function to return the peak table object of the given mpactr object.
 }
 \examples{
-data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
-                      load(system.file('extdata', 'extdata/metadata.csv', package = 'mpactr')))
+data <- import_data(example("coculture_peak_table.csv"),
+                    example("metadata.csv"))
 
 peak_table <- get_peak_table(data)
 

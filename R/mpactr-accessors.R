@@ -9,8 +9,8 @@
 #' @export 
 #'
 #' @examples 
-#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
-#'                       load(system.file('extdata', 'extdata/metadata.csv', package = 'mpactr')))
+#' data <- import_data(example("coculture_peak_table.csv"),
+#'                     example("metadata.csv"))
 #'
 #' peak_table <- get_peak_table(data)
 #'
@@ -29,8 +29,8 @@ get_peak_table <- function(mpactr_object) {
 #' @export 
 #'
 #' @examples 
-#' data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
-#'                       load(system.file('extdata', 'extdata/metadata.csv', package = 'mpactr')))
+#' data <- import_data(example("coculture_peak_table.csv"),
+#'                     example("metadata.csv"))
 #'
 #' meta_data <- get_meta_data(data)
 #'

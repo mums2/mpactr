@@ -1,5 +1,5 @@
 test_that("get_peak_table correctly returns the table", {
-  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+  data <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                       test_path("exttestdata", "102623_metadata_correct.csv"))
   
   peak_table <- get_peak_table(data)
@@ -8,7 +8,7 @@ test_that("get_peak_table correctly returns the table", {
 })
 
 test_that("get_meta_data correctly returns the table", {
-  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+  data <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                       test_path("exttestdata", "102623_metadata_correct.csv"))
   
   metadata <- get_meta_data(data)

@@ -1,6 +1,6 @@
 test_that("plot_QC_Tree generates the correct plot", {
     
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                              test_path("exttestdata", "102623_metadata_correct.csv"))
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)

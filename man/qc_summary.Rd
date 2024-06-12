@@ -17,8 +17,8 @@ a \code{data.table} reporting the number of high quality ions
 Parses an mpactr object and exracts a summary of all applied filters. Specifically, the fate of each input ion is reported as ion status. Status options are: Passed, mispicked, group, replicability, and insouce. A status of Passed ions is returned for ions that passed all applied filters and therefore are expected to be high quaility ions. Ions tagged as group, mispicked, replicability, or ionsource were removed during the correspoding filter.
 }
 \examples{
-data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
-                      load(system.file('extdata', 'extdata/metadata.csv', package = 'mpactr')))
+data <- import_data(example("coculture_peak_table.csv"),
+                    example("metadata.csv"))
 
 data_filter <- filter_mispicked_ions(data, 
                                     ringwin = 0.5, 

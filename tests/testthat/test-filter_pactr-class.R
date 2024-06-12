@@ -1,5 +1,5 @@
 test_that("test that filter_pactr-class constructs properly", {
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                              test_path("exttestdata", "102623_metadata_correct.csv"))
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)

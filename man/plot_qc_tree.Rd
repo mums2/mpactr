@@ -16,8 +16,8 @@ a tree map plot of class \code{ggplot}
 \code{plot_qc_tree()} visualizes the filtering summary as a treemap. Ion staus (see \code{\link[=qc_summary]{qc_summary()}}) is reported here as percentage of all pre-filtered ions.
 }
 \examples{
-data <- import_data(load(system.file('extdata', 'coculture_peak_table.csv', package = 'mpactr')), 
-                      load(system.file('extdata', 'extdata/metadata.csv', package = 'mpactr')))
+data <- import_data(example("coculture_peak_table.csv"),
+                    example("metadata.csv"))
 
 data_filter <- filter_mispicked_ions(data, 
                                     ringwin = 0.5, 
