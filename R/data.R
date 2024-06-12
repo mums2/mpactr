@@ -11,14 +11,6 @@
 #'  }
 "CulturesData"
 
-# .onLoad <- function(libname, pkgname) {
-#   ns <- topenv()
-#   path_dir <- system.file("extdata", mustWork = TRUE, package = "mpactR")
-#   ns$peakTable <- paste(path_dir, "coculture_peak_table.csv", sep = "/")
-#   ns$metadata <- paste(path_dir, "metadata.csv", sep = "/")
-#   # print(ns$metadata)
-#   # print(ns$peakTable)
-# }
 
 #' Get file paths for examples
 #'
@@ -41,11 +33,3 @@ example <- function(file = NULL) {
   }
   return(path)
 }
-
-# readr_example <- function(file = NULL) {
-#   if (is.null(file)) {
-#     dir(system.file("extdata", package = "readr"))
-#   } else {
-#     system.file("extdata", file, package = "readr", mustWork = TRUE)
-#   }
-# }

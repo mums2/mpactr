@@ -1,0 +1,11 @@
+# TODO: Compare CV filter (with, without solvent blanks, solvent and media blanks as 1 group - need data)
+
+# TODO: workflow article/vignette - ARM
+# TODO: CV threshold qc plot - ARM
+
+# TODO: Multiple group filter reporting - GDJ
+# TODO: Add Copy functionality for functions - GDJ
+# TODO: think about custom print for filter_pactr class - GDJ
+
+# Way future (post initial release)
+# TODO: benchmark speed on peak_table sizes
