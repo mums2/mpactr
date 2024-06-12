@@ -1,6 +1,6 @@
 test_that("mpactr class initialize works correctly", {
-  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-  here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  mpactr_class <- mpactr$new(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
   
   expect_true(all(class(mpactr_class) == c("mpactr", "R6")))
   expect_equal(length(mpactr_class$get_meta_data()), 3)

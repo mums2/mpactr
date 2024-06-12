@@ -1,6 +1,6 @@
 test_that("get_peak_table correctly returns the table", {
-  data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                      here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                      test_path("exttestdata", "102623_metadata_correct.csv"))
   
   peak_table <- get_peak_table(data)
   expect_equal(class(peak_table), c("data.table", "data.frame"))
@@ -8,8 +8,8 @@ test_that("get_peak_table correctly returns the table", {
 })
 
 test_that("get_meta_data correctly returns the table", {
-  data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                      here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                      test_path("exttestdata", "102623_metadata_correct.csv"))
   
   metadata <- get_meta_data(data)
   expect_equal(class(metadata), c("data.table", "data.frame"))

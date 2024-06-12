@@ -1,11 +1,11 @@
 test_that("filter mismatch ions wrapper works as expected when merge_peaks is TRUE", {
-  data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                      here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                      test_path("exttestdata", "102623_metadata_correct.csv"))
 
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
                                       merge_peaks = TRUE)
 
-  expected_cut_ions <- read_csv(here::here("tests/exttestdata/cut_ions.csv"), col_names = c("V1"), show_col_types = FALSE)
+  expected_cut_ions <- read_csv(test_path("exttestdata", "cut_ions.csv"), col_names = c("V1"), show_col_types = FALSE)
   expected_cut_ions <- as.integer(expected_cut_ions$V1)
 
   expect_equal(data_mpactr$logger[["check_mismatched_peaks"]][["cut_ions"]], expected_cut_ions)
@@ -13,8 +13,8 @@ test_that("filter mismatch ions wrapper works as expected when merge_peaks is TR
 })
 
 test_that("filter mismatch ions wrapper works as expected when merge_peaks is FALSE", {
-  data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                      here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                      test_path("exttestdata", "102623_metadata_correct.csv"))
 
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     FALSE)
@@ -23,8 +23,8 @@ test_that("filter mismatch ions wrapper works as expected when merge_peaks is FA
 })
 
 test_that("group filter wrapper works as expected", {
-  data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                        here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                      test_path("exttestdata", "102623_metadata_correct.csv"))
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", FALSE)
@@ -38,8 +38,8 @@ test_that("group filter wrapper works as expected", {
 })
 
 test_that("filter cv filter wrapper works as expected with cv_params mean", {
-  data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                        here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                      test_path("exttestdata", "102623_metadata_correct.csv"))
 
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
@@ -50,8 +50,8 @@ test_that("filter cv filter wrapper works as expected with cv_params mean", {
 })
 
 test_that("filter cv filter wrapper works as expected with cv_params median", {
-  data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                        here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                      test_path("exttestdata", "102623_metadata_correct.csv"))
 
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
@@ -62,8 +62,8 @@ test_that("filter cv filter wrapper works as expected with cv_params median", {
 })
 
 test_that("filter insource ions wrapper works as expected", {
-  data <- import_data(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                        here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  data <- import_data(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                      test_path("exttestdata", "102623_metadata_correct.csv"))
 
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)

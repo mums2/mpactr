@@ -1,13 +1,13 @@
 ####  filter 1: mismatched peaks    ###
 test_that("test that check_mistmatched_peaks works properly with filter_pactr-class data", {
-  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+  mpactr_class <- mpactr$new(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
 
-  expected_cut_ions <- read_csv(here::here("tests/exttestdata/cut_ions.csv"), col_names = c("V1"), show_col_types = FALSE)
+  expected_cut_ions <- read_csv(test_path("exttestdata","cut_ions.csv"), col_names = c("V1"), show_col_types = FALSE)
   expected_cut_ions <- as.integer(expected_cut_ions$V1)
 
   expect_equal(filter_class$logger[["check_mismatched_peaks"]][["cut_ions"]], expected_cut_ions)
@@ -22,15 +22,16 @@ test_that("test that check_mistmatched_peaks works properly with filter_pactr-cl
 
 ####  filter 2: group filter    ###
 test_that("blank filter works correctly", {
-  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+ mpactr_class <- mpactr$new(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE)
   filter_class$filter_blank()
 
-  error_prop <- read_csv(here::here("tests/exttestdata/102623 peaktable coculture simple_groupaverages.csv"),
+test_path("exttestdata","102623 peaktable coculture simple_groupaverages.csv")
+  error_prop <- read_csv(test_path("exttestdata","102623 peaktable coculture simple_groupaverages.csv"),
                          show_col_types = FALSE, skip = 1,
                          col_names = c("Compound", "mz", "rt", "biologicalGroup", "average"))
 
@@ -43,8 +44,8 @@ test_that("blank filter works correctly", {
 })
 
 test_that("parse_ions_by_group flags the correct ions", {
-  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+ mpactr_class <- mpactr$new(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
@@ -52,14 +53,14 @@ test_that("parse_ions_by_group flags the correct ions", {
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
 
-  ang_18 <-  read_csv(here::here("tests/exttestdata/output_ANG18 monoculture.csv"), col_names = c("V1"),
+  ang_18 <-  read_csv(test_path("exttestdata", "output_ANG18 monoculture.csv"), col_names = c("V1"),
                       show_col_types = FALSE)
-  angdt <- read_csv(here::here("tests/exttestdata/output_ANGDT monoculture"), col_names = c("V1"),
+  angdt <- read_csv(test_path("exttestdata", "output_ANGDT monoculture"), col_names = c("V1"),
                     show_col_types = FALSE)
-  blanks <- read_csv(here::here("tests/exttestdata/output_Blanks"), col_names = c("V1"), show_col_types = FALSE)
-  coculture <- read_csv(here::here("tests/exttestdata/output_Coculture"), col_names = c("V1"), show_col_types = FALSE)
-  jc1 <- read_csv(here::here("tests/exttestdata/output_JC1 monoculture"), col_names = c("V1"), show_col_types = FALSE)
-  jc28 <- read_csv(here::here("tests/exttestdata/output_JC28 monoculture"), col_names = c("V1"), show_col_types = FALSE)
+  blanks <- read_csv(test_path("exttestdata", "output_Blanks"), col_names = c("V1"), show_col_types = FALSE)
+  coculture <- read_csv(test_path("exttestdata", "output_Coculture"), col_names = c("V1"), show_col_types = FALSE)
+  jc1 <- read_csv(test_path("exttestdata", "output_JC1 monoculture"), col_names = c("V1"), show_col_types = FALSE)
+  jc28 <- read_csv(test_path("exttestdata", "output_JC28 monoculture"), col_names = c("V1"), show_col_types = FALSE)
   group_filter_list <- filter_class$logger[["group_filter-failing_list"]]
 
   expect_false(all(sapply(group_filter_list, is.null)))
@@ -74,8 +75,8 @@ test_that("parse_ions_by_group flags the correct ions", {
 
 test_that("apply_group_filter removes the correct ions", {
 
- mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+ mpactr_class <- mpactr$new(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
@@ -96,8 +97,8 @@ test_that("apply_group_filter removes the correct ions", {
 
 ####  filter 3: cv filter    ###
 test_that("cv_filter filters out data properly", {
-  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+ mpactr_class <- mpactr$new(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
@@ -120,8 +121,8 @@ test_that("cv_filter filters out data properly", {
 
 ####  filter 4: insource ions    ###
 test_that("filter_inscource_ions filters out data properly", {
-  mpactr_class <- mpactr$new(here::here("tests/exttestdata/102623 peaktable coculture simple.csv"),
-                             here::here("tests/exttestdata/102623_metadata_correct.csv"))
+ mpactr_class <- mpactr$new(test_path("exttestdata","102623 peaktable coculture simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
