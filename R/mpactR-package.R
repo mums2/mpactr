@@ -2,10 +2,14 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom R6 R6Class
+#' @importFrom data.table copy
+#' @importFrom data.table data.table
+#' @importFrom data.table dcast
+#' @importFrom data.table melt
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 theme
-#' @importFrom R6 R6Class
 #' @importFrom readr read_csv
 #' @importFrom stats cor
 #' @importFrom stats cutree

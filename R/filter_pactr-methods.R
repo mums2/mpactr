@@ -68,7 +68,7 @@ filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, t
   else{
     print(paste0("merge peaks is: ", merge_peaks, ". Peaks will not be merged."))
   }
-  self$logger$list_of_summaries$mispicked$summmarize
+  self$logger$list_of_summaries$mispicked$summarize()
 })
 
 filter_pactr$set("private", "merge_ions", function(ion_filter_list) {

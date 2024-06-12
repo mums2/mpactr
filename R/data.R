@@ -11,16 +11,27 @@
 #'  }
 "CulturesData"
 
-.onLoad <- function(libname, pkgname) {
-  ns <- topenv()
-  path_dir <- system.file("extdata", mustWork = TRUE, package = "mpactR")
-  ns$peakTable <- paste(path_dir, "coculture_peak_table.csv", sep = "/")
-  ns$metadata <- paste(path_dir, "metadata.csv", sep = "/")
-  # print(ns$metadata)
-  # print(ns$peakTable)
-}
+# .onLoad <- function(libname, pkgname) {
+#   ns <- topenv()
+#   path_dir <- system.file("extdata", mustWork = TRUE, package = "mpactR")
+#   ns$peakTable <- paste(path_dir, "coculture_peak_table.csv", sep = "/")
+#   ns$metadata <- paste(path_dir, "metadata.csv", sep = "/")
+#   # print(ns$metadata)
+#   # print(ns$peakTable)
+# }
 
+#' Get file paths for examples
+#'
+#' mpactr contains a number of example files in the `inst\extdata` directory. This function makes them accessible in
+#' that shows how file paths are used in function examples.
+#'
+#' @param file Name of a file. If `NULL`, all examples files will be listed.
+#'
 #' @export
+#' @examples
+#' example()
+#'
+#' example("metadata.csv")
 example <- function(file = NULL) {
   path <- ""
   if (is.null(file)) {
