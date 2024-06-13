@@ -128,12 +128,13 @@ filter_pactr$set("public", "apply_group_filter", function(group, remove_ions = T
   self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[!(self$mpactr_data$get_peak_table()$Compound
     %in% ions),])
 
-   self$logger$list_of_summaries$group <- summary$new(filter = "group", failed_ions = as.numeric(ions),
-                              passed_ions = self$mpactr_data$get_peak_table()$Compound)
+   self$logger$list_of_summaries[[paste0("group-",group)]] <- summary$new(filter = group,
+                                                              failed_ions = as.numeric(ions),
+                                                              passed_ions = self$mpactr_data$get_peak_table()$Compound)
 
   print(paste0("remove_ions is: ", remove_ions, ". Removing Peaks"))
 
-  self$logger$list_of_summaries$group$summmarize
+  self$logger$list_of_summaries$group$summarize()
 })
 
 ####  filter 3: cv filter    ###

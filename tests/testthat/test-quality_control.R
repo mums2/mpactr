@@ -9,7 +9,7 @@ test_that("qc_summary returns a summary data.table", {
 
   data_mpactr_summary <- qc_summary(data)
   expect_true(nrow(data_mpactr_summary) > 1)
-  expect_equal(unique(data_mpactr_summary$status), c("Passed", "mispicked", "group", "insource"))
+  expect_equal(unique(data_mpactr_summary$status), c("Passed", "mispicked", "group-Blanks", "insource"))
 })
 
 test_that("qc plot returns a generates a plot", {
