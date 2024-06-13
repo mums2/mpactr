@@ -27,3 +27,4 @@ Imports:
     treemapify,
     viridis
 LazyData: true
+Config/Needs/website: rmarkdown
