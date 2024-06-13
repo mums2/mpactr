@@ -5,7 +5,7 @@
 
 # TODO: Multiple group filter reporting - GDJ (Done)
 # TODO: Add Copy functionality for functions - GDJ (Done)
-# TODO: think about custom print for filter_pactr class - GDJ 
+# TODO: think about custom print for filter_pactr class - GDJ (Done)
 
 # Way future (post initial release)
 # TODO: benchmark speed on peak_table sizes
