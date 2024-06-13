@@ -6,3 +6,4 @@
 ^LICENSE\.md$
 ^\.idea$
 ^vignettes/articles$
+^README\.Rmd$
