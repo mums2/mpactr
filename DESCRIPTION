@@ -20,6 +20,7 @@ Depends:
     data.table,
     R (>= 3.5.0)
 Imports: 
+    cli,
     ggplot2,
     R6,
     readr,
