@@ -10,7 +10,8 @@ filter_pactr <- R6Class("filter_pactr", public = list(
 )
 
 #' @export
-print.filter_pactr <- function(mpactr_object)
+print.filter_pactr <- function(x, ...)
 {
-  print(mpactr_object$mpactr_data$get_peak_table())
+  print(x$mpactr_data$get_peak_table())
 }
+
