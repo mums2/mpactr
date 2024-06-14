@@ -68,7 +68,7 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 {
   mpactr_object$filter_blank()
   mpactr_object$parse_ions_by_group(group_threshold = group_threshold)
-  mpactr_object$apply_group_filter(group_to_remove, remove_ions = remove_ions)
+  mpactr_object$apply_group_filter(group = group_to_remove, remove_ions = remove_ions)
   return(mpactr_object)
 }
 
