@@ -41,3 +41,27 @@ test_that("get_log returns the correct fitler summary list", {
   expect_equal(length(mispicked_summary), 2)
   expect_equal(length(mispicked_summary$passed_ions), 1233)
 })
+
+test_that("get_mispicked_ions returns error if check_mismatched_peaks has not been called", {
+  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  
+  expect_error(filter_class$get_mispicked_ions(), "The mispicked filter has not yet been")
+})
+
+test_that("get_mispicked_ions correctly returns the check_mismatched_peaks list", {
+  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+    TRUE)
+  
+  mispicked_groups <- filter_class$get_mispicked_ions()
+  
+  expect_equal(class(mispicked_groups), c("data.table", "data.frame"))
+  expect_equal(length(mispicked_groups), 2)
+  expect_equal(names(mispicked_groups), c("main_ion", "similar_ions"))
+})

@@ -18,6 +18,18 @@ filter_pactr <- R6Class("filter_pactr", public = list(
     return(list("failed_ions" = self$logger$list_of_summaries[[filter]]$get_failed_ions(),
                 "passed_ions" = self$logger$list_of_summaries[[filter]]$get_passed_ions()))
 
+  },
+  get_mispicked_ions = function(){
+    if (!exists("check_mismatched_peaks", self$logger)) {
+      cli::cli_abort("The mispicked filter has not yet been applied to the data - run filter_mispicked_ions() first.")
+    }
+    
+    merge_groups <- self$logger$check_mismatched_peaks$merge_groups
+    
+    similar_ions <- data.table("main_ion" = names(merge_groups),
+                               "similar_ions" = merge_groups)
+    
+    return(similar_ions)
   }
   )
 )
