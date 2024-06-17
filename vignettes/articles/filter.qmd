@@ -1,5 +1,5 @@
 ---
-title: "Filter blank/group filter mpactR"
+title: "Filter"
 vignette: >
     %\VignetteIndexEntry{Filter blank/group filter mpactR}
     %\VignetteEngine{quarto::html}
@@ -15,6 +15,166 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(mpactR)
+#| output: false
+# library(mpactR)
+devtools::load_all()
 ```
 
+## Load data into R
+
+mpactR requires 2 files as imput: a feature table and metadata file. Both are expected to be comma separated files (*.csv*).
+
+1. peak_table: a peak table in Progenesis format is expected. To export a compatable peak table in Progensis, navigate to the *Review Compounds* tab then File -> Export Compound Measurements. Select the following properties: Compound, m/z, Retention time (min), and Raw abundance and click ok. 
+2. metadata: a table with sample information. At minimum the following columns are expected: Injection, Sample_Code, Biological_Group. Injection is the sample name and is expected to match sample column names in the peak_table. Sample_Code is the id for technical replicate groups. Biological Group is the id for biological replicate groups. Other sample metadata can be added, and is encouraged for downstream analysis following filtering with mpactR.
+
+To import these data into R, use the mpactR function `import_data()`, which has the arguments: `peak_table_file_path` and `meta_data_file_path`
+
+```{r}
+data <- import_data(example("coculture_peak_table.csv"),
+                    example("metadata.csv"))
+```
+
+This will create an R6 class object, which will store both the peak table and metadata.
+
+```{r}
+#| eval: false
+#| include: false
+
+data
+```
+
+## Accessing data in mpactr object
+
+You can extract the peak table or metadata at any point with `get_peak_table()` and `get_meta_data()` functions. Both functions will return a `data.table` object with the corresponding information.
+
+### Extract peak table
+
+```{r}
+get_peak_table(data)[1:5, 1:8]
+```
+
+
+### Extract metadata
+
+
+```{r}
+get_meta_data(data)[1:5, ]
+```
+
+## Filtering
+
+mpactR provides filters to correct for the following issues observed during preprocessing of tandem MS/MS data: 
+
+- mispicked ions: isotopic patterns that are incorrectly split during preprocessing.
+- solvent blank impurities: features overrepresented in a specific group of samples; for example removal of features present is solvent blanks due to carryover between samples.
+- non-reproducible ions: those that are inconsistent between technical replicates.
+- insource ions: fragment ions created during the first ionization in the tandem MS/MS workflow.
+
+#### Mispicked ions filter
+
+To check for mispicked ions, use mpactR function `filter_mispicked_ions()`. This function takes an `mpactr object` as input, and checks for similar ions with the arguments `ringwin`, `isowin`, `trwin` and `max_iso_shift`. 
+
+Ions in the feature table are flagged as similar based on retention time and mass. Flagged ion groups are suggested to be the result of incorrect splitting of isotopic patterns during peak picking, detector saturation artifacts, or incorrect identification of multiply charged oligomers.
+
+```{r}
+data_mispicked <- filter_mispicked_ions(data, ringwin = 0.5, 
+                                        isowin = 0.01, trwin = 0.005, 
+                                        max_iso_shift = 3, merge_peaks = TRUE)
+```
+
+Each filter reports progress of filtering, here we can see that 1303 ions were present prior to checking for mispicked ions. 70 ions were found to be similar to another ion and following merging, 1233 ions remain.
+
+If you are interested in the groups of similar ions flagged in this filter, you can use `similar_ions()`. This function returns a `data.table` report the main ion (the ion retained post-merging) and the ions similar to it.
+
+```{r}
+head(similar_ions(data_mispicked))
+```
+
+#### Remove ions that are above a threhold in one biological sample group
+
+Removing solvent blank impurities is important for correcting for between-sample carryover and contamination in experimental samples. You can identify and remove these ions with mpactR's `filter_group()` function. `filter_group()` identifies ions above a relative abundance threshold (`group_threshold`) a specific group (`group_to_remove`). To remove solvent blank impurities set `group_to_remove` to the `Biological_Group` in your metadata file which corresponds to your solvent blank samples. 
+
+```{r}
+data_blank <- filter_group(data, group_threshold = 0.01,
+                            group_to_remove = "Blanks", remove_ions = TRUE)
+```
+
+In this example, 1303 ions were present prior to the group filter. 796 ions were found to be above the relative abundance threshold of 0.01 in "Blanks" samples, leaving 507 ions in the peak table.
+
+#### Remove non-reproducible ions
+
+Ions whose abundance are not consisent between technical replicates (*i.e.*, nonreproducible) may not be reliable for analysis and therefore should be removed from the feature table. Nonreproducible ions are identified by mean or median coefficient of variation (cv) with `filter_cv()`. 
+
+```{r}
+data_rep <- filter_cv(data, cv_threshold = 0.2, cv_param = "median")
+```
+
+In our example dataset, 256 ions were flagged as nonreproducible. These ions were removed, leaving 1047 ions in the feature table.
+
+#### Remove insouce fragment ions
+
+Some ions produce fragments during the first ionization of tandem MS/MS, called insouce ions. This can result in ions from one compound being represented more than once in the feature table. If you would like to remove insource ions framgments, you can do so with mpactR's `filter_insource_ions()`. `filter_insource_ions()` conducts ion decovolution via retention time correlation matrices within MS1 scans. Highly correlated ion groups are determined by the `cluster_threshold` parameter and filtered to remvome the low mass features. The highest mass feature is identified as the likely parent ion and retained in the feature table. 
+
+```{r}
+data_insource <- filter_insource_ions(data, cluster_threshold = 0.95)
+```
+
+71 ions were identified and removed during deconvolution of this dataset, leaving 1232 ions in the feature table. 
+
+#### Chaining filters together
+
+Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering nonrepoducible or insouce ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying nonreproducible and insource fragment ions.
+
+```{r}
+data <- import_data(example("coculture_peak_table.csv"),
+                    example("metadata.csv"))
+
+data_filtered <- filter_mispicked_ions(data) |>
+  filter_group(group_to_remove = "Blanks") |>
+  filter_cv(cv_param = "median")
+
+```
+
+## Summary
+
+mpactR offers mutliple ways to view a summary of data filtering. 
+
+#### View passing and failed ions for a single filter
+
+If you are interested in viewing the passing and failing ions for a single filter, use the `filter_summary()` function.  You must specify which filter you are intested in, either "mispicked", "group", "replicability", or "insouce".
+
+```{r}
+mispicked_summary <- filter_summary(data_filtered, filter = "mispicked")
+```
+
+Failed ions: 
+```{r}
+mispicked_summary$failed_ions
+```
+
+Passing ions:
+```{r}
+head(mispicked_summary$passed_ions, 100)
+```
+
+If you set `filter` to a filter name that you did not apply to your data, a warning message will be returned.
+
+```{r}
+#| error: true
+filter_summary(data_filtered, filter = "insource")
+```
+
+#### View passing and failed ions for all input ions
+
+You can view the fate of all input ions with the `qc_summary()` function. A data.table reporting the compound id (`compounds`) and if it failed or passed filtering. If the ion failed filtering, its status will report the name of the filter it failed.
+
+```{r}
+head(qc_summary(data_filtered)[order(compounds), ])
+```
+
+#### Visualize filtering QC with tree map plot
+
+
+```{r}
+plot_qc_tree(data_filtered)
+```
