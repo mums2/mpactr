@@ -134,7 +134,7 @@ filter_pactr$set("public", "apply_group_filter", function(group, remove_ions = T
 
   print(paste0("remove_ions is: ", remove_ions, ". Removing Peaks"))
 
-  self$logger$list_of_summaries$group$summarize()
+  self$logger$list_of_summaries[[paste0("group-",group)]]$summarize()
 })
 
 ####  filter 3: cv filter    ###
