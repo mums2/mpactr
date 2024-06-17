@@ -8,7 +8,8 @@ filter_group(
   mpactr_object,
   group_threshold = 0.01,
   group_to_remove,
-  remove_ions = TRUE
+  remove_ions = TRUE,
+  copy_object = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ filter_group(
 \item{group_to_remove}{Biological group name to remove ions from.}
 
 \item{remove_ions}{A \code{logical}. If \code{TRUE} failing ions will be removed from the peak table. Default = TRUE.}
+
+\item{copy_object}{A \code{boolean} paramter that allows users to return a copied object instead of modifying the object.}
 }
 \value{
 an \code{mpactr_object}
