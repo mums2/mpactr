@@ -1,7 +1,7 @@
 ---
 title: "Filter"
 vignette: >
-    %\VignetteIndexEntry{Filter blank/group filter mpactR}
+    %\VignetteIndexEntry{Filter}
     %\VignetteEngine{quarto::html}
     %\VignetteEncoding{UTF-8}
 ---
