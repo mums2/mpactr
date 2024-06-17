@@ -196,3 +196,4 @@ fabric.properties
 # ignore intermediate files created during quarto vignette rendering
 vignettes/articles/*_files 
 vignettes/*_files 
+docs
