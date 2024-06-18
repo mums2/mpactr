@@ -91,8 +91,8 @@ test_that("apply_group_filter removes the correct ions", {
   expect_true(all(!(filter_class$logger[["group_filter-failing_list"]]$Blanks %in%
     filter_class$mpactr_data$get_peak_table()$Compound)))
 
-  expect_false(is.null(filter_class$logger$list_of_summaries$group))
-  expect_equal(class(filter_class$logger$list_of_summaries$group), c("summary", "R6"))
+  expect_false(is.null(filter_class$logger$list_of_summaries[["group-Blanks"]]))
+  expect_equal(class(filter_class$logger$list_of_summaries[["group-Blanks"]]), c("summary", "R6"))
 })
 
 ####  filter 3: cv filter    ###
