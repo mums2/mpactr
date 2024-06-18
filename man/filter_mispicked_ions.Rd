@@ -10,7 +10,8 @@ filter_mispicked_ions(
   isowin = 0.01,
   trwin = 0.005,
   max_iso_shift = 3,
-  merge_peaks = TRUE
+  merge_peaks = TRUE,
+  copy_object = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ filter_mispicked_ions(
 \item{max_iso_shift}{A \code{numeric}. Default = 3.}
 
 \item{merge_peaks}{A \code{logical} to determine if peaks found to belong to the same ion should be merged in the feature table.}
+
+\item{copy_object}{A \code{boolean} paramter that allows users to return a copied object instead of modifying the object.}
 }
 \value{
 an \code{mpactr_object}
