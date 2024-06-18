@@ -1,4 +1,35 @@
 url: ~
 template:
   bootstrap: 5
+  bootswatch: sandstone
+  font_scale: 0.8
+  
+reference:
+- title: Import Data
+  contents:
+  - import_data
+  - example
+  
+- title: Access Data
+  contents:
+  - get_peak_table
+  - get_meta_data
+    
+- title: Filter Data
+  contents:
+  - filter_mispicked_ions
+  - filter_group
+  - filter_cv
+  - filter_insource_ions
+  
+- title: Summarize Filtering
+  contents:
+  - similar_ions
+  - filter_summary
+  - qc_summary
+  - plot_qc_tree
+  
+- title: Data
+  contents:
+  - CulturesData
 

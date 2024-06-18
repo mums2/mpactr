@@ -1,0 +1,42 @@
+// Apply increased space between headings per tidytemplate
+// @Manual{,
+//  title = {tidytemplate: 'pkgdown' Templates for Core 'Tidyverse' Packages},
+//  author = {Hadley Wickham and Robby Shaver and Desirée {De Leon}},
+//  year = {2024},
+//  note = {R package version 1.0.0,
+//https://tidytemplate.tidyverse.org},
+//  url = {https://github.com/tidyverse/tidytemplate},
+//}
+
+// Headings -----------------------
+// Use smaller headings with more vertical space
+
+h2 {
+    @include font-size(1.8rem);
+    margin-top: 2.5rem;
+  }
+  
+  // Reduce margin of first h2
+  main .page-header + .section h2 {
+    margin-top: 1rem;
+  }
+  
+  h3 {
+    @include font-size(1.5rem);
+    margin-top: 2rem;
+  }
+  
+  h4 {
+    @include font-size(1.2rem);
+    font-weight: bold;
+    margin-top: 1.2rem;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    color: mix($body-color, $primary, 90%);
+  }
+  
+  h2, h3, h4, h5, h6 {
+    margin-bottom: 1rem;
+  }
+  
