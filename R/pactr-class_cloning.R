@@ -5,7 +5,7 @@
 #' This function allows us to clone the mpactr object to give our users a more r-based flow.
 #'
 #' @param mpactr_object the object that we are cloning.
-#'
+#' @noRd 
 clone <- function(mpactr_object)
 {
   new_object <- mpactr_object$clone(deep = TRUE)
