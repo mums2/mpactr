@@ -4,12 +4,18 @@
 \alias{filter_insource_ions}
 \title{Filter Insource ions}
 \usage{
-filter_insource_ions(mpactr_object, cluster_threshold = 0.95)
+filter_insource_ions(
+  mpactr_object,
+  cluster_threshold = 0.95,
+  copy_object = FALSE
+)
 }
 \arguments{
 \item{mpactr_object}{An \code{mpactr_object}. See \code{\link[=import_data]{import_data()}}.}
 
 \item{cluster_threshold}{cluster threshold for ion deconvolution. Default = 0.95.}
+
+\item{copy_object}{A \code{boolean} paramter that allows users to return a copied object instead of modifying the object.}
 }
 \value{
 an \code{mpactr_object}

@@ -14,7 +14,7 @@
 #' @param trwin A `numeric` denoting the retention time threhold for assessing if ions should be merged. Defulat = 0.005.
 #' @param max_iso_shift A `numeric`. Default = 3.
 #' @param merge_peaks A `logical` to determine if peaks found to belong to the same ion should be merged in the feature table.
-#'
+#' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 #' @return an `mpactr_object`
 #' @export 
 #'
@@ -30,8 +30,12 @@
 #'                               merge_peaks = TRUE)
 #'
 filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
-                                merge_peaks = TRUE)
+                                merge_peaks = TRUE, copy_object = FALSE)
 {
+  if(copy_object)
+  {
+    mpactr_object <- clone(mpactr_object)
+  }
   mpactr_object$check_mismatched_peaks(ringwin = ringwin, isowin = isowin, trwin = trwin, max_iso_shift = max_iso_shift,
                                 merge_peaks = merge_peaks)
   return(mpactr_object)
@@ -51,7 +55,8 @@ filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, t
 #' @param group_threshold Relative abundance threshold at which to remove ions. Default = 0.01.
 #' @param group_to_remove Biological group name to remove ions from.
 #' @param remove_ions A `logical`. If `TRUE` failing ions will be removed from the peak table. Default = TRUE.
-#'
+#' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
+
 #' @return an `mpactr_object`
 #' @export 
 #'
@@ -64,8 +69,13 @@ filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, t
 #'                               group_to_remove = "Blanks",
 #'                               remove_ions = TRUE)
 #'
-filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove, remove_ions = TRUE)
+filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove, remove_ions = TRUE,
+                          copy_object = FALSE)
 {
+   if(copy_object)
+  {
+    mpactr_object <- clone(mpactr_object)
+  }
   mpactr_object$filter_blank()
   mpactr_object$parse_ions_by_group(group_threshold = group_threshold)
   mpactr_object$apply_group_filter(group = group_to_remove, remove_ions = remove_ions)
@@ -84,6 +94,7 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param cv_threshold Coefficient of variation threshold. Default = 0.2.
 #' @param cv_param Coefficient of variation (CV) to use for filtering. Options are "mean" or "median", corresponding to mean and median CV, respectively. 
+#' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 #'
 #' @return an `mpactr_object`
 #' @export 
@@ -101,7 +112,11 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 #'                               cv_threshold = 0.01,
 #'                               cv_param = "median")
 #'
-filter_cv <- function(mpactr_object, cv_threshold = 0.2, cv_param) {
+filter_cv <- function(mpactr_object, cv_threshold = 0.2, cv_param, copy_object = FALSE) {
+   if(copy_object)
+  {
+    mpactr_object <- clone(mpactr_object)
+  }
    mpactr_object$cv_filter(cv_threshold = cv_threshold, cv_params = cv_param)
   return(mpactr_object)
 }
@@ -118,6 +133,7 @@ filter_cv <- function(mpactr_object, cv_threshold = 0.2, cv_param) {
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param cluster_threshold cluster threshold for ion deconvolution. Default = 0.95.
+#' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 #'
 #' @return an `mpactr_object`
 #' @export 
@@ -129,8 +145,11 @@ filter_cv <- function(mpactr_object, cv_threshold = 0.2, cv_param) {
 #' data_filter <- filter_insource_ions(data,
 #'                               cluster_threshold = 0.95)
 #'
-filter_insource_ions <- function(mpactr_object, cluster_threshold = 0.95) {
-
+filter_insource_ions <- function(mpactr_object, cluster_threshold = 0.95, copy_object = FALSE) {
+ if(copy_object)
+  {
+    mpactr_object <- clone(mpactr_object)
+  }
   mpactr_object$filter_insource_ions(cluster_threshold = cluster_threshold)
   return(mpactr_object)
 }
