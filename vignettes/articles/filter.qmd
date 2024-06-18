@@ -34,12 +34,11 @@ data <- import_data(example("coculture_peak_table.csv"),
                     example("metadata.csv"))
 ```
 
-This will create an R6 class object, which will store both the peak table and metadata.
+This will create an R6 class object, which will store both the peak table and metadata. Note: you do not need to use `example()` if you are using your own files. This is a package function that allows access to internal package data. If you simply want to play around with the packge using example data, you can follow run the `import_data` function as shown above.
+
+Calling the new mpactr object will print the current peak table in the terminal:
 
 ```{r}
-#| eval: false
-#| include: false
-
 data
 ```
 
@@ -79,12 +78,11 @@ Ions in the feature table are flagged as similar based on retention time and mas
 ```{r}
 data_mispicked <- filter_mispicked_ions(data, ringwin = 0.5, 
                                         isowin = 0.01, trwin = 0.005, 
-                                        max_iso_shift = 3, merge_peaks = TRUE)
+                                        max_iso_shift = 3, merge_peaks = TRUE,
+                                        copy_object = TRUE)
 ```
 
 Each filter reports progress of filtering, here we can see that 1303 ions were present prior to checking for mispicked ions. 70 ions were found to be similar to another ion and following merging, 1233 ions remain.
-
-If you are interested in the groups of similar ions flagged in this filter, you can use `similar_ions()`. This function returns a `data.table` report the main ion (the ion retained post-merging) and the ions similar to it.
 
 ```{r}
 head(similar_ions(data_mispicked))
@@ -96,7 +94,8 @@ Removing solvent blank impurities is important for correcting for between-sample
 
 ```{r}
 data_blank <- filter_group(data, group_threshold = 0.01,
-                            group_to_remove = "Blanks", remove_ions = TRUE)
+                            group_to_remove = "Blanks", remove_ions = TRUE,
+                            copy_object = TRUE)
 ```
 
 In this example, 1303 ions were present prior to the group filter. 796 ions were found to be above the relative abundance threshold of 0.01 in "Blanks" samples, leaving 507 ions in the peak table.
@@ -134,6 +133,41 @@ data_filtered <- filter_mispicked_ions(data) |>
   filter_cv(cv_param = "median")
 
 ```
+
+
+## Reference semantics
+
+Note: mpactR is built on an R6 class-system, meaning it opperates on reference semantics in which data is updated *in-place*. Compared to a shallow copy, where only data pointers are copied, or a deep copy, where the entire data object is copied in memory, any changes to the original data object, regardless if they are assigned to a new object, result in changes to the original data object. We can see this below.
+
+Where the raw data object has 1303 ions in the feature table:
+
+```{r}
+data2 <- import_data(example("coculture_peak_table.csv"),
+                    example("metadata.csv"))
+
+get_peak_table(data2)[ , 1:5]
+```
+
+Running the `filter_mispicked_ions` filter, with default setting `copy_object = FALSE` (operates on reference semtanics) results in 1233 ions in the feature table:
+
+```{r}
+data2_mispicked <- filter_mispicked_ions(data2, ringwin = 0.5, 
+                                        isowin = 0.01, trwin = 0.005, 
+                                        max_iso_shift = 3, merge_peaks = TRUE,
+                                        copy_object = FALSE)
+
+get_peak_table(data2_mispicked)[ , 1:5]
+```
+
+Even though we created an object called `data2_mispicked`, the original `data2` object was also updated and now has 1233 ions in the feature table:
+
+```{r}
+get_peak_table(data2)[ , 1:5]
+```
+
+We recommend using the default `copy_object = FALSE` as this makes for an extremely fast and memory-efficient way to chain mpactR filters together (see **Chaining filters together** section); however, if you would like to run the filters individually with traditional R style objects, you can set `copy_object` to `TRUE` as shown in the filter examples. 
+
+If you are interested in the groups of similar ions flagged in this filter, you can use `similar_ions()`. This function returns a `data.table` report the main ion (the ion retained post-merging) and the ions similar to it.
 
 ## Summary
 
