@@ -10,7 +10,7 @@ similar_ions(mpactr_object)
 \item{mpactr_object}{The mpactr object that is created by calling the import_data() function.}
 }
 \value{
-a \code{data.table} retporting the main ion and those found to be similar with \code{\link[=filter_mispicked_ion]{filter_mispicked_ion()}}.
+a \code{data.table} retporting the main ion and those found to be similar with \code{\link[=filter_mispicked_ions]{filter_mispicked_ions()}}.
 }
 \description{
 \code{similar_ions()} is a wrapper function to return similar ion groups determined with the \code{\link[=filter_mispicked_ions]{filter_mispicked_ions()}}.

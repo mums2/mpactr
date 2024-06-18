@@ -30,7 +30,7 @@ filter_summary <- function(mpactr_object, filter) {
 #'
 #' @param mpactr_object The mpactr object that is created by calling the import_data() function.
 #'
-#' @return a `data.table` retporting the main ion and those found to be similar with [filter_mispicked_ion()].
+#' @return a `data.table` retporting the main ion and those found to be similar with [filter_mispicked_ions()].
 #' @export 
 #'
 #' @examples 
