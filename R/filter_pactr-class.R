@@ -30,6 +30,16 @@ filter_pactr <- R6Class("filter_pactr", public = list(
                                "similar_ions" = merge_groups)
     
     return(similar_ions)
+  },
+  get_group_averages = function() {
+    # if the group filter hasn't been run, group stats will 
+    # be calculated using the current data in the mpactr object
+    if(!exists("group_filter-group_stats", self$logger)) {
+      self$filter_blank()
+      return(self$logger[["group_filter-group_stats"]])
+    }
+    
+    return(self$logger[["group_filter-group_stats"]])
   }
   )
 )

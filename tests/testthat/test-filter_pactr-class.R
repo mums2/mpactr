@@ -65,3 +65,32 @@ test_that("get_mispicked_ions correctly returns the check_mismatched_peaks list"
   expect_equal(length(mispicked_groups), 2)
   expect_equal(names(mispicked_groups), c("main_ion", "similar_ions"))
 })
+
+
+test_that("get_group_averages calculates a group table if fitler blank hasn't been run", {
+  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+    TRUE)
+  
+  avgs <- filter_class$get_group_averages()
+  expect_equal(class(avgs), c("data.table", "data.frame"))
+})
+
+test_that("get_group_averages returns the group table if fitler blank has been run", {
+  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
+                             test_path("exttestdata", "102623_metadata_correct.csv"))
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+    TRUE)
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+  
+  avgs <- filter_class$get_group_averages()
+  expect_equal(class(avgs), c("data.table", "data.frame"))
+})
