@@ -210,7 +210,7 @@ head(qc_summary(data_filtered)[order(compounds), ])
 
 You can visualize filtering efforts with a tree map using the filtering summary obtained from `qc_summary()` and the packages `ggplot2` and `treemapify`.
 
-First we need to determine the number of ions for each ion status in the summary table. You can report the count, or further calculate the percent of ions in each group. We have done this in the code chunk below, where we have used `data.table` syntax as the `qc_summary()` returns a `data.table` object. If you are not familar with the package data.table, check out their resources on [gitlab](https://rdatatable.gitlab.io/data.table/).
+First we need to determine the number of ions for each ion status in the summary table. You can report the count, however we need to calculate the percent of ions in each group. We have done this in the code chunk below, where we have used `data.table` syntax as the `qc_summary()` returns a `data.table` object. If you are not familar with the package data.table, check out their resources on [gitlab](https://rdatatable.gitlab.io/data.table/).
 
 ```{r}
 library(ggplot2)
