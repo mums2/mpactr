@@ -29,53 +29,50 @@ test_that(" returns the correct fitler summary list", {
   expect_equal(length(mispicked_summary$passed_ions), 1233)
 })
 
-test_that("similar_ions returns error if check_mismatched_peaks has not been called", {
+test_that("get_similar_ions returns error if check_mismatched_peaks has not been called", {
   data <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                       test_path("exttestdata", "102623_metadata_correct.csv"))
   
-  expect_error(similar_ions(data), "The mispicked filter has not yet been")
+  expect_error(get_similar_ions(data), "The mispicked filter has not yet been")
 })
 
-test_that("similar_ions correctly returns the check_mismatched_peaks list", {
+test_that("get_similar_ions correctly returns the check_mismatched_peaks list", {
   data <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                       test_path("exttestdata", "102623_metadata_correct.csv"))
   
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
-  mispicked_groups <- similar_ions(data_mpactr)
+  mispicked_groups <- get_similar_ions(data_mpactr)
   
   expect_equal(class(mispicked_groups), c("data.table", "data.frame"))
   expect_equal(length(mispicked_groups), 2)
   expect_equal(names(mispicked_groups), c("main_ion", "similar_ions"))
 })
 
-test_that("group_averages calculates a group table if fitler blank hasn't been run", {
+test_that("get_group_averages calculates a group table if fitler blank hasn't been run", {
   data <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                       test_path("exttestdata", "102623_metadata_correct.csv"))
   
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE)
   
-  avgs <- group_averages(data_mpactr)
+  avgs <- get_group_averages(data_mpactr)
   expect_equal(class(avgs), c("data.table", "data.frame"))
 })
 
 
-test_that("cv_values returns the cv table if fitler cv has been run", {
+test_that("get_cv_data returns the cv table if fitler cv has been run", {
   data <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                       test_path("exttestdata", "102623_metadata_correct.csv"))
   
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE) |>
-    filter_group(group_to_remove = "Blanks") 
-    
-  data_mpactr$get_cv()
-  data_mpactr$logger[["cv_values"]]
+    filter_group(group_to_remove = "Blanks")
   
-  expect_error(cv_values(data_mpactr), "The CV filter has not yet")
+  expect_error(get_cv_data(data_mpactr), "The cv filter has not yet")
   
   data_mpactr |>
     filter_cv(cv_param = "median")
   
-  cv <- cv_values(data_mpactr)
+  cv <- get_cv_data(data_mpactr)
 
   expect_equal(class(cv), c("data.table", "data.frame"))
 })
