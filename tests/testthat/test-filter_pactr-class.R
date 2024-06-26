@@ -105,8 +105,9 @@ test_that("get_cv returns the cv filter has been applied", {
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
-  
-  expect_error(filter_class$get_cv(), "The CV filter has not yet")
+  # filter_class$get_cv()
+
+  expect_error(filter_class$get_cv(), "The cv filter has not yet")
   
   filter_class$cv_filter(cv_threshold = 0.2, cv_params = c("mean"))
   

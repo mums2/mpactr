@@ -19,14 +19,14 @@
 #' mispicked_summary <- filter_summary(data_filter, filter = "mispicked")
 #' mispicked_summary
 #'
-filter_summary <- function(mpactr_object, filter) {
-    return(mpactr_object$get_log(filter = filter))
+filter_summary <- function(mpactr_object, filter, group = NULL) {
+    return(mpactr_object$get_log(filter = filter, group = group))
 }
 
 #' Get similar ion groups.
 #'
 #' @description 
-#' `similar_ions()` is a wrapper function to return similar ion groups determined with the [filter_mispicked_ions()]. 
+#' `get_similar_ions()` is a wrapper function to return similar ion groups determined with the [filter_mispicked_ions()].
 #'
 #' @param mpactr_object The mpactr object that is created by calling the import_data() function.
 #'
@@ -39,17 +39,17 @@ filter_summary <- function(mpactr_object, filter) {
 #'
 #' data_filter <- filter_mispicked_ions(data)
 #'
-#' mispicked_ion_groups <- similar_ions(data_filter)
+#' mispicked_ion_groups <- get_similar_ions(data_filter)
 #' mispicked_ion_groups
 #'
-similar_ions <- function(mpactr_object) {
+get_similar_ions <- function(mpactr_object) {
     return(mpactr_object$get_mispicked_ions())
 }
 
 #' Get groups averages.
 #'
 #' @description 
-#' `group_averages()` is a wrapper function to return group averages calculated with [filter_group()]. 
+#' `get_group_averages()` is a wrapper function to return group averages calculated with [filter_group()].
 #'
 #' @param mpactr_object The mpactr object that is created by calling the import_data() function.
 #'
@@ -62,17 +62,17 @@ similar_ions <- function(mpactr_object) {
 #'
 #' data_filter <- filter_group(data, group_to_remove = "Blanks")
 #'
-#' group_averages <- group_averages(data_filter)
+#' group_averages <- get_group_averages(data_filter)
 #' head(group_averages)
 #'
-group_averages <- function(mpactr_object) {
+get_group_averages <- function(mpactr_object) {
     return(mpactr_object$get_group_averages())
 }
 
 #' Get CV values.
 #'
 #' @description 
-#' `cv_values()` is a wrapper function to return cv (coefficient of variation) calculated with [filter_cv()]. 
+#' `get_cv_data()` is a wrapper function to return cv (coefficient of variation) calculated with [filter_cv()].
 #'
 #' @param mpactr_object The mpactr object that is created by calling the import_data() function.
 #'
@@ -87,9 +87,9 @@ group_averages <- function(mpactr_object) {
 #'                               cv_threshold = 0.01,
 #'                               cv_param = "median")
 #'
-#' cv <- cv_values(data_filter)
+#' cv <- get_cv_data(data_filter)
 #' head(cv_values)
 #'
-cv_values <- function(mpactr_object) {
+get_cv_data <- function(mpactr_object) {
     return(mpactr_object$get_cv())
 }
