@@ -59,14 +59,23 @@ test_that("group_averages calculates a group table if fitler blank hasn't been r
   expect_equal(class(avgs), c("data.table", "data.frame"))
 })
 
-test_that("group_averages returns the group table if fitler blank has been run", {
+
+test_that("cv_values returns the cv table if fitler cv has been run", {
   data <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                       test_path("exttestdata", "102623_metadata_correct.csv"))
   
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE) |>
     filter_group(group_to_remove = "Blanks") 
+    
+  data_mpactr$get_cv()
+  data_mpactr$logger[["cv_values"]]
   
-  avgs <- group_averages(data_mpactr)
+  expect_error(cv_values(data_mpactr), "The CV filter has not yet")
+  
+  data_mpactr |>
+    filter_cv(cv_param = "median")
+  
+  cv <- cv_values(data_mpactr)
 
-  expect_equal(class(avgs), c("data.table", "data.frame"))
+  expect_equal(class(cv), c("data.table", "data.frame"))
 })

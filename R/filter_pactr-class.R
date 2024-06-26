@@ -40,6 +40,13 @@ filter_pactr <- R6Class("filter_pactr", public = list(
     }
     
     return(self$logger[["group_filter-group_stats"]])
+  },
+  get_cv = function() {
+    if (!exists("cv_values", self$logger)) {
+      cli::cli_abort("The cv filter has not yet been applied to the data - run filter_cv() first.")
+    }
+    
+    return(self$logger$cv_values)
   }
   )
 )

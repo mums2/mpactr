@@ -49,11 +49,11 @@ similar_ions <- function(mpactr_object) {
 #' Get groups averages.
 #'
 #' @description 
-#' `group_averages()` is a wrapper function to return group averages for calculated with [filter_group()]. 
+#' `group_averages()` is a wrapper function to return group averages calculated with [filter_group()]. 
 #'
 #' @param mpactr_object The mpactr object that is created by calling the import_data() function.
 #'
-#' @return a `data.table` retporting the average and relative standard deviation across biological groups and techincal replicates within each group].
+#' @return a `data.table` retporting the average and relative standard deviation across biological groups and techincal replicates within each group.
 #' @export 
 #'
 #' @examples 
@@ -67,4 +67,29 @@ similar_ions <- function(mpactr_object) {
 #'
 group_averages <- function(mpactr_object) {
     return(mpactr_object$get_group_averages())
+}
+
+#' Get CV values.
+#'
+#' @description 
+#' `cv_values()` is a wrapper function to return cv (coefficient of variation) calculated with [filter_cv()]. 
+#'
+#' @param mpactr_object The mpactr object that is created by calling the import_data() function.
+#'
+#' @return a `data.table` retporting the mean and median coefficient of variation for each input ion.
+#' @export 
+#'
+#' @examples 
+#' data <- import_data(example("coculture_peak_table.csv"),
+#'                     example("metadata.csv"))
+#'
+#' data_filter <- filter_cv(data,
+#'                               cv_threshold = 0.01,
+#'                               cv_param = "median")
+#'
+#' cv <- cv_values(data_filter)
+#' head(cv_values)
+#'
+cv_values <- function(mpactr_object) {
+    return(mpactr_object$get_cv())
 }

@@ -157,6 +157,8 @@ filter_pactr$set("public", "cv_filter", function(cv_threshold, cv_params) {
     self$mpactr_data$get_meta_data(), on = .(sample = Injection)][
       , .(cv = rsd(intensity)), by = .(Compound, Biological_Group, Sample_Code)][
         , .(mean_cv = mean(cv, na.rm = TRUE), median_cv = median(cv, na.rm = TRUE)), by = .(Compound)]
+  
+  self$logger[["cv_values"]] <- cv
 
     if (cv_params == "mean") {
       failed_ions <- cv[mean_cv > cv_threshold, Compound]
