@@ -4,7 +4,7 @@
 \alias{filter_summary}
 \title{Return the summary for a single mpactR filter.}
 \usage{
-filter_summary(mpactr_object, filter)
+filter_summary(mpactr_object, filter, group = NULL)
 }
 \arguments{
 \item{mpactr_object}{The mpactr object that is created by calling the import_data() function.}
