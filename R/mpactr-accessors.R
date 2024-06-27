@@ -37,3 +37,23 @@ get_peak_table <- function(mpactr_object) {
 get_meta_data <- function(mpactr_object) {
   return(data.table::copy(mpactr_object$mpactr_data$get_meta_data()))
 }
+
+#' Return the input peak table from mpactr object.
+#'
+#' @description 
+#' `get_raw_data` a wrapper function to return the meta data object of the given mpactr object. 
+#'
+#' @param mpactr_object The mpactr object that is created by calling the import_data() function.
+#'
+#' @return a `data.table`
+#' @export 
+#'
+#' @examples 
+#' data <- import_data(example("coculture_peak_table.csv"),
+#'                     example("metadata.csv"))
+#'
+#' raw_data <- get_raw_data(data)
+#'
+get_raw_data <- function(mpactr_object) {
+  return(data.table::copy(mpactr_object$mpactr_data$get_raw_data()))
+}

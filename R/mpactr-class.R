@@ -15,5 +15,6 @@ mpactr <- R6Class("mpactr", public = list(
 ),
   private = list(
     peak_table = NA,
-    meta_data = NA
+    meta_data = NA,
+    raw_peak_table = NA
 ))
