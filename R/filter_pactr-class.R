@@ -6,6 +6,9 @@ filter_pactr <- R6Class("filter_pactr", public = list(
     self$logger <- new.env(hash = TRUE)
     self$logger[["list_of_summaries"]] <- list()
   },
+  print = function() {
+    print(self$mpactr_data$get_peak_table())
+  },
   get_log = function(filter, group = NULL) {
 
     if(!(filter %in% c("mispicked", "group", "replicability", "insource"))) {
@@ -56,9 +59,3 @@ filter_pactr <- R6Class("filter_pactr", public = list(
   }
   )
 )
-
-#' @export
-print.filter_pactr <- function(x, ...)
-{
-  return(x$mpactr_data$get_peak_table())
-}
