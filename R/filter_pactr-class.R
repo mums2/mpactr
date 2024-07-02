@@ -40,14 +40,21 @@ filter_pactr <- R6Class("filter_pactr", public = list(
     return(similar_ions)
   },
   get_group_averages = function() {
-    # if the group filter hasn't been run, group stats will 
-    # be calculated using the current data in the mpactr object
-    if(!exists("group_filter-group_stats", self$logger)) {
-      self$filter_blank()
-      return(self$logger[["group_filter-group_stats"]])
-    }
+    # return averages and variations for all ions in filtered table
+    b <- data.table::melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
+    "sample", value.name = "intensity", variable.factor = FALSE)[
+    data.table(self$mpactr_data$get_meta_data()), on = .(sample = Injection)][
+    , .(average = mean(intensity), BiolRSD = rsd(intensity), Bioln = length(intensity)), by = .(Compound, Biological_Group)]
+
+    t <- data.table::melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)[
+      data.table(self$mpactr_data$get_meta_data()), on = .(sample = Injection)][
+      , .(sd = rsd(intensity), n = length(intensity)), by = .(Compound, Biological_Group, Sample_Code)][
+      , .(techRSD = mean(sd), techn = mean(n)), by = .(Compound, Biological_Group)]
+
+    group_stats <- b[t, on = .(Compound, Biological_Group)]
+    setorder(group_stats, Compound, Biological_Group)
     
-    return(self$logger[["group_filter-group_stats"]])
+    return(group_stats)
   },
   get_cv = function() {
     # if(self$logger$cv_values == NULL)

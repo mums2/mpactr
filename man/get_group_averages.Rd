@@ -13,7 +13,7 @@ get_group_averages(mpactr_object)
 a \code{data.table} retporting the average and relative standard deviation across biological groups and techincal replicates within each group.
 }
 \description{
-\code{get_group_averages()} is a wrapper function to return group averages calculated with \code{\link[=filter_group]{filter_group()}}.
+\code{get_group_averages()} is a wrapper function to return group averages for the filtered peak table.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),

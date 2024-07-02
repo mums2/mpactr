@@ -49,7 +49,7 @@ get_similar_ions <- function(mpactr_object) {
 #' Get groups averages.
 #'
 #' @description 
-#' `get_group_averages()` is a wrapper function to return group averages calculated with [filter_group()].
+#' `get_group_averages()` is a wrapper function to return group averages for the filtered peak table.
 #'
 #' @param mpactr_object The mpactr object that is created by calling the import_data() function.
 #'

@@ -67,7 +67,7 @@ test_that("get_mispicked_ions correctly returns the check_mismatched_peaks list"
 })
 
 
-test_that("get_group_averages calculates a group table if fitler blank hasn't been run", {
+test_that("get_group_averages calculates a group table", {
   mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                              test_path("exttestdata", "102623_metadata_correct.csv"))
   mpactr_class$setup()
@@ -78,9 +78,8 @@ test_that("get_group_averages calculates a group table if fitler blank hasn't be
   
   avgs <- filter_class$get_group_averages()
   expect_equal(class(avgs), c("data.table", "data.frame"))
-})
-
-test_that("get_group_averages returns the group table if fitler blank has been run", {
+  expect_equal(nrow(avgs), (1233 * 6))
+  
   mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                              test_path("exttestdata", "102623_metadata_correct.csv"))
   mpactr_class$setup()
@@ -90,9 +89,11 @@ test_that("get_group_averages returns the group table if fitler blank has been r
     TRUE)
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
+  filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
   
   avgs <- filter_class$get_group_averages()
   expect_equal(class(avgs), c("data.table", "data.frame"))
+  expect_equal(nrow(avgs), (484 * 6))
 })
 
 test_that("get_cv returns the cv filter has been applied", {

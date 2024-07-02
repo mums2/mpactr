@@ -49,7 +49,7 @@ test_that("get_similar_ions correctly returns the check_mismatched_peaks list", 
   expect_equal(names(mispicked_groups), c("main_ion", "similar_ions"))
 })
 
-test_that("get_group_averages calculates a group table if fitler blank hasn't been run", {
+test_that("get_group_averages calculates a group table", {
   data <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                       test_path("exttestdata", "102623_metadata_correct.csv"))
   
@@ -57,6 +57,7 @@ test_that("get_group_averages calculates a group table if fitler blank hasn't be
   
   avgs <- get_group_averages(data_mpactr)
   expect_equal(class(avgs), c("data.table", "data.frame"))
+  expect_equal(nrow(avgs), (1233 * 6))
 })
 
 
