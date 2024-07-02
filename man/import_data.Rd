@@ -4,12 +4,12 @@
 \alias{import_data}
 \title{Import data into an mpactr object.}
 \usage{
-import_data(peak_table_file_path, meta_data_file_path)
+import_data(peak_table, meta_data)
 }
 \arguments{
-\item{peak_table_file_path}{The file path to your feature table file.}
+\item{peak_table}{The file path to your feature table file or a or \code{data.frame}.}
 
-\item{meta_data_file_path}{The file path to your meta_data file.}
+\item{meta_data}{The file path to your meta_data file or \code{data.frame}.}
 }
 \value{
 an \code{mpactr_object}
@@ -25,5 +25,10 @@ Expected metadata table format.
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
                     example("metadata.csv"))
+
+peak_table <- read.csv(example("coculture_peak_table.csv"), skip = 2, check.names = FALSE)
+meta_data <- read.csv(example("metadata.csv"))
+data <- import_data(peak_table,
+                      meta_data)
 
 }
