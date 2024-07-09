@@ -121,13 +121,7 @@ data_rep <- filter_cv(data, cv_threshold = 0.2, cv_param = "median",
 In our example dataset, 256 ions were flagged as nonreproducible. These ions were removed, leaving 1047 ions in the feature table.
 
 ```{r}
-data_filtered <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv")) |>
-  filter_mispicked_ions() |>
-  filter_group(group_to_remove = "Blanks") |>
-  filter_cv(cv_param = "median")
-
-cv <- get_cv_data(data_filtered) %>%
+cv <- get_cv_data(data_rep) %>%
   pivot_longer(cols = c("mean_cv", "median_cv"), names_to = "param", values_to = "cv") %>%
   nest(.by = param) %>%
   mutate(data = map(data, arrange, cv),
