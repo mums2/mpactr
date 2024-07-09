@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 #| output: false
 # library(mpactR)
 devtools::load_all()
+library(tidyverse)
 ```
 
 ## Load data into R
@@ -44,9 +45,17 @@ data
 
 ## Accessing data in mpactr object
 
-You can extract the peak table or metadata at any point with `get_peak_table()` and `get_meta_data()` functions. Both functions will return a `data.table` object with the corresponding information.
+You can extract the peak table or metadata at any point with `get_raw_data()`, `get_peak_table()` and `get_meta_data()` functions. Both functions will return a `data.table` object with the corresponding information.
 
 ### Extract peak table
+
+To extract the raw input peak table with `get_raw_data()`:
+
+```{r}
+get_raw_data(data)[1:5, 1:8]
+```
+
+The raw peak table will not change as filters are applied to the data. If you want to extract the filtered peak table, use `get_peak_table()`:
 
 ```{r}
 get_peak_table(data)[1:5, 1:8]
@@ -85,7 +94,7 @@ data_mispicked <- filter_mispicked_ions(data, ringwin = 0.5,
 Each filter reports progress of filtering, here we can see that 1303 ions were present prior to checking for mispicked ions. 70 ions were found to be similar to another ion and following merging, 1233 ions remain.
 
 ```{r}
-head(similar_ions(data_mispicked))
+head(get_similar_ions(data_mispicked))
 ```
 
 #### Remove ions that are above a threhold in one biological sample group
@@ -105,17 +114,120 @@ In this example, 1303 ions were present prior to the group filter. 796 ions were
 Ions whose abundance are not consisent between technical replicates (*i.e.*, nonreproducible) may not be reliable for analysis and therefore should be removed from the feature table. Nonreproducible ions are identified by mean or median coefficient of variation (cv) with `filter_cv()`. 
 
 ```{r}
-data_rep <- filter_cv(data, cv_threshold = 0.2, cv_param = "median")
+data_rep <- filter_cv(data, cv_threshold = 0.2, cv_param = "median", 
+                      copy_object = TRUE)
 ```
 
 In our example dataset, 256 ions were flagged as nonreproducible. These ions were removed, leaving 1047 ions in the feature table.
+
+```{r}
+data_filtered <- import_data(example("coculture_peak_table.csv"),
+                    example("metadata.csv")) |>
+  filter_mispicked_ions() |>
+  filter_group(group_to_remove = "Blanks") |>
+  filter_cv(cv_param = "median")
+
+cv <- get_cv_data(data_filtered) %>%
+  pivot_longer(cols = c("mean_cv", "median_cv"), names_to = "param", values_to = "cv") %>%
+  nest(.by = param) %>%
+  mutate(data = map(data, arrange, cv),
+         data = map(data, mutate, index = 0:(length(cv)-1)),
+         data = map(data, mutate, index_scale = index * 100 / length(cv))) %>%
+  mutate(data = map(data, mutate, dist = cv - lag(cv)),
+         data = map(data, mutate, auc = dist * index_scale)) 
+
+cv_thresh_percent <- cv %>%
+  filter(param == "median_cv") %>%
+  unnest(cols = data) %>%
+  mutate(diff_cv_thresh = abs(cv - 0.2)) %>%
+  slice_min(diff_cv_thresh, n = 1) %>%
+  pull(index_scale)
+
+cv %>%
+  unnest(cols = data) %>%
+  mutate(param = factor(param, levels = c("mean_cv", "median_cv"), labels = c("mean", "median"))) %>%
+  ggplot() +
+  aes(x = cv, y = index_scale, group = param, color = param) +
+  geom_line(size = 2) +
+  geom_vline(xintercept = 0.2, color = "darkgrey", linetype = "dashed", size = 1) +
+  geom_hline(yintercept = cv_thresh_percent, color = "darkgrey", size = 1) +
+  labs(x = "CV", y = "Percentage of Features", param = "Statistic") +
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 20),
+    axis.text = element_text(size = 15),
+    legend.position = "inside",
+    legend.position.inside = c(.90, .08),
+    legend.title = element_blank(),
+    legend.text = element_text(size = 15)
+  )
+
+```
+
+```{r}
+#| include: false
+#| eval: false
+
+
+# Replicability statistics
+mean_n <- get_meta_data(data_rep) %>%
+  summarise(count = n_distinct(Injection) / n_distinct(Sample_Code)) %>%
+  pull()
+  
+stdev <- c(1, 0, 0 * (as.integer(mean_n) - 1))
+mod_stdev <- sd(stdev) / mean(stdev)
+
+mean_ord_med <- t$data[[2]] %>%
+    left_join(select(t$data[[1]], Compound, cv), by = "Compound") %>%
+    rename(cv_median = cv.x,
+           cv = cv.y) %>%
+    arrange(cv_median) %>%
+    mutate(param = "mead_ord_med") %>%
+    select(param, cv, everything())
+  
+cv2 <- t %>%
+  unnest(cols = data) %>%
+  bind_rows(mean_ord_med) %>%
+  nest(.by = param)
+  
+index_cv_mean <- function(x, df, sd) {
+  mean(df$index_scale[which(abs(df$cv - x - sd/200) < sd/200)])
+}
+
+s <- data.frame(val = 1:(mod_stdev*100)) %>%
+  mutate(pos = val/100,
+         meanavg = map_dbl(pos, index_cv_mean, df = cv2$data[[1]], sd = mod_stdev),
+         meanmed = map_dbl(pos, index_cv_mean, df = cv2$data[[3]], sd = mod_stdev),
+         skew = abs(meanmed - meanavg),
+         skew_sd = skew * mod_stdev/100
+         )
+
+sumskew <- s %>%
+  summarise(sum = sum(skew_sd, na.rm = TRUE)) %>%
+  pull(sum)        
+
+auc_groups <- t %>%
+  unnest(cols = data) %>%
+  summarise(auc = sum(auc, na.rm = TRUE), .by = param)
+  
+filter(auc_groups, param == "median_cv") %>% pull(auc)
+
+sumskew_n <- sumskew / ((filter(auc_groups, param == "median_cv") %>% pull(auc) + filter(auc_groups, param == "mean_cv") %>% pull(auc))/2)
+rep <- ((filter(auc_groups, param == "median_cv") %>% pull(auc) + filter(auc_groups, param == "mean_cv") %>% pull(auc))/2) / (mod_stdev*100)
+qualscore <- (1 - sumskew_n) * rep * 100
+
+paste0("Reproducibility: ", round(100*rep, 1), "% ", 
+       "Skewness: ", round(100*sumskew_n, 1), "% ",
+       "Overall: ", round(qualscore, 1), "%")
+```
 
 #### Remove insouce fragment ions
 
 Some ions produce fragments during the first ionization of tandem MS/MS, called insouce ions. This can result in ions from one compound being represented more than once in the feature table. If you would like to remove insource ions framgments, you can do so with mpactR's `filter_insource_ions()`. `filter_insource_ions()` conducts ion decovolution via retention time correlation matrices within MS1 scans. Highly correlated ion groups are determined by the `cluster_threshold` parameter and filtered to remvome the low mass features. The highest mass feature is identified as the likely parent ion and retained in the feature table. 
 
 ```{r}
-data_insource <- filter_insource_ions(data, cluster_threshold = 0.95)
+data_insource <- filter_insource_ions(data, cluster_threshold = 0.95,
+                                      copy_object = TRUE)
 ```
 
 71 ions were identified and removed during deconvolution of this dataset, leaving 1232 ions in the feature table. 
@@ -125,8 +237,8 @@ data_insource <- filter_insource_ions(data, cluster_threshold = 0.95)
 Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering nonrepoducible or insouce ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying nonreproducible and insource fragment ions.
 
 ```{r}
-data <- import_data(peak_table_file_path = example("coculture_peak_table.csv"),
-                    meta_data_file_path = example("metadata.csv"))
+data <- import_data(peak_table = example("coculture_peak_table.csv"),
+                    meta_data = example("metadata.csv"))
 
 data_filtered <- filter_mispicked_ions(data) |>
   filter_group(group_to_remove = "Blanks") |>
@@ -167,7 +279,7 @@ get_peak_table(data2)[ , 1:5]
 
 We recommend using the default `copy_object = FALSE` as this makes for an extremely fast and memory-efficient way to chain mpactR filters together (see **Chaining filters together** section); however, if you would like to run the filters individually with traditional R style objects, you can set `copy_object` to `TRUE` as shown in the filter examples. 
 
-If you are interested in the groups of similar ions flagged in this filter, you can use `similar_ions()`. This function returns a `data.table` report the main ion (the ion retained post-merging) and the ions similar to it.
+If you are interested in the groups of similar ions flagged in this filter, you can use `get_similar_ions()`. This function returns a `data.table` report the main ion (the ion retained post-merging) and the ions similar to it.
 
 ## Summary
 
