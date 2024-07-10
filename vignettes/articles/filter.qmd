@@ -120,23 +120,45 @@ data_rep <- filter_cv(data, cv_threshold = 0.2, cv_param = "median",
 
 In our example dataset, 256 ions were flagged as nonreproducible. These ions were removed, leaving 1047 ions in the feature table.
 
+If you would like to visualize how the CV threshold performed on your dataset, you can extract the CV calculations using mpactR's `get_cv_data()` function and caclulate the percentage of features for plotting. You can look at both mean and median cv as shown in the example below, or you can filter the data by the parameter of choice. 
+
 ```{r}
 cv <- get_cv_data(data_rep) %>%
   pivot_longer(cols = c("mean_cv", "median_cv"), names_to = "param", values_to = "cv") %>%
   nest(.by = param) %>%
   mutate(data = map(data, arrange, cv),
          data = map(data, mutate, index = 0:(length(cv)-1)),
-         data = map(data, mutate, index_scale = index * 100 / length(cv))) %>%
-  mutate(data = map(data, mutate, dist = cv - lag(cv)),
-         data = map(data, mutate, auc = dist * index_scale)) 
+         data = map(data, mutate, index_scale = index * 100 / length(cv))) 
+  
+head(cv)
+```
 
+The nested data are tibbles with the columns `r colnames(cv$data[[1]])`:
+
+```{r}
+#| echo: false
+
+head(cv$data[[1]])
+```
+
+There is one tibble for each parameter (either mean or median). We also want to calculate the percentage of features represented by the CV threshold.
+
+```{r}
 cv_thresh_percent <- cv %>%
   filter(param == "median_cv") %>%
   unnest(cols = data) %>%
   mutate(diff_cv_thresh = abs(cv - 0.2)) %>%
   slice_min(diff_cv_thresh, n = 1) %>%
   pull(index_scale)
+  
+cv_thresh_percent
+```
 
+
+Then we can plot percentage of features by CV:
+
+```{r}
+#| warning: false
 cv %>%
   unnest(cols = data) %>%
   mutate(param = factor(param, levels = c("mean_cv", "median_cv"), labels = c("mean", "median"))) %>%
@@ -158,10 +180,14 @@ cv %>%
 
 ```
 
+Here we can see that roughly 80% of features were below the CV threshold meaning 20% were removed at a CV theshold of 0.2.
+
 ```{r}
 #| include: false
 #| eval: false
-
+cv <- cv %>%
+  mutate(data = map(data, mutate, dist = cv - lag(cv)),
+         data = map(data, mutate, auc = dist * index_scale)) 
 
 # Replicability statistics
 mean_n <- get_meta_data(data_rep) %>%
