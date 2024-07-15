@@ -33,7 +33,7 @@ test_that("get_log returns the correct fitler summary list", {
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   
   mispicked_summary <- filter_class$get_log(filter = "mispicked")
   
@@ -57,7 +57,7 @@ test_that("get_mispicked_ions correctly returns the check_mismatched_peaks list"
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   
   mispicked_groups <- filter_class$get_mispicked_ions()
   
@@ -74,7 +74,7 @@ test_that("get_group_averages calculates a group table", {
   filter_class <- filter_pactr$new(mpactr_class)
   
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   
   avgs <- filter_class$get_group_averages()
   expect_equal(class(avgs), c("data.table", "data.frame"))
@@ -86,7 +86,7 @@ test_that("get_group_averages calculates a group table", {
   filter_class <- filter_pactr$new(mpactr_class)
   
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
@@ -102,7 +102,7 @@ test_that("get_cv returns the cv filter has been applied", {
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)

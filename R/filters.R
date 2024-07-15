@@ -27,17 +27,18 @@
 #'                               isowin = 0.01,
 #'                               trwin = 0.005,
 #'                               max_iso_shift = 3,
-#'                               merge_peaks = TRUE)
+#'                               merge_peaks = TRUE, 
+#'                               merge_method = "sum")
 #'
 filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
-                                merge_peaks = TRUE, copy_object = FALSE)
+                                merge_peaks = TRUE, merge_method = "sum", copy_object = FALSE)
 {
   if(copy_object)
   {
     mpactr_object <- clone(mpactr_object)
   }
   mpactr_object$check_mismatched_peaks(ringwin = ringwin, isowin = isowin, trwin = trwin, max_iso_shift = max_iso_shift,
-                                merge_peaks = merge_peaks)
+                                merge_peaks = merge_peaks, merge_method = "sum")
   return(mpactr_object)
 }
 

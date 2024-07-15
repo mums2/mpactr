@@ -1,5 +1,5 @@
 ####  filter 1: mismatched peaks    ###
-filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, trwin, max_iso_shift, merge_peaks) {
+filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, trwin, max_iso_shift, merge_peaks, merge_method) {
   cli::cli_alert_info("Checking {nrow(self$mpactr_data$get_peak_table())} peaks for mispicked peaks.")
 
   ion_filter_list <- list()
@@ -54,9 +54,9 @@ filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, t
   self$logger[["check_mismatched_peaks"]] <- ion_filter_list
 
   if (isTRUE(merge_peaks)) {
-    cli::cli_alert_info("Argument merge_peaks is: {merge_peaks}. Merging mispicked peaks.")
+    cli::cli_alert_info("Argument merge_peaks is: {merge_peaks}. Merging mispicked peaks with method {merge_method}.")
     
-    private$merge_ions(ion_filter_list)
+    private$merge_ions(ion_filter_list, merge_method)
   }
   else{
     cli::cli_alert_warning("Argument merge_peaks is: {merge_peaks}. Mispicked peaks will not be merged.")
@@ -68,14 +68,22 @@ filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, t
   self$logger$list_of_summaries$mispicked$summarize()
 })
 
-filter_pactr$set("private", "merge_ions", function(ion_filter_list) {
-  dat <- melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)
-
-  for (ion in names(ion_filter_list$merge_groups)) {
-    dat <- dat[Compound %in% c(ion, ion_filter_list$merge_groups[[ion]]), intensity := sum(intensity), by = .(sample)]
+filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
+  
+  if (is.null(method)) {
+    cli::cli_abort("No method has been supplied for merging peaks. method must be one of: sum")
   }
-  self$mpactr_data$set_peak_table(dcast(dat, Compound + mz + kmd + rt ~ sample, value.var = "intensity")[
-    (!Compound %in% ion_filter_list$cut_ions),])
+  
+  if (method == "sum") {
+      dat <- melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)
+
+    for (ion in names(ion_filter_list$merge_groups)) {
+      dat <- dat[Compound %in% c(ion, ion_filter_list$merge_groups[[ion]]), intensity := sum(intensity), by = .(sample)]
+    }
+    self$mpactr_data$set_peak_table(dcast(dat, Compound + mz + kmd + rt ~ sample, value.var = "intensity")[
+      (!Compound %in% ion_filter_list$cut_ions),])
+  }
+
 })
 
 ####  filter 2: group filter    ###

@@ -5,7 +5,7 @@ test_that("test that check_mistmatched_peaks works properly with filter_pactr-cl
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
 
   expected_cut_ions <- read_csv(test_path("exttestdata","cut_ions.csv"), col_names = c("V1"), show_col_types = FALSE)
   expected_cut_ions <- as.integer(expected_cut_ions$V1)
@@ -27,7 +27,7 @@ test_that("blank filter works correctly", {
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   filter_class$filter_blank()
 
 test_path("exttestdata","102623_peaktable_coculture_simple_groupaverages.csv")
@@ -49,7 +49,7 @@ test_that("parse_ions_by_group flags the correct ions", {
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
 
@@ -80,7 +80,7 @@ test_that("apply_group_filter removes the correct ions", {
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
 
@@ -102,7 +102,7 @@ test_that("cv_filter filters out data properly", {
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
@@ -126,7 +126,7 @@ test_that("filter_inscource_ions filters out data properly", {
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)

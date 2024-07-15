@@ -3,10 +3,10 @@ test_that("filter mismatch ions wrapper works as expected when merge_peaks is TR
                       test_path("exttestdata", "102623_metadata_correct.csv"))
 
   data_mpactr_copy <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
-                                      merge_peaks = TRUE, copy_object = TRUE)
+                                      merge_peaks = TRUE, merge_method = "sum", copy_object = TRUE)
 
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
-                                      merge_peaks = TRUE, copy_object = FALSE)
+                                      merge_peaks = TRUE, merge_method = "sum", copy_object = FALSE)
 
   expected_cut_ions <- read_csv(test_path("exttestdata", "cut_ions.csv"), col_names = c("V1"), show_col_types = FALSE)
   expected_cut_ions <- as.integer(expected_cut_ions$V1)
@@ -24,7 +24,7 @@ test_that("filter mismatch ions wrapper works as expected when merge_peaks is FA
                       test_path("exttestdata", "102623_metadata_correct.csv"))
 
    data_mpactr_copy <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
-                                        merge_peaks = FALSE, copy_object = TRUE)
+                                        merge_peaks = FALSE, merge_method = "sum", copy_object = TRUE)
 
    data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
                                         merge_peaks = FALSE)
@@ -37,7 +37,7 @@ test_that("group filter wrapper works as expected", {
   data <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
                       test_path("exttestdata", "102623_metadata_correct.csv"))
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", FALSE)
   expect_equal(nrow(data_mpactr$mpactr_data$get_peak_table()), 1233)
 
@@ -62,7 +62,7 @@ test_that("filter cv filter wrapper works as expected with cv_params mean", {
                       test_path("exttestdata", "102623_metadata_correct.csv"))
 
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
   data_mpactr_copy <- filter_cv(data_mpactr, 0.2 , "mean", copy_object = TRUE)
   data_mpactr <- filter_cv(data_mpactr, 0.2 , "mean")
@@ -77,7 +77,7 @@ test_that("filter cv filter wrapper works as expected with cv_params median", {
                       test_path("exttestdata", "102623_metadata_correct.csv"))
 
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
 
   data_mpactr_copy <- filter_cv(data_mpactr, 0.2 , "median", copy_object = TRUE)
@@ -94,7 +94,7 @@ test_that("filter insource ions wrapper works as expected", {
                       test_path("exttestdata", "102623_metadata_correct.csv"))
 
   data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-    TRUE)
+    TRUE, merge_method = "sum")
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
 
   data_mpactr_copy <- filter_insource_ions(data_mpactr, cluster_threshold = 0.95, copy_object = TRUE)
