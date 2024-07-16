@@ -14,6 +14,7 @@
 #' @param trwin A `numeric` denoting the retention time threhold for assessing if ions should be merged. Defulat = 0.005.
 #' @param max_iso_shift A `numeric`. Default = 3.
 #' @param merge_peaks A `logical` to determine if peaks found to belong to the same ion should be merged in the feature table.
+#' @param merge_method If merege_peaks is TRUE, a method for how similar peaks should be merged. Can be one of "sum".
 #' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 #' @return an `mpactr_object`
 #' @export 
