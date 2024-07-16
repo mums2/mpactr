@@ -4,12 +4,12 @@
 \alias{filter_cv}
 \title{Filter Non-reproducible ions}
 \usage{
-filter_cv(mpactr_object, cv_threshold = 0.2, cv_param, copy_object = FALSE)
+filter_cv(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE)
 }
 \arguments{
 \item{mpactr_object}{An \code{mpactr_object}. See \code{\link[=import_data]{import_data()}}.}
 
-\item{cv_threshold}{Coefficient of variation threshold. Default = 0.2.}
+\item{cv_threshold}{Coefficient of variation threshold.}
 
 \item{cv_param}{Coefficient of variation (CV) to use for filtering. Options are "mean" or "median", corresponding to mean and median CV, respectively.}
 

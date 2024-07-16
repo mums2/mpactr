@@ -94,7 +94,7 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 #'
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
-#' @param cv_threshold Coefficient of variation threshold. Default = 0.2.
+#' @param cv_threshold Coefficient of variation threshold.
 #' @param cv_param Coefficient of variation (CV) to use for filtering. Options are "mean" or "median", corresponding to mean and median CV, respectively. 
 #' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 #'
@@ -114,7 +114,7 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 #'                               cv_threshold = 0.01,
 #'                               cv_param = "median")
 #'
-filter_cv <- function(mpactr_object, cv_threshold = 0.2, cv_param, copy_object = FALSE) {
+filter_cv <- function(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE) {
    if(copy_object)
   {
     mpactr_object <- clone(mpactr_object)

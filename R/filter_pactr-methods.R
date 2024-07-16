@@ -146,7 +146,10 @@ filter_pactr$set("public", "apply_group_filter", function(group, remove_ions = T
 })
 
 ####  filter 3: cv filter    ###
-filter_pactr$set("public", "cv_filter", function(cv_threshold, cv_params) {
+filter_pactr$set("public", "cv_filter", function(cv_threshold = NULL, cv_params) {
+  if (is.null(cv_threshold)) {
+    cli::cli_abort("{.var cv_threshold} must be supplied.")
+  }
   ## abort if an incorrect cv_params argument is supplied.
   if (!(cv_params %in% c("mean", "median"))) {
     cli::cli_abort("{.var cv_params} must be one of mean or median.")
