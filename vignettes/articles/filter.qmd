@@ -31,8 +31,8 @@ mpactR requires 2 files as imput: a feature table and metadata file. Both are ex
 To import these data into R, use the mpactR function `import_data()`, which has the arguments: `peak_table_file_path` and `meta_data_file_path`
 
 ```{r}
-data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+data <- import_data(example("cultures_peak_table.csv"),
+                    example("cultures_metadata.csv"))
 ```
 
 This will create an R6 class object, which will store both the peak table and metadata. Note: you do not need to use `example()` if you are using your own files. This is a package function that allows access to internal package data. If you simply want to play around with the packge using example data, you can follow run the `import_data` function as shown above.
@@ -257,8 +257,8 @@ data_insource <- filter_insource_ions(data, cluster_threshold = 0.95,
 Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering nonrepoducible or insouce ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying nonreproducible and insource fragment ions.
 
 ```{r}
-data <- import_data(peak_table = example("coculture_peak_table.csv"),
-                    meta_data = example("metadata.csv"))
+data <- import_data(example("cultures_peak_table.csv"),
+                    example("cultures_metadata.csv"))
 
 data_filtered <- filter_mispicked_ions(data) |>
   filter_group(group_to_remove = "Blanks") |>
@@ -274,8 +274,8 @@ Note: mpactR is built on an R6 class-system, meaning it opperates on reference s
 Where the raw data object has 1303 ions in the feature table:
 
 ```{r}
-data2 <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+data2 <- import_data(example("cultures_peak_table.csv"),
+                    example("cultures_metadata.csv"))
 
 get_peak_table(data2)[ , 1:5]
 ```
