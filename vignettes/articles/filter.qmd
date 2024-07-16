@@ -88,10 +88,13 @@ Ions in the feature table are flagged as similar based on retention time and mas
 data_mispicked <- filter_mispicked_ions(data, ringwin = 0.5, 
                                         isowin = 0.01, trwin = 0.005, 
                                         max_iso_shift = 3, merge_peaks = TRUE,
+                                        merge_method = "sum",
                                         copy_object = TRUE)
 ```
 
-Each filter reports progress of filtering, here we can see that 1303 ions were present prior to checking for mispicked ions. 70 ions were found to be similar to another ion and following merging, 1233 ions remain.
+Each filter reports progress of filtering, here we can see that `r length(filter_summary(data_mispicked, "mispicked")$failed_ions) + length(filter_summary(data_mispicked, "mispicked")$passed_ions)`ions were present prior to checking for mispicked ions. `r length(filter_summary(data_mispicked, "mispicked")$failed_ions)` ions were found to be similar to another ion and following merging, `r (length(filter_summary(data_mispicked, "mispicked")$failed_ions) + length(filter_summary(data_mispicked, "mispicked")$passed_ions)) - length(filter_summary(data_mispicked, "mispicked")$failed_ions)` ions remain.
+
+You can look at which ions were found to similar to one another with the `get_similar_ions()` function.
 
 ```{r}
 head(get_similar_ions(data_mispicked))
@@ -99,15 +102,15 @@ head(get_similar_ions(data_mispicked))
 
 #### Remove ions that are above a threhold in one biological sample group
 
-Removing solvent blank impurities is important for correcting for between-sample carryover and contamination in experimental samples. You can identify and remove these ions with mpactR's `filter_group()` function. `filter_group()` identifies ions above a relative abundance threshold (`group_threshold`) a specific group (`group_to_remove`). To remove solvent blank impurities set `group_to_remove` to the `Biological_Group` in your metadata file which corresponds to your solvent blank samples. 
+Removing solvent blank impurities is important for correcting for between-sample carryover and contamination in experimental samples. You can identify and remove these ions with mpactR's `filter_group()` function. `filter_group()` identifies ions above a relative abundance threshold (`group_threshold`) a specific group (`group_to_remove`). To remove solvent blank impurities set `group_to_remove` to the `Biological_Group` in your metadata file which corresponds to your solvent blank samples, here "Solvent_Blank". 
 
 ```{r}
 data_blank <- filter_group(data, group_threshold = 0.01,
-                            group_to_remove = "Blanks", remove_ions = TRUE,
+                            group_to_remove = "Solvent_Blank", remove_ions = TRUE,
                             copy_object = TRUE)
 ```
 
-In this example, 1303 ions were present prior to the group filter. 796 ions were found to be above the relative abundance threshold of 0.01 in "Blanks" samples, leaving 507 ions in the peak table.
+In this example, `r length(filter_summary(data_blank, "group", "Solvent_Blank")$failed_ions) + length(filter_summary(data_blank, "group", "Solvent_Blank")$passed_ions)` ions were present prior to the group filter. `r length(filter_summary(data_blank, "group", "Solvent_Blank")$failed_ions)` ions were found to be above the relative abundance threshold of 0.01 in "Solvent_Blank" samples, leaving `r (length(filter_summary(data_blank, "group", "Solvent_Blank")$failed_ions) + length(filter_summary(data_blank, "group", "Solvent_Blank")$passed_ions)) - length(filter_summary(data_blank, "group", "Solvent_Blank")$failed_ions)`  ions in the peak table.
 
 #### Remove non-reproducible ions
 
@@ -118,7 +121,7 @@ data_rep <- filter_cv(data, cv_threshold = 0.2, cv_param = "median",
                       copy_object = TRUE)
 ```
 
-In our example dataset, 256 ions were flagged as nonreproducible. These ions were removed, leaving 1047 ions in the feature table.
+In our example dataset, `r length(filter_summary(data_rep, "replicability")$failed_ions)` ions were flagged as nonreproducible. These ions were removed, leaving `r (length(filter_summary(data_rep, "replicability")$failed_ions) + length(filter_summary(data_rep, "replicability")$passed_ions)) - length(filter_summary(data_rep, "replicability")$failed_ions)` ions in the feature table.
 
 If you would like to visualize how the CV threshold performed on your dataset, you can extract the CV calculations using mpactR's `get_cv_data()` function and caclulate the percentage of features for plotting. You can look at both mean and median cv as shown in the example below, or you can filter the data by the parameter of choice. 
 
@@ -250,19 +253,20 @@ data_insource <- filter_insource_ions(data, cluster_threshold = 0.95,
                                       copy_object = TRUE)
 ```
 
-71 ions were identified and removed during deconvolution of this dataset, leaving 1232 ions in the feature table. 
+`r length(filter_summary(data_insource, "insource")$failed_ions)` ions were identified and removed during deconvolution of this dataset, leaving `r (length(filter_summary(data_insource, "insource")$failed_ions) + length(filter_summary(data_insource, "insource")$passed_ions)) - length(filter_summary(data_insource, "insource")$failed_ions)` ions in the feature table. 
 
 #### Chaining filters together
 
-Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering nonrepoducible or insouce ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying nonreproducible and insource fragment ions.
+Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering nonrepoducible or insouce ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying nonreproducible and insource fragment ions. Here we also demonstrate the removal of media blank components with the `filter_group()` function.
 
 ```{r}
 data <- import_data(example("cultures_peak_table.csv"),
                     example("cultures_metadata.csv"))
 
-data_filtered <- filter_mispicked_ions(data) |>
-  filter_group(group_to_remove = "Blanks") |>
-  filter_cv(cv_param = "median")
+data_filtered <- filter_mispicked_ions(data, merge_method = "sum") |>
+  filter_group(group_to_remove = "Solvent_Blank") |>
+  filter_group(group_to_remove = "Media") |>
+  filter_cv(cv_threshold = 0.2, cv_param = "median")
 
 ```
 
@@ -286,6 +290,7 @@ Running the `filter_mispicked_ions` filter, with default setting `copy_object = 
 data2_mispicked <- filter_mispicked_ions(data2, ringwin = 0.5, 
                                         isowin = 0.01, trwin = 0.005, 
                                         max_iso_shift = 3, merge_peaks = TRUE,
+                                        merge_method = "sum",
                                         copy_object = FALSE)
 
 get_peak_table(data2_mispicked)[ , 1:5]
@@ -329,6 +334,14 @@ If you set `filter` to a filter name that you did not apply to your data, a warn
 #| error: true
 filter_summary(data_filtered, filter = "insource")
 ```
+
+If you want to retrieve the filter summary for the group filter, you must also supply the group name with the `group` argument:
+
+```{r}
+filter_summary(data_filtered, filter = "group", group = "Solvent_Blank")
+```
+
+`group` must always be supplied for this filter, even if only one group filter has been applied.
 
 #### View passing and failed ions for all input ions
 
