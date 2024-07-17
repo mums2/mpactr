@@ -16,6 +16,7 @@ reference:
   - get_meta_data
   - get_raw_data
   - get_group_averages
+  - get_cv_data
     
 - title: Filter Data
   contents:
