@@ -1,13 +1,16 @@
 # TODO: Compare CV filter (with, without solvent blanks, solvent and media blanks as 1 group - need data)
 
-# TODO: workflow article/vignette - ARM
-# TODO: CV threshold qc plot - ARM
+# TODO: workflow article/vignette - ARM (Done)
+# TODO: CV threshold qc plot - ARM (Done)
 
 # TODO: Multiple group filter reporting - GDJ (Done)
 # TODO: Add Copy functionality for functions - GDJ (Done)
 # TODO: think about custom print for filter_pactr class - GDJ (Done)
 
-# TODO: review all documentation - clear with Marcy
+
+# TODO: review all methods - Done
+# TODO: review all documentation - in progress
+# TODO: finalize example and tutorial dataset
 # TODO: logo???
 
 # Way future (post initial release)
