@@ -191,3 +191,9 @@ fabric.properties
 
 # idea folder, uncomment if you don't need it
 .idea
+.Rproj.user
+
+# ignore intermediate files created during quarto vignette rendering
+vignettes/articles/*_files 
+vignettes/*_files 
+docs

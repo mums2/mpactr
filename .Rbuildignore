@@ -1,0 +1,14 @@
+^vignettes/*_files$
+^data-raw$
+^.*\.Rproj$
+^\.Rproj\.user$
+^peaktable_flow.png
+^LICENSE\.md$
+^\.idea$
+^vignettes/articles$
+^README\.Rmd$
+
+
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

@@ -1,0 +1,35 @@
+#' LC-MS/MS sample data
+#'
+#' A `mpactr` R6 class object of contining a feature table and associated sample
+#' metadata.
+#'
+#' @format ## `ColcultureData`
+#' A `mpactr` with 2 attributes:
+#' \describe{
+#'  \item{peak_table}{A feature table of class `data.table`}
+#'  \item{meta_data}{A `data.table` with associated sample metadata}
+#'  }
+"CulturesData"
+
+
+#' Get file paths for examples
+#'
+#' mpactr contains a number of example files in the `inst\extdata` directory. This function makes them accessible in
+#' that shows how file paths are used in function examples.
+#'
+#' @param file Name of a file. If `NULL`, all examples files will be listed.
+#'
+#' @export
+#' @examples
+#' example()
+#'
+#' example("metadata.csv")
+example <- function(file = NULL) {
+  path <- ""
+  if (is.null(file)) {
+    path <- dir(system.file("extdata", package = "mpactR"))
+  } else {
+    path <- system.file("extdata", file, package = "mpactR", mustWork = TRUE)
+  }
+  return(path)
+}
