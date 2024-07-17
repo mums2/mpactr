@@ -2,7 +2,9 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @importFrom R6 R6Class
+#' @importFrom cli cli_abort
+#' @importFrom cli cli_alert_info
+#' @importFrom cli cli_alert_success
 #' @importFrom data.table copy
 #' @importFrom data.table data.table
 #' @importFrom data.table dcast
@@ -10,6 +12,7 @@
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggplot2 theme
+#' @importFrom R6 R6Class
 #' @importFrom readr read_csv
 #' @importFrom stats cor
 #' @importFrom stats cutree

@@ -11,6 +11,7 @@ filter_mispicked_ions(
   trwin = 0.005,
   max_iso_shift = 3,
   merge_peaks = TRUE,
+  merge_method = "sum",
   copy_object = FALSE
 )
 }
@@ -26,6 +27,8 @@ filter_mispicked_ions(
 \item{max_iso_shift}{A \code{numeric}. Default = 3.}
 
 \item{merge_peaks}{A \code{logical} to determine if peaks found to belong to the same ion should be merged in the feature table.}
+
+\item{merge_method}{If merege_peaks is TRUE, a method for how similar peaks should be merged. Can be one of "sum".}
 
 \item{copy_object}{A \code{boolean} paramter that allows users to return a copied object instead of modifying the object.}
 }
@@ -44,6 +47,7 @@ data_filter <- filter_mispicked_ions(data,
                               isowin = 0.01,
                               trwin = 0.005,
                               max_iso_shift = 3,
-                              merge_peaks = TRUE)
+                              merge_peaks = TRUE, 
+                              merge_method = "sum")
 
 }

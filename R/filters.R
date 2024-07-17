@@ -14,6 +14,7 @@
 #' @param trwin A `numeric` denoting the retention time threhold for assessing if ions should be merged. Defulat = 0.005.
 #' @param max_iso_shift A `numeric`. Default = 3.
 #' @param merge_peaks A `logical` to determine if peaks found to belong to the same ion should be merged in the feature table.
+#' @param merge_method If merege_peaks is TRUE, a method for how similar peaks should be merged. Can be one of "sum".
 #' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 #' @return an `mpactr_object`
 #' @export 
@@ -27,17 +28,17 @@
 #'                               isowin = 0.01,
 #'                               trwin = 0.005,
 #'                               max_iso_shift = 3,
-#'                               merge_peaks = TRUE)
+#'                               merge_peaks = TRUE, 
+#'                               merge_method = "sum")
 #'
-filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
-                                merge_peaks = TRUE, copy_object = FALSE)
+filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE, merge_method = "sum", copy_object = FALSE)
 {
   if(copy_object)
   {
     mpactr_object <- clone(mpactr_object)
   }
   mpactr_object$check_mismatched_peaks(ringwin = ringwin, isowin = isowin, trwin = trwin, max_iso_shift = max_iso_shift,
-                                merge_peaks = merge_peaks)
+                                merge_peaks = merge_peaks, merge_method = "sum")
   return(mpactr_object)
 }
 
@@ -78,7 +79,7 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
   }
   mpactr_object$filter_blank()
   mpactr_object$parse_ions_by_group(group_threshold = group_threshold)
-  mpactr_object$apply_group_filter(group_to_remove, remove_ions = remove_ions)
+  mpactr_object$apply_group_filter(group = group_to_remove, remove_ions = remove_ions)
   return(mpactr_object)
 }
 
@@ -92,7 +93,7 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 #'
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
-#' @param cv_threshold Coefficient of variation threshold. Default = 0.2.
+#' @param cv_threshold Coefficient of variation threshold.
 #' @param cv_param Coefficient of variation (CV) to use for filtering. Options are "mean" or "median", corresponding to mean and median CV, respectively. 
 #' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 #'
@@ -112,7 +113,7 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 #'                               cv_threshold = 0.01,
 #'                               cv_param = "median")
 #'
-filter_cv <- function(mpactr_object, cv_threshold = 0.2, cv_param, copy_object = FALSE) {
+filter_cv <- function(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE) {
    if(copy_object)
   {
     mpactr_object <- clone(mpactr_object)

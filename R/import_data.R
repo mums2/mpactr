@@ -8,8 +8,8 @@
 #'
 #' Expected metadata table format.
 #'
-#' @param peak_table_file_path The file path to your feature table file.
-#' @param meta_data_file_path The file path to your meta_data file. 
+#' @param peak_table The file path to your feature table file or a or `data.frame`.
+#' @param meta_data The file path to your meta_data file or `data.frame`. 
 #'
 #' @return an `mpactr_object`
 #' @export 
@@ -18,9 +18,15 @@
 #' data <- import_data(example("coculture_peak_table.csv"),
 #'                     example("metadata.csv"))
 #'
-import_data <- function(peak_table_file_path, meta_data_file_path)
+#' peak_table <- read.csv(example("coculture_peak_table.csv"), skip = 2, check.names = FALSE)
+#' meta_data <- read.csv(example("metadata.csv"))
+#' data <- import_data(peak_table,
+#'                       meta_data)
+#'
+import_data <- function(peak_table, meta_data)
 {
-    mpactr_object <- mpactr$new(peak_table_path = peak_table_file_path, meta_data_path = meta_data_file_path)
+    mpactr_object <- mpactr$new(peak_table_path = peak_table,
+                                meta_data_path = meta_data)
     mpactr_object$setup()
     filter_object <- filter_pactr$new(mpactr_object)
     return(filter_object)

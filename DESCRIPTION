@@ -12,7 +12,7 @@ Description: A fast tool for the correction of pre-processed tandem MS/MS featur
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2.9000
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
@@ -20,6 +20,7 @@ Depends:
     data.table,
     R (>= 3.5.0)
 Imports: 
+    cli,
     ggplot2,
     R6,
     readr,
@@ -27,3 +28,4 @@ Imports:
     treemapify,
     viridis
 LazyData: true
+Config/Needs/website: rmarkdown

@@ -1,6 +1,6 @@
 ####  filter 1: mismatched peaks    ###
-filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, trwin, max_iso_shift, merge_peaks) {
-  print(paste0("Checking ", nrow(self$mpactr_data$get_peak_table()), " peaks for mismatches."))
+filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, trwin, max_iso_shift, merge_peaks, merge_method) {
+  cli::cli_alert_info("Checking {nrow(self$mpactr_data$get_peak_table())} peaks for mispicked peaks.")
 
   ion_filter_list <- list()
   cut_ions <- c() # list
@@ -52,33 +52,38 @@ filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, t
   ion_filter_list[["cut_ions"]] <- cut_ions
   ion_filter_list[["merge_groups"]] <- merge_groups
   self$logger[["check_mismatched_peaks"]] <- ion_filter_list
-  if (isTRUE(merge_peaks)) {
-    private$merge_ions(ion_filter_list)
-  }
-
-  # self$logger[["mispicked_summary"]] <- summary$new(filter = "mispicked", failed_ions = cut_ions,
-  #                             passed_ions = self$mpactr_data$get_peak_table()$Compound)
-
-  self$logger$list_of_summaries$mispicked <- summary$new(filter = "mispicked", failed_ions = cut_ions,
-                              passed_ions = self$mpactr_data$get_peak_table()$Compound)
 
   if (isTRUE(merge_peaks)) {
-    print(paste0("merge peaks is: ", merge_peaks, ". Merging Peaks"))
+    cli::cli_alert_info("Argument merge_peaks is: {merge_peaks}. Merging mispicked peaks with method {merge_method}.")
+    
+    private$merge_ions(ion_filter_list, merge_method)
   }
   else{
-    print(paste0("merge peaks is: ", merge_peaks, ". Peaks will not be merged."))
+    cli::cli_alert_warning("Argument merge_peaks is: {merge_peaks}. Mispicked peaks will not be merged.")
   }
+  
+  self$logger$list_of_summaries$mispicked <- summary$new(filter = "mispicked", failed_ions = cut_ions,
+                              passed_ions = self$mpactr_data$get_peak_table()$Compound)
+  
   self$logger$list_of_summaries$mispicked$summarize()
 })
 
-filter_pactr$set("private", "merge_ions", function(ion_filter_list) {
-  dat <- melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)
-
-  for (ion in names(ion_filter_list$merge_groups)) {
-    dat <- dat[Compound %in% c(ion, ion_filter_list$merge_groups[[ion]]), intensity := sum(intensity), by = .(sample)]
+filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
+  
+  if (is.null(method)) {
+    cli::cli_abort("No method has been supplied for merging peaks. method must be one of: sum")
   }
-  self$mpactr_data$set_peak_table(dcast(dat, Compound + mz + kmd + rt ~ sample, value.var = "intensity")[
-    (!Compound %in% ion_filter_list$cut_ions),])
+  
+  if (method == "sum") {
+      dat <- melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)
+
+    for (ion in names(ion_filter_list$merge_groups)) {
+      dat <- dat[Compound %in% c(ion, ion_filter_list$merge_groups[[ion]]), intensity := sum(intensity), by = .(sample)]
+    }
+    self$mpactr_data$set_peak_table(dcast(dat, Compound + mz + kmd + rt ~ sample, value.var = "intensity")[
+      (!Compound %in% ion_filter_list$cut_ions),])
+  }
+
 })
 
 ####  filter 2: group filter    ###
@@ -119,11 +124,15 @@ filter_pactr$set("public", "parse_ions_by_group", function(group_threshold = 0.0
 
 # Given a group name, removes flagged ions from the peak table.
 filter_pactr$set("public", "apply_group_filter", function(group, remove_ions = TRUE) {
-  print(paste0("Parsing ", nrow(self$mpactr_data$get_peak_table()), " peaks based on the following biological groups: ", group))
+  cli::cli_alert_info("Parsing {nrow(self$mpactr_data$get_peak_table())} peaks based on the following sample group: {group}.")
+
   if (isFALSE(remove_ions)) {
-    print(paste0("remove_ions is: ", remove_ions, ". Peaks will not be removed."))
+    cli::cli_alert_warning("Argument remove_ions is {remove_ions}. Peaks from {group} will not be removed.")
     return()
   }
+  
+  cli::cli_alert_info("Argument remove_ions is: {remove_ions}. Removing peaks from {group}.")
+  
   ions <- self$logger[["group_filter-failing_list"]][[group]]
   self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[!(self$mpactr_data$get_peak_table()$Compound
     %in% ions),])
@@ -132,20 +141,35 @@ filter_pactr$set("public", "apply_group_filter", function(group, remove_ions = T
                                                               failed_ions = as.numeric(ions),
                                                               passed_ions = self$mpactr_data$get_peak_table()$Compound)
 
-  print(paste0("remove_ions is: ", remove_ions, ". Removing Peaks"))
 
   self$logger$list_of_summaries[[paste0("group-",group)]]$summarize()
 })
 
 ####  filter 3: cv filter    ###
-filter_pactr$set("public", "cv_filter", function(cv_threshold, cv_params) {
+filter_pactr$set("public", "cv_filter", function(cv_threshold = NULL, cv_params) {
+  if (is.null(cv_threshold)) {
+    cli::cli_abort("{.var cv_threshold} must be supplied.")
+  }
+  ## abort if an incorrect cv_params argument is supplied.
+  if (!(cv_params %in% c("mean", "median"))) {
+    cli::cli_abort("{.var cv_params} must be one of mean or median.")
+  }
+  
+  ## abort if there are no technical replicates.
+  if (isFALSE(self$mpactr_data$isMultipleTechReps())) {
+      cli::cli_abort("There are no technical replicates in the dataset provided. In order to run the replicability filter, technical replicates are required.")
+  }
+  
   input_ions <- self$mpactr_data$get_peak_table()$Compound
-  stopifnot("You can only use mean or median as a cv_parameters" = any(cv_params == c("mean", "median")))
+  cli::cli_alert_info("Parsing {length(input_ions)} peaks for replicability across technical replicates.")
+
   cv <- data.table::melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
     "sample", value.name = "intensity", variable.factor = FALSE)[
     self$mpactr_data$get_meta_data(), on = .(sample = Injection)][
       , .(cv = rsd(intensity)), by = .(Compound, Biological_Group, Sample_Code)][
         , .(mean_cv = mean(cv, na.rm = TRUE), median_cv = median(cv, na.rm = TRUE)), by = .(Compound)]
+  
+    self$logger[["cv_values"]] <- cv
 
     if (cv_params == "mean") {
       failed_ions <- cv[mean_cv > cv_threshold, Compound]
@@ -160,6 +184,7 @@ filter_pactr$set("public", "cv_filter", function(cv_threshold, cv_params) {
     self$logger$list_of_summaries$replicability <- summary$new(filter = "cv_filter",
                                                      failed_ions = failed_ions,
                                                      passed_ions = self$mpactr_data$get_peak_table()$Compound)
+    
     self$logger$list_of_summaries$replicability$summarize()
 })
 
@@ -168,11 +193,12 @@ filter_pactr$set("public", "cv_filter", function(cv_threshold, cv_params) {
 filter_pactr$set("public", "filter_insource_ions", function(cluster_threshold = 0.95) {
 
   input_ions <- self$mpactr_data$get_peak_table()$Compound
+  cli::cli_alert_info("Parsing {length(input_ions)} peaks for insource ions.")
 
   self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[ ,
     cor:= private$deconvolute_correlation(.SD, cluster_threshold), by = .(rt)][cor ==TRUE, ])
 
-  self$logger$list_of_summaries$insource <- summary$new(filter = "decon",
+  self$logger$list_of_summaries$insource <- summary$new(filter = "insource",
                                                           failed_ions = setdiff(input_ions,
                                                                             self$mpactr_data$get_peak_table()$Compound),
                                                           passed_ions = self$mpactr_data$get_peak_table()$Compound)

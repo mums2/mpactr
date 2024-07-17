@@ -5,3 +5,10 @@
 ^peaktable_flow.png
 ^LICENSE\.md$
 ^\.idea$
+^vignettes/articles$
+^README\.Rmd$
+
+
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
