@@ -69,6 +69,41 @@ get_peak_table(data)[1:5, 1:8]
 get_meta_data(data)[1:5, ]
 ```
 
+## Reference semantics
+
+Note: mpactR is built on an R6 class-system, meaning it opperates on reference semantics in which data is updated *in-place*. Compared to a shallow copy, where only data pointers are copied, or a deep copy, where the entire data object is copied in memory, any changes to the original data object, regardless if they are assigned to a new object, result in changes to the original data object. We can see this below.
+
+Where the raw data object has 1303 ions in the feature table:
+
+```{r}
+data2 <- import_data(example("cultures_peak_table.csv"),
+                    example("cultures_metadata.csv"))
+
+get_peak_table(data2)[ , 1:5]
+```
+
+Running the `filter_mispicked_ions` filter, with default setting `copy_object = FALSE` (operates on reference semtanics) results in 1233 ions in the feature table:
+
+```{r}
+data2_mispicked <- filter_mispicked_ions(data2, ringwin = 0.5, 
+                                        isowin = 0.01, trwin = 0.005, 
+                                        max_iso_shift = 3, merge_peaks = TRUE,
+                                        merge_method = "sum",
+                                        copy_object = FALSE)
+
+get_peak_table(data2_mispicked)[ , 1:5]
+```
+
+Even though we created an object called `data2_mispicked`, the original `data2` object was also updated and now has 1233 ions in the feature table:
+
+```{r}
+get_peak_table(data2)[ , 1:5]
+```
+
+We recommend using the default `copy_object = FALSE` as this makes for an extremely fast and memory-efficient way to chain mpactR filters together (see **Chaining filters together** section); however, if you would like to run the filters individually with traditional R style objects, you can set `copy_object` to `TRUE` as shown in the filter examples. 
+
+If you are interested in the groups of similar ions flagged in this filter, you can use `get_similar_ions()`. This function returns a `data.table` report the main ion (the ion retained post-merging) and the ions similar to it.
+
 ## Filtering
 
 mpactR provides filters to correct for the following issues observed during preprocessing of tandem MS/MS data: 
@@ -269,42 +304,6 @@ data_filtered <- filter_mispicked_ions(data, merge_method = "sum") |>
   filter_cv(cv_threshold = 0.2, cv_param = "median")
 
 ```
-
-
-## Reference semantics
-
-Note: mpactR is built on an R6 class-system, meaning it opperates on reference semantics in which data is updated *in-place*. Compared to a shallow copy, where only data pointers are copied, or a deep copy, where the entire data object is copied in memory, any changes to the original data object, regardless if they are assigned to a new object, result in changes to the original data object. We can see this below.
-
-Where the raw data object has 1303 ions in the feature table:
-
-```{r}
-data2 <- import_data(example("cultures_peak_table.csv"),
-                    example("cultures_metadata.csv"))
-
-get_peak_table(data2)[ , 1:5]
-```
-
-Running the `filter_mispicked_ions` filter, with default setting `copy_object = FALSE` (operates on reference semtanics) results in 1233 ions in the feature table:
-
-```{r}
-data2_mispicked <- filter_mispicked_ions(data2, ringwin = 0.5, 
-                                        isowin = 0.01, trwin = 0.005, 
-                                        max_iso_shift = 3, merge_peaks = TRUE,
-                                        merge_method = "sum",
-                                        copy_object = FALSE)
-
-get_peak_table(data2_mispicked)[ , 1:5]
-```
-
-Even though we created an object called `data2_mispicked`, the original `data2` object was also updated and now has 1233 ions in the feature table:
-
-```{r}
-get_peak_table(data2)[ , 1:5]
-```
-
-We recommend using the default `copy_object = FALSE` as this makes for an extremely fast and memory-efficient way to chain mpactR filters together (see **Chaining filters together** section); however, if you would like to run the filters individually with traditional R style objects, you can set `copy_object` to `TRUE` as shown in the filter examples. 
-
-If you are interested in the groups of similar ions flagged in this filter, you can use `get_similar_ions()`. This function returns a `data.table` report the main ion (the ion retained post-merging) and the ions similar to it.
 
 ## Summary
 
