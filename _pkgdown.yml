@@ -35,4 +35,14 @@ reference:
 - title: Data
   contents:
   - CulturesData
+  
+# articles:
+# - title: Using mpactR
+#   navbar: ~
+#   contents:
+#   - filter
 
+# - title: Downstream Analyses
+#   navbar: ~
+#   contents:
+#   - downstream_analyses
