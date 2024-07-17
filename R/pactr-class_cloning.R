@@ -6,6 +6,7 @@
 #'
 #' @param mpactr_object the object that we are cloning.
 #' @noRd 
+
 clone <- function(mpactr_object)
 {
   new_object <- mpactr_object$clone(deep = TRUE)

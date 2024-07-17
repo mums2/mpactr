@@ -31,8 +31,7 @@
 #'                               merge_peaks = TRUE, 
 #'                               merge_method = "sum")
 #'
-filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
-                                merge_peaks = TRUE, merge_method = "sum", copy_object = FALSE)
+filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE, merge_method = "sum", copy_object = FALSE)
 {
   if(copy_object)
   {

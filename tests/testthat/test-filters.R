@@ -26,6 +26,7 @@ test_that("filter mismatch ions wrapper works as expected when merge_peaks is FA
    data_mpactr_copy <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
                                         merge_peaks = FALSE, merge_method = "sum", copy_object = TRUE)
 
+
    data_mpactr <- filter_mispicked_ions(data, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
                                         merge_peaks = FALSE)
 
