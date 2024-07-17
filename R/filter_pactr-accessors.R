@@ -6,6 +6,7 @@
 #' @param mpactr_object The mpactr object that is created by calling the import_data() function.
 #'
 #' @param filter The name of a filter whose summary is to be extracted. Must be one of: "mispicked", "group", "replicability", or "insource".
+#' @param group If filter = "group", the name of the Biological_Group filtered on.
 #'
 #' @return a `list` reporting 1) compound ids for compounds which failed the filter and 2) compound ids for compounds which passed the filter.
 #' @export 
@@ -84,11 +85,11 @@ get_group_averages <- function(mpactr_object) {
 #'                     example("metadata.csv"))
 #'
 #' data_filter <- filter_cv(data,
-#'                               cv_threshold = 0.01,
+#'                               cv_threshold = 0.2,
 #'                               cv_param = "median")
 #'
 #' cv <- get_cv_data(data_filter)
-#' head(cv_values)
+#' head(cv)
 #'
 get_cv_data <- function(mpactr_object) {
     return(mpactr_object$get_cv())
