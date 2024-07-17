@@ -29,5 +29,3 @@ Imports:
     viridis
 LazyData: true
 Config/Needs/website: rmarkdown
-VignetteBuilder: 
-    quarto
