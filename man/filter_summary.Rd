@@ -11,7 +11,7 @@ filter_summary(mpactr_object, filter, group = NULL)
 
 \item{filter}{The name of a filter whose summary is to be extracted. Must be one of: "mispicked", "group", "replicability", or "insource".}
 
-\item{group}{If filter = "group", the name of the Biological_Group filtered on.}
+\item{group}{If filter = "group", the name of the Biological_Group used to filter.}
 }
 \value{
 a \code{list} reporting 1) compound ids for compounds which failed the filter and 2) compound ids for compounds which passed the filter.

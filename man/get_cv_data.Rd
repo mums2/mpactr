@@ -20,7 +20,7 @@ data <- import_data(example("coculture_peak_table.csv"),
                     example("metadata.csv"))
 
 data_filter <- filter_cv(data,
-                              cv_threshold = 0.2,
+                              cv_threshold = 0.01,
                               cv_param = "median")
 
 cv <- get_cv_data(data_filter)
