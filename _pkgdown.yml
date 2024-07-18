@@ -1,4 +1,4 @@
-url: ~
+url: http://www.schlosslab.org/mpactR/
 template:
   bootstrap: 5
   bootswatch: sandstone
@@ -35,14 +35,4 @@ reference:
 - title: Data
   contents:
   - CulturesData
-  
-# articles:
-# - title: Using mpactR
-#   navbar: ~
-#   contents:
-#   - filter
-
-# - title: Downstream Analyses
-#   navbar: ~
-#   contents:
-#   - downstream_analyses
+   

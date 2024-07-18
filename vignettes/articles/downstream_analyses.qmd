@@ -1,9 +1,9 @@
 ---
 title: "Downstream Analyses"
 vignette: >
-    %\VignetteIndexEntry{Downstream Analyses}
-    %\VignetteEngine{quarto::html}
-    %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Vignette's Title}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
 ---
 
 The goal of mpactR is to correct for errors that occur during the pre-processing of raw tandem MS/MS data. Once filtering in complete, you should have a feature table containing high quality ms1 features. This table can be used for a variety of analyses that can be conducted in R to better understand if and how samples differ from one another. 
@@ -33,8 +33,8 @@ We will be using multiple libraries for data analysis and visualization, which c
 
 ```{r setup}
 #| output: false
-# library(mpactR)
-devtools::load_all()
+library(mpactR)
+# devtools::load_all()
 library(viridis)
 library(plotly)
 library(data.table)
