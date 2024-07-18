@@ -29,7 +29,14 @@ Imports:
     treemapify,
     viridis
 LazyData: true
-Config/Needs/website: rmarkdown
+Config/Needs/website: rmarkdown,
+    tidyverse,
+    viridis,
+    plotly,
+    Hmisc,
+    corrplot,
+    ggdendro,
+    ggtext
 VignetteBuilder: 
     quarto
 URL: http://www.schlosslab.org/mpactR/
