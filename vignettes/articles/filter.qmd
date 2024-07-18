@@ -1,9 +1,6 @@
 ---
 title: "Filter"
-vignette: >
-    %\VignetteIndexEntry{Filter}
-    %\VignetteEngine{quarto::html}
-    %\VignetteEncoding{UTF-8}
+format: html
 ---
 
 ```{r}
