@@ -16,8 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 #| output: false
-# library(mpactR)
-devtools::load_all()
+library(mpactR)
 library(tidyverse)
 ```
 
