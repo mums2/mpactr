@@ -23,10 +23,18 @@
 #' data <- import_data(peak_table,
 #'                       meta_data)
 #'
-import_data <- function(peak_table, meta_data)
+import_data <- function(peak_table, meta_data, format="none")
 {
-    mpactr_object <- mpactr$new(peak_table_path = peak_table,
+     
+    if(!any(class(meta_data) %in% c("data.table", "data.frame"))) {
+        meta_data <- data.table(readr::read_csv(meta_data, show_col_types = FALSE))
+    }
+    
+    df <- format_by_type(peak_table = peak_table, meta_data$Injection, format = format)
+    mpactr_object <- mpactr$new(peak_table_path = df,
                                 meta_data_path = meta_data)
+    
+    
     mpactr_object$setup()
     filter_object <- filter_pactr$new(mpactr_object)
     return(filter_object)
