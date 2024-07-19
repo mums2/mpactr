@@ -5,7 +5,6 @@ mpactr$set("public", "setup", function()
 mpactr$set("private", "initialize_data", function()
 {
   
-  private$raw_peak_table <- data.table::copy(private$peak_table)
   private$peak_table <- private$peak_table[which(rowSums(
     private$peak_table[, .SD, .SDcols = private$meta_data$Injection]) > 0),]
   private$set_kmd()

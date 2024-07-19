@@ -17,7 +17,8 @@ a \code{data.table}
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+                    example("metadata.csv"),
+                    format = "Progenesis")
 
 meta_data <- get_meta_data(data)
 

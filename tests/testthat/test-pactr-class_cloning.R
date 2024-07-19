@@ -1,6 +1,6 @@
 test_that("The clone function properly deep clones the mpactr object", {
   mpactr_object <- import_data(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                      test_path("exttestdata", "102623_metadata_correct.csv"))
+                      test_path("exttestdata", "102623_metadata_correct.csv"), format = "Progenesis")
 
   mpactr_object <- filter_mispicked_ions(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3,
                                         merge_peaks = TRUE)

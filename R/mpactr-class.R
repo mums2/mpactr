@@ -2,19 +2,14 @@ mpactr <- R6Class("mpactr", public = list(
   # Properties
 
   # Constructor
-  initialize = function(peak_table_path, meta_data_path) {
-    if((any(class(peak_table_path) %in% c("data.table", "data.frame"))) &&
-    (any(class(meta_data_path) %in% c("data.table", "data.frame"))))
-    {
-      private$peak_table = data.table(peak_table_path)
-      private$meta_data = data.table(meta_data_path)
-    }
-    else{
-      private$peak_table = data.table(readr::read_csv(peak_table_path, skip = 2, show_col_types = FALSE))
-      private$meta_data = data.table(readr::read_csv(meta_data_path, show_col_types = FALSE))
-    }
-    stopifnot(any(class(private$peak_table) == "data.table"))
-    stopifnot(any(class(private$meta_data) == "data.table"))
+  initialize = function(peak_table, meta_data) {
+    stopifnot(any(class(peak_table$raw_table) == "data.table"))
+    stopifnot(any(class(peak_table$peak_table) == "data.table"))
+    stopifnot(any(class(meta_data) == "data.table"))
+    
+    private$raw_peak_table= data.table(peak_table$raw_table)
+    private$peak_table = data.table(peak_table$peak_table)
+    private$meta_data = data.table(meta_data)  
   },
   isMultipleTechReps = function() {
     

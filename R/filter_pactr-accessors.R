@@ -13,7 +13,8 @@
 #'
 #' @examples 
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' data_filter <- filter_mispicked_ions(data)
 #'
@@ -36,7 +37,8 @@ filter_summary <- function(mpactr_object, filter, group = NULL) {
 #'
 #' @examples 
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' data_filter <- filter_mispicked_ions(data)
 #'
@@ -59,7 +61,8 @@ get_similar_ions <- function(mpactr_object) {
 #'
 #' @examples 
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' data_filter <- filter_group(data, group_to_remove = "Blanks")
 #'
@@ -82,7 +85,8 @@ get_group_averages <- function(mpactr_object) {
 #'
 #' @examples 
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' data_filter <- filter_cv(data,
 #'                               cv_threshold = 0.01,

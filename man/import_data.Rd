@@ -4,12 +4,14 @@
 \alias{import_data}
 \title{Import data into an mpactr object.}
 \usage{
-import_data(peak_table, meta_data)
+import_data(peak_table, meta_data, format = "none")
 }
 \arguments{
-\item{peak_table}{The file path to your feature table file or a or \code{data.frame}.}
+\item{peak_table}{The file path to your feature table file.}
 
 \item{meta_data}{The file path to your meta_data file or \code{data.frame}.}
+
+\item{format}{The expected exported type of your peak table, can be one of Progenesis, MzMine, Metaboscape, or None.}
 }
 \value{
 an \code{mpactr_object}
@@ -24,11 +26,12 @@ Expected metadata table format.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+                    example("metadata.csv"),
+                    format = "Progenesis")
 
-peak_table <- read.csv(example("coculture_peak_table.csv"), skip = 2, check.names = FALSE)
 meta_data <- read.csv(example("metadata.csv"))
-data <- import_data(peak_table,
-                      meta_data)
+data <- import_data(example("coculture_peak_table.csv"),
+                    meta_data,
+                    format = "Progenesis")
 
 }

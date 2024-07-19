@@ -1,6 +1,9 @@
 test_that("test that filter_pactr-class constructs properly", {
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   expect_true(all(class(filter_class) == c("filter_pactr", "R6")))
@@ -10,8 +13,11 @@ test_that("test that filter_pactr-class constructs properly", {
 })
 
 test_that("get_log returns an error when an incorrect fitler argument is provided", {
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   
@@ -19,8 +25,11 @@ test_that("get_log returns an error when an incorrect fitler argument is provide
 })
 
 test_that("get_log returns an error when the fitler argument provided has not yet been run (e.g., not in the log)", {
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   
@@ -28,8 +37,11 @@ test_that("get_log returns an error when the fitler argument provided has not ye
 })
 
 test_that("get_log returns the correct fitler summary list", {
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
@@ -43,8 +55,11 @@ test_that("get_log returns the correct fitler summary list", {
 })
 
 test_that("get_mispicked_ions returns error if check_mismatched_peaks has not been called", {
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   
@@ -52,8 +67,11 @@ test_that("get_mispicked_ions returns error if check_mismatched_peaks has not be
 })
 
 test_that("get_mispicked_ions correctly returns the check_mismatched_peaks list", {
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
@@ -68,8 +86,11 @@ test_that("get_mispicked_ions correctly returns the check_mismatched_peaks list"
 
 
 test_that("get_group_averages calculates a group table", {
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   
@@ -80,8 +101,11 @@ test_that("get_group_averages calculates a group table", {
   expect_equal(class(avgs), c("data.table", "data.frame"))
   expect_equal(nrow(avgs), (1233 * 6))
   
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   
@@ -97,8 +121,11 @@ test_that("get_group_averages calculates a group table", {
 })
 
 test_that("get_cv returns the cv filter has been applied", {
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
