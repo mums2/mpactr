@@ -2,8 +2,9 @@
 
 # TDOD: add capability to have different peak table formats: Metabpscape, Progenesis, and MZ-mine
 # TODO: add "format" argument to import_data to specify peak table format
+# TODO: make this a formatter class to fix global bindings CMD error - Greg
 
-# TODO: review all documentation - in progress
+# TODO: review all documentation - Allison
 # TODO: finalize example and tutorial dataset
 # TODO: logo???
 
