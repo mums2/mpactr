@@ -31,7 +31,8 @@ To import these data into R, use the mpactR function `import_data()`, which has 
 
 ```{r}
 data <- import_data(example("cultures_peak_table.csv"),
-                    example("cultures_metadata.csv"))
+                    example("cultures_metadata.csv"),
+                    format = "Progenesis")
 ```
 
 This will create an R6 class object, which will store both the peak table and metadata.
@@ -76,7 +77,8 @@ Where the raw data object has 1303 ions in the feature table:
 
 ```{r}
 data2 <- import_data(example("cultures_peak_table.csv"),
-                    example("cultures_metadata.csv"))
+                    example("cultures_metadata.csv"),
+                    format = "Progenesis")
 
 get_peak_table(data2)[ , 1:5]
 ```
@@ -295,7 +297,8 @@ Filters can be chained in a customizable workflow, shown below. While filters ca
 
 ```{r}
 data <- import_data(example("cultures_peak_table.csv"),
-                    example("cultures_metadata.csv"))
+                    example("cultures_metadata.csv"),
+                    format = "Progenesis")
 
 data_filtered <- filter_mispicked_ions(data, merge_method = "sum") |>
   filter_group(group_to_remove = "Solvent_Blank") |>

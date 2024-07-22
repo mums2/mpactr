@@ -4,6 +4,8 @@ template:
   bootswatch: sandstone
   font_scale: 0.8
   
+
+    
 reference:
 - title: Import Data
   contents:
@@ -35,4 +37,21 @@ reference:
 - title: Data
   contents:
   - CulturesData
-   
+
+
+navbar:
+  type: default
+  left:
+  - text: Reference
+    href: reference/index.html
+  - text: Articles
+    menu:
+    - text: Filter
+      href: articles/filter.html
+    - text: Additional Analyses
+      href: articles/downstream_analyses.html
+  right:
+  - icon: fa-github fa-lg
+    href: https://github.com/SchlossLab/mpactR
+    
+
