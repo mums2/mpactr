@@ -80,6 +80,7 @@ data2 <- import_data(example("cultures_peak_table.csv"),
                     example("cultures_metadata.csv"),
                     format = "Progenesis")
 
+
 get_peak_table(data2)[ , 1:5]
 ```
 
