@@ -1,4 +1,5 @@
-# TODO: allow for compound IDs that are alphanumeric (character) - need to check if we sort by or use compound ids as an numeric
+# TODO: allow for compound IDs that are alphanumeric (character) - need to check if we sort by
+# TODO: or use compound ids as an numeric (Greg)
 
 # TODO: add capability to have different peak table formats: Metabpscape, Progenesis, and MZ-mine
 # TODO: add "format" argument to import_data to specify peak table format

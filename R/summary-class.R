@@ -2,8 +2,8 @@ summary <- R6::R6Class("summary", public = list(
   initialize = function(filter, failed_ions, passed_ions)
   {
     stopifnot(any(class(filter) == "character"))
-    stopifnot(class(failed_ions) == "numeric")
-    stopifnot(class(passed_ions) == "numeric")
+    stopifnot(any(class(failed_ions) == c("numeric", "character")))
+    stopifnot(any(class(failed_ions) == c("numeric", "character")))
     private$filter = filter
     private$failed_ions = failed_ions
     private$passed_ions = passed_ions
