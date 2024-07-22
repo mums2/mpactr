@@ -10,3 +10,14 @@ test_that("import_data creates a proper mpactr and filter-pactr object", {
   expect_true(nrow(data$mpactr_data$get_peak_table()) > 1)
   expect_true(nrow(data$mpactr_data$get_meta_data()) > 1)
 })
+
+
+test_that("import_data aborts when expected metadata columns are not provided", {
+
+  meta_data_abort = read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE)
+  colnames(meta_data_abort) <- c("Injection", "Sample", "Biological_Group")
+
+  expect_error(import_data(peak_table = test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
+                      meta_data = meta_data_abort, 
+                      format = "Progenesis"))
+})
