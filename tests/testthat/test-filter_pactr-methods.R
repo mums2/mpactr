@@ -1,8 +1,11 @@
 ####  filter 1: mismatched peaks    ###
 test_that("test that check_mistmatched_peaks works properly with filter_pactr-class data", {
-  mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
-  mpactr_class$setup()
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
+                             mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE, merge_method = "sum")
@@ -20,11 +23,26 @@ test_that("test that check_mistmatched_peaks works properly with filter_pactr-cl
   expect_equal(class(filter_class$logger$list_of_summaries$mispicked), c("summary", "R6"))
 })
 
+test_that("test that check_mistmatched_peaks returns an error when no merge method is supplied", {
+    meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
+                             mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  expect_error(filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE))
+
+})
+
 ####  filter 2: group filter    ###
 test_that("blank filter works correctly", {
- mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
-  mpactr_class$setup()
+   meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
+                             mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
     TRUE, merge_method = "sum")
@@ -44,8 +62,11 @@ test_path("exttestdata","102623_peaktable_coculture_simple_groupaverages.csv")
 })
 
 test_that("parse_ions_by_group flags the correct ions", {
- mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+   meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
@@ -75,8 +96,11 @@ test_that("parse_ions_by_group flags the correct ions", {
 
 test_that("apply_group_filter removes the correct ions", {
 
- mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+   meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
@@ -97,8 +121,11 @@ test_that("apply_group_filter removes the correct ions", {
 
 ####  filter 3: cv filter    ###
 test_that("cv_filter filters out data properly", {
- mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+   meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
@@ -118,11 +145,78 @@ test_that("cv_filter filters out data properly", {
   expect_false(is.null(filter_class$logger$list_of_summaries$replicability))
   expect_equal(class(filter_class$logger$list_of_summaries$replicability), c("summary", "R6"))
 })
+test_that("cv_filter errors without threshold", {
+  meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+ mpactr_class <- mpactr$new(pt_list,
+                             meta)
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+    TRUE, merge_method = "sum")
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+  filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
+  
+  expect_error(filter_class$cv_filter(cv_params = c("mean")))
+
+})
+
+test_that("cv_filter errors with incorrect paramter", {
+  meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+ mpactr_class <- mpactr$new(pt_list,
+                             meta)
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+    TRUE, merge_method = "sum")
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+  filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
+  
+  expect_error(filter_class$cv_filter(cv_threshold = 0.2, cv_params = ""))
+
+})
+
+test_that("cv_filter errors when there are no technical replicates", { # hmm
+  meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  meta_sub <- meta[ , head(.SD, 1), by = Sample_Code]
+  
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv")) 
+  sub <- c("Compound", "mz", "rt", meta_sub$Injection)
+  pt_list$peak_table <- pt_list$peak_table[, .SD, .SDcols = sub]
+  pt_list$raw_table <- pt_list$raw_table[, .SD, .SDcols = sub]
+  
+                                                          
+  mpactr_class <- mpactr$new(pt_list,
+                             meta_sub)
+  mpactr_class$setup()
+  
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
+    TRUE, merge_method = "sum")
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+  filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
+  
+  
+  expect_error(filter_class$cv_filter(cv_threshold = 0.2, cv_params = "mean"))
+
+})
+
+
+
 
 ####  filter 4: insource ions    ###
 test_that("filter_inscource_ions filters out data properly", {
- mpactr_class <- mpactr$new(test_path("exttestdata","102623_peaktable_coculture_simple.csv"),
-                             test_path("exttestdata", "102623_metadata_correct.csv"))
+   meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =

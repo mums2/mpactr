@@ -24,17 +24,18 @@ library(tidyverse)
 
 mpactR requires 2 files as imput: a feature table and metadata file. Both are expected to be comma separated files (*.csv*).
 
-1. peak_table: a peak table in Progenesis format is expected. To export a compatable peak table in Progensis, navigate to the *Review Compounds* tab then File -> Export Compound Measurements. Select the following properties: Compound, m/z, Retention time (min), and Raw abundance and click ok. 
+1. peak_table: a peak table in Progenesis format is expected. To export a compatable peak table in Progenesis, navigate to the *Review Compounds* tab then File -> Export Compound Measurements. Select the following properties: Compound, m/z, Retention time (min), and Raw abundance and click ok. 
 2. metadata: a table with sample information. At minimum the following columns are expected: Injection, Sample_Code, Biological_Group. Injection is the sample name and is expected to match sample column names in the peak_table. Sample_Code is the id for technical replicate groups. Biological Group is the id for biological replicate groups. Other sample metadata can be added, and is encouraged for downstream analysis following filtering with mpactR.
 
-To import these data into R, use the mpactR function `import_data()`, which has the arguments: `peak_table_file_path` and `meta_data_file_path`
+To import these data into R, use the mpactR function `import_data()`, which has the arguments: `peak_table_file_path` and `meta_data_file_path`. Note - you do not need to use `example()` if you are using your own files. This is a package function that allows access to internal package data. If you simply want to play around with the packge using example data, you can run the `import_data` function as shown above, otherwise, provide file paths for your own files.
 
 ```{r}
 data <- import_data(example("cultures_peak_table.csv"),
-                    example("cultures_metadata.csv"))
+                    example("cultures_metadata.csv"),
+                    format = "Progenesis")
 ```
 
-This will create an R6 class object, which will store both the peak table and metadata. Note: you do not need to use `example()` if you are using your own files. This is a package function that allows access to internal package data. If you simply want to play around with the packge using example data, you can follow run the `import_data` function as shown above.
+This will create an R6 class object, which will store both the peak table and metadata.
 
 Calling the new mpactr object will print the current peak table in the terminal:
 
@@ -76,7 +77,8 @@ Where the raw data object has 1303 ions in the feature table:
 
 ```{r}
 data2 <- import_data(example("cultures_peak_table.csv"),
-                    example("cultures_metadata.csv"))
+                    example("cultures_metadata.csv"),
+                    format = "Progenesis")
 
 get_peak_table(data2)[ , 1:5]
 ```
@@ -295,7 +297,8 @@ Filters can be chained in a customizable workflow, shown below. While filters ca
 
 ```{r}
 data <- import_data(example("cultures_peak_table.csv"),
-                    example("cultures_metadata.csv"))
+                    example("cultures_metadata.csv"),
+                    format = "Progenesis")
 
 data_filtered <- filter_mispicked_ions(data, merge_method = "sum") |>
   filter_group(group_to_remove = "Solvent_Blank") |>

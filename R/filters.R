@@ -21,7 +21,8 @@
 #'
 #' @examples 
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' data_filter <- filter_mispicked_ions(data,
 #'                               ringwin = 0.5, 
@@ -63,7 +64,8 @@ filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, t
 #'
 #' @examples 
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' data_filter <- filter_group(data,
 #'                               group_threshold = 0.01,
@@ -103,7 +105,8 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 #' @examples
 #'
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' data_filter <- filter_cv(data,
 #'                               cv_threshold = 0.01,
@@ -141,7 +144,8 @@ filter_cv <- function(mpactr_object, cv_threshold = NULL, cv_param, copy_object 
 #'
 #' @examples 
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' data_filter <- filter_insource_ions(data,
 #'                               cluster_threshold = 0.95)

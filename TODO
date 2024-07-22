@@ -1,15 +1,11 @@
-# TODO: Compare CV filter (with, without solvent blanks, solvent and media blanks as 1 group - need data)
+# TODO: allow for compound IDs that are alphanumeric (character) - need to check if we sort by
+# TODO: or use compound ids as an numeric (Greg)
 
-# TODO: workflow article/vignette - ARM (Done)
-# TODO: CV threshold qc plot - ARM (Done)
+# TODO: add capability to have different peak table formats: Metabpscape, Progenesis, and MZ-mine
+# TODO: add "format" argument to import_data to specify peak table format
+# TODO: make this a formatter class to fix global bindings CMD error - Greg (Done)
 
-# TODO: Multiple group filter reporting - GDJ (Done)
-# TODO: Add Copy functionality for functions - GDJ (Done)
-# TODO: think about custom print for filter_pactr class - GDJ (Done)
-
-
-# TODO: review all methods - Done
-# TODO: review all documentation - in progress
+# TODO: review all documentation - Allison
 # TODO: finalize example and tutorial dataset
 # TODO: logo???
 

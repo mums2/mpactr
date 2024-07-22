@@ -49,7 +49,8 @@ library(ggtext)
 
 ```{r}
 data <- import_data(example("cultures_peak_table.csv"),
-                    example("cultures_metadata.csv"))
+                    example("cultures_metadata.csv"), 
+                    format = "Progenesis")
 ```
 
 We will be using example data in the `mpactR` package, which has `r nrow(get_meta_data(data))` samples and `r length(unique(get_meta_data(data)$Biological_Group))` biological groups. Biological groups are: `r unique(get_meta_data(data)$Biological_Group)`.

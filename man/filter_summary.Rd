@@ -21,7 +21,8 @@ a \code{list} reporting 1) compound ids for compounds which failed the filter an
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+                    example("metadata.csv"),
+                    format = "Progenesis")
 
 data_filter <- filter_mispicked_ions(data)
 

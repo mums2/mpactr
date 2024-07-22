@@ -10,7 +10,8 @@
 #'
 #' @examples 
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' peak_table <- get_peak_table(data)
 #'
@@ -30,7 +31,8 @@ get_peak_table <- function(mpactr_object) {
 #'
 #' @examples 
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' meta_data <- get_meta_data(data)
 #'
@@ -50,7 +52,8 @@ get_meta_data <- function(mpactr_object) {
 #'
 #' @examples 
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'                     example("metadata.csv"),
+#'                     format = "Progenesis")
 #'
 #' raw_data <- get_raw_data(data)
 #'

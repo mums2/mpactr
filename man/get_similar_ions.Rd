@@ -17,7 +17,8 @@ a \code{data.table} retporting the main ion and those found to be similar with \
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+                    example("metadata.csv"),
+                    format = "Progenesis")
 
 data_filter <- filter_mispicked_ions(data)
 

@@ -18,7 +18,8 @@ Parses an mpactr object and exracts a summary of all applied filters. Specifical
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+                    example("metadata.csv"),
+                    format = "Progenesis")
 
 data_filter <- filter_mispicked_ions(data, 
                                     ringwin = 0.5, 
