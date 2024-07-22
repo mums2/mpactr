@@ -33,7 +33,6 @@
 #'
 import_data <- function(peak_table, meta_data, format = "none")
 {
-     
     if(!any(class(meta_data) %in% c("data.table", "data.frame"))) {
         meta_data <- data.table(readr::read_csv(meta_data, show_col_types = FALSE))
     }
@@ -52,15 +51,3 @@ import_data <- function(peak_table, meta_data, format = "none")
     filter_object <- filter_pactr$new(mpactr_object)
     return(filter_object)
 }
-
-# c("Injection", "Sample_Code", "Biological_Group") %in% colnames(meta_data)
-# which(isFALSE(c("Injection", "Sample_Code", "Biological_Group") %in% colnames(meta_data)))
-
-# which(c(TRUE, FALSE, TRUE) == FALSE)
-# cols <- c("Injection", "Sample_Code", "Biological_Group")
-
-# test_names <- c("Injection", "Sample_Code", "Biological_Group")
-# if (isFALSE(any(cols %in% colnames(meta_data)))) {
-#         cli::cli_abort("{.cls {cols[which(!(cols %in% colnames(meta_data)))]}} are not columns in the provided metadata. Please see function documentation for more details.")
-#     }
-    
