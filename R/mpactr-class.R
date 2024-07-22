@@ -13,7 +13,7 @@ mpactr <- R6Class("mpactr", public = list(
   },
   isMultipleTechReps = function() {
     
-    any(private$meta_data[ , .N, by = Sample_Code][["N"]])
+    any(private$meta_data[ , .N, by = Sample_Code][["N"]] > 1)
   }
 ),
   private = list(

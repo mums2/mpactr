@@ -13,10 +13,6 @@ graph_qc_pactr <- R6Class("graph_qc_pactr", public = list(
 
     failed_ions_dt <- data.table(status, compounds)
     
-    if (nrow(failed_ions_dt) != length(unique(failed_ions_dt$compounds))) {
-      cli::cli_abort("At least one ion fails multiple filters. Please check.")
-    }
-    
     passed_ions_dt <- data.table("status" = rep("Passed", length
      (private$filter_pactr_data$mpactr_data$get_peak_table()$Compound)),
                     "compounds" = private$filter_pactr_data$mpactr_data$get_peak_table()$Compound)

@@ -1,5 +1,5 @@
 ####  filter 1: mismatched peaks    ###
-filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, trwin, max_iso_shift, merge_peaks, merge_method) {
+filter_pactr$set("public", "check_mismatched_peaks", function(ringwin, isowin, trwin, max_iso_shift, merge_peaks, merge_method = NULL) {
   cli::cli_alert_info("Checking {nrow(self$mpactr_data$get_peak_table())} peaks for mispicked peaks.")
 
   ion_filter_list <- list()

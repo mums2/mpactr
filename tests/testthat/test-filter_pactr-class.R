@@ -54,6 +54,25 @@ test_that("get_log returns the correct fitler summary list", {
   expect_equal(length(mispicked_summary$passed_ions), 1233)
 })
 
+test_that("get_log returns the correct fitler summary list when group is supplied", {
+  meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+  filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
+  
+  group_summary <- filter_class$get_log(filter = "group", group = "Blanks")
+  
+  expect_type(group_summary, "list")
+})
+
+
 test_that("get_mispicked_ions returns error if check_mismatched_peaks has not been called", {
     meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
   pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
@@ -141,4 +160,15 @@ test_that("get_cv returns the cv filter has been applied", {
   
   cv <- filter_class$get_cv()
   expect_equal(class(cv), c("data.table", "data.frame"))
+})
+
+test_that("Test that mpactr can be printed from the filter-pactR class", {
+  meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata","102623_peaktable_coculture_simple.csv"))
+  
+  mpactr_class <- mpactr$new(pt_list,
+                             meta)
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  expect_output(filter_class$print())
 })
