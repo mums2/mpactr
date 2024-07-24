@@ -1,14 +1,19 @@
 #' Return the summary for a single mpactR filter.
 #'
 #' @description
-#' `filter_summary()` is a wrapper function to return the summary from a single filter within the given mpactr object.
+#' `filter_summary()` is a wrapper function to return the summary
+#' from a single filter within the given mpactr object.
 #'
-#' @param mpactr_object The mpactr object that is created by calling the import_data() function.
+#' @param mpactr_object The mpactr object that is created by calling
+#' the import_data() function.
 #'
-#' @param filter The name of a filter whose summary is to be extracted. Must be one of: "mispicked", "group", "replicability", or "insource".
-#' @param group If filter = "group", the name of the Biological_Group used to filter.
+#' @param filter The name of a filter whose summary is to be extracted.
+#' Must be one of: "mispicked", "group", "replicability", or "insource".
+#' @param group If filter = "group", the name of the Biological_Group
+#' used to filter.
 #'
-#' @return a `list` reporting 1) compound ids for compounds which failed the filter and 2) compound ids for compounds which passed the filter.
+#' @return a `list` reporting 1) compound ids for compounds which failed
+#' the filter and 2) compound ids for compounds which passed the filter.
 #' @export
 #'
 #' @examples
@@ -29,11 +34,14 @@ filter_summary <- function(mpactr_object, filter, group = NULL) {
 #' Get similar ion groups.
 #'
 #' @description
-#' `get_similar_ions()` is a wrapper function to return similar ion groups determined with the [filter_mispicked_ions()].
+#' `get_similar_ions()` is a wrapper function to return similar ion groups
+#' determined with the [filter_mispicked_ions()].
 #'
-#' @param mpactr_object The mpactr object that is created by calling the import_data() function.
+#' @param mpactr_object The mpactr object that is created by calling the
+#' import_data() function.
 #'
-#' @return a `data.table` retporting the main ion and those found to be similar with [filter_mispicked_ions()].
+#' @return a `data.table` retporting the main ion and those found to be
+#' similar with [filter_mispicked_ions()].
 #' @export
 #'
 #' @examples
@@ -54,11 +62,15 @@ get_similar_ions <- function(mpactr_object) {
 #' Get groups averages.
 #'
 #' @description
-#' `get_group_averages()` is a wrapper function to return group averages for the filtered peak table.
+#' `get_group_averages()` is a wrapper function to return group averages
+#' for the filtered peak table.
 #'
-#' @param mpactr_object The mpactr object that is created by calling the import_data() function.
+#' @param mpactr_object The mpactr object that is created by calling the
+#' import_data() function.
 #'
-#' @return a `data.table` retporting the average and relative standard deviation across biological groups and techincal replicates within each group.
+#' @return a `data.table` retporting the average and relative standard
+#' deviation across biological groups and techincal replicates within
+#' each group.
 #' @export
 #'
 #' @examples
@@ -79,11 +91,14 @@ get_group_averages <- function(mpactr_object) {
 #' Get CV values.
 #'
 #' @description
-#' `get_cv_data()` is a wrapper function to return cv (coefficient of variation) calculated with [filter_cv()].
+#' `get_cv_data()` is a wrapper function to return cv (coefficient of
+#' variation) calculated with [filter_cv()].
 #'
-#' @param mpactr_object The mpactr object that is created by calling the import_data() function.
+#' @param mpactr_object The mpactr object that is created by calling
+#' the import_data() function.
 #'
-#' @return a `data.table` retporting the mean and median coefficient of variation for each input ion.
+#' @return a `data.table` retporting the mean and median coefficient
+#' of variation for each input ion.
 #' @export
 #'
 #' @examples

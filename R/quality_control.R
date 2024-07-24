@@ -1,7 +1,13 @@
 #' Summary of Fitering
 #'
 #' @description
-#' Parses an mpactr object and exracts a summary of all applied filters. Specifically, the fate of each input ion is reported as ion status. Status options are: Passed, mispicked, group, replicability, and insouce. A status of Passed ions is returned for ions that passed all applied filters and therefore are expected to be high quaility ions. Ions tagged as group, mispicked, replicability, or ionsource were removed during the correspoding filter.
+#' Parses an mpactr object and exracts a summary of all applied filters.
+#' Specifically, the fate of each input ion is reported as ion status. Status
+#' options are: Passed, mispicked, group, replicability, and insouce. A status
+#' of Passed ions is returned for ions that passed all applied filters and
+#' therefore are expected to be high quaility ions. Ions tagged as group,
+#' mispicked, replicability, or ionsource were removed during the correspoding
+#' filter.
 #'
 #' @param mpactr_object an `mpactr_object`.
 #'
@@ -34,7 +40,9 @@ qc_summary <- function(mpactr_object) {
 #' Visualize Filtering Summary as Tree Map
 #'
 #' @description
-#' `plot_qc_tree()` visualizes the filtering summary as a treemap. Ion staus (see [qc_summary()]) is reported here as percentage of all pre-filtered ions.
+#' `plot_qc_tree()` visualizes the filtering summary as a treemap. Ion
+#' staus (see [qc_summary()]) is reported here as percentage of all
+#' pre-filtered ions.
 #'
 #' @param mpactr_object an `mpactr_object`
 #'

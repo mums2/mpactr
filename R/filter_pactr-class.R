@@ -11,7 +11,8 @@ filter_pactr <- R6Class("filter_pactr", public = list(
   },
   get_log = function(filter, group = NULL) {
     if (!(filter %in% c("mispicked", "group", "replicability", "insource"))) {
-      cli::cli_abort("{.var filter} must be one of mpactR's supported filters: mispicked, group, replicability, insource.")
+      cli::cli_abort("{.var filter} must be one of mpactR's supported filters:
+                     mispicked, group, replicability, insource.")
     }
 
     if (!is.null(group)) {
@@ -19,7 +20,9 @@ filter_pactr <- R6Class("filter_pactr", public = list(
     }
 
     if (!(filter %in% names(self$logger$list_of_summaries))) {
-      cli::cli_abort("{.var filter} {filter} has not yet been applied to the data. Run the corresponding filter function prior to extracting the summary.")
+      cli::cli_abort("{.var filter} {filter} has not yet been applied to
+                     the data. Run the corresponding filter function prior
+                     to extracting the summary.")
     }
 
     return(list(
@@ -29,7 +32,8 @@ filter_pactr <- R6Class("filter_pactr", public = list(
   },
   get_mispicked_ions = function() {
     if (!exists("check_mismatched_peaks", self$logger)) {
-      cli::cli_abort("The mispicked filter has not yet been applied to the data - run filter_mispicked_ions() first.")
+      cli::cli_abort("The mispicked filter has not yet been applied to
+                     the data - run filter_mispicked_ions() first.")
     }
 
     merge_groups <- self$logger$check_mismatched_peaks$merge_groups
@@ -50,11 +54,20 @@ filter_pactr <- R6Class("filter_pactr", public = list(
       data.table(self$mpactr_data$get_meta_data()),
       on = .(sample = Injection)
     ][
-      , .(average = mean(intensity), BiolRSD = rsd(intensity), Bioln = length(intensity)),
+      , .(
+        average = mean(intensity),
+        BiolRSD = rsd(intensity),
+        Bioln = length(intensity)
+      ),
       by = .(Compound, Biological_Group)
     ]
 
-    t <- data.table::melt(self$mpactr_data$get_peak_table(), id.vars = c("Compound", "mz", "rt", "kmd"), variable.name = "sample", value.name = "intensity", variable.factor = FALSE)[
+    t <- data.table::melt(self$mpactr_data$get_peak_table(),
+      id.vars = c("Compound", "mz", "rt", "kmd"),
+      variable.name = "sample",
+      value.name = "intensity",
+      variable.factor = FALSE
+    )[
       data.table(self$mpactr_data$get_meta_data()),
       on = .(sample = Injection)
     ][
@@ -73,7 +86,8 @@ filter_pactr <- R6Class("filter_pactr", public = list(
   get_cv = function() {
     # if(self$logger$cv_values == NULL)
     if (!exists("cv_values", self$logger)) {
-      cli::cli_abort("The cv filter has not yet been applied to the data - run filter_cv() first.")
+      cli::cli_abort("The cv filter has not yet been applied
+                      to the data - run filter_cv() first.")
     }
 
     return(self$logger$cv_values)

@@ -9,7 +9,10 @@ summary <- R6::R6Class("summary",
       private$passed_ions <- passed_ions
     },
     summarize = function(x) {
-      cli::cli_alert_success("{length(private$failed_ions)} ions failed the {private$filter} filter, {length(private$passed_ions)} ions remain.")
+      cli::cli_alert_success("{length(private$failed_ions)} ions failed the
+                              {private$filter} filter,
+                               {length(private$passed_ions)}
+                               ions remain.")
     },
     get_failed_ions = function() {
       return(private$failed_ions)
