@@ -118,7 +118,7 @@ filter_pactr$set("public", "parse_ions_by_group", function(group_threshold = 0.0
 
   biol_groups <- as.list(group_max)
   biol_groups <- lapply(biol_groups, setNames, group_avgs[, Compound])
-  group_filter_list <- lapply(biol_groups, \(x) { names(x)[which(x > group_threshold)] })
+  group_filter_list <- lapply(biol_groups, function(x) { names(x)[which(x > group_threshold)] })
   self$logger[["group_filter-failing_list"]] <- group_filter_list
 })
 
