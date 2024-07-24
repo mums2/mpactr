@@ -25,7 +25,8 @@ an \code{mpactr_object}
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+                    example("metadata.csv"),
+                    format = "Progenesis")
 
 data_filter <- filter_insource_ions(data,
                               cluster_threshold = 0.95)

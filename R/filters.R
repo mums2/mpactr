@@ -1,4 +1,3 @@
-
 #######################
 ### Mistatched peaks ##
 #######################
@@ -17,28 +16,31 @@
 #' @param merge_method If merege_peaks is TRUE, a method for how similar peaks should be merged. Can be one of "sum".
 #' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 #' @return an `mpactr_object`
-#' @export 
+#' @export
 #'
-#' @examples 
+#' @examples
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'   example("metadata.csv"),
+#'   format = "Progenesis"
+#' )
 #'
 #' data_filter <- filter_mispicked_ions(data,
-#'                               ringwin = 0.5, 
-#'                               isowin = 0.01,
-#'                               trwin = 0.005,
-#'                               max_iso_shift = 3,
-#'                               merge_peaks = TRUE, 
-#'                               merge_method = "sum")
+#'   ringwin = 0.5,
+#'   isowin = 0.01,
+#'   trwin = 0.005,
+#'   max_iso_shift = 3,
+#'   merge_peaks = TRUE,
+#'   merge_method = "sum"
+#' )
 #'
-filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE, merge_method = "sum", copy_object = FALSE)
-{
-  if(copy_object)
-  {
+filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks = TRUE, merge_method = "sum", copy_object = FALSE) {
+  if (copy_object) {
     mpactr_object <- clone(mpactr_object)
   }
-  mpactr_object$check_mismatched_peaks(ringwin = ringwin, isowin = isowin, trwin = trwin, max_iso_shift = max_iso_shift,
-                                merge_peaks = merge_peaks, merge_method = "sum")
+  mpactr_object$check_mismatched_peaks(
+    ringwin = ringwin, isowin = isowin, trwin = trwin, max_iso_shift = max_iso_shift,
+    merge_peaks = merge_peaks, merge_method = "sum"
+  )
   return(mpactr_object)
 }
 
@@ -47,10 +49,10 @@ filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, t
 #######################
 #' Filter Ions by Group
 #'
-#' @details 
+#' @details
 #' `filter_group()` removes ions which have a signigifanct presence in the defined group (typically solvent blanks). Significance is determined by relative ion abundance arcoss groups at the user-defined `group_threshold`.
 #'
-#' Filtering is assessed on function parameter `group_threshold`. The defualt is 0.01, meaning features present in `group_to_remove` at greater than 1% are removed. 
+#' Filtering is assessed on function parameter `group_threshold`. The defualt is 0.01, meaning features present in `group_to_remove` at greater than 1% are removed.
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param group_threshold Relative abundance threshold at which to remove ions. Default = 0.01.
@@ -59,22 +61,23 @@ filter_mispicked_ions <- function(mpactr_object, ringwin = 0.5, isowin = 0.01, t
 #' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 
 #' @return an `mpactr_object`
-#' @export 
+#' @export
 #'
-#' @examples 
+#' @examples
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'   example("metadata.csv"),
+#'   format = "Progenesis"
+#' )
 #'
 #' data_filter <- filter_group(data,
-#'                               group_threshold = 0.01,
-#'                               group_to_remove = "Blanks",
-#'                               remove_ions = TRUE)
+#'   group_threshold = 0.01,
+#'   group_to_remove = "Blanks",
+#'   remove_ions = TRUE
+#' )
 #'
 filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove, remove_ions = TRUE,
-                          copy_object = FALSE)
-{
-   if(copy_object)
-  {
+                         copy_object = FALSE) {
+  if (copy_object) {
     mpactr_object <- clone(mpactr_object)
   }
   mpactr_object$filter_blank()
@@ -88,37 +91,40 @@ filter_group <- function(mpactr_object, group_threshold = 0.01, group_to_remove,
 #######################
 #' Filter Non-reproducible ions
 #'
-#' @description 
-#' `filter_cv()` removes feature ions that are found to be non-reproducible between technical inejction replicates. Replicability is assessed via mean or median coefficient of variation (CV) between technical replicates. As such, this fitler is expecting an input dataset with at least two replicate injections per sample. 
+#' @description
+#' `filter_cv()` removes feature ions that are found to be non-reproducible between technical inejction replicates. Replicability is assessed via mean or median coefficient of variation (CV) between technical replicates. As such, this fitler is expecting an input dataset with at least two replicate injections per sample.
 #'
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param cv_threshold Coefficient of variation threshold.
-#' @param cv_param Coefficient of variation (CV) to use for filtering. Options are "mean" or "median", corresponding to mean and median CV, respectively. 
+#' @param cv_param Coefficient of variation (CV) to use for filtering. Options are "mean" or "median", corresponding to mean and median CV, respectively.
 #' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 #'
 #' @return an `mpactr_object`
-#' @export 
+#' @export
 #'
 #' @examples
 #'
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'   example("metadata.csv"),
+#'   format = "Progenesis"
+#' )
 #'
 #' data_filter <- filter_cv(data,
-#'                               cv_threshold = 0.01,
-#'                               cv_param = "mean")
+#'   cv_threshold = 0.01,
+#'   cv_param = "mean"
+#' )
 #'
 #' data_filter <- filter_cv(data,
-#'                               cv_threshold = 0.01,
-#'                               cv_param = "median")
+#'   cv_threshold = 0.01,
+#'   cv_param = "median"
+#' )
 #'
 filter_cv <- function(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE) {
-   if(copy_object)
-  {
+  if (copy_object) {
     mpactr_object <- clone(mpactr_object)
   }
-   mpactr_object$cv_filter(cv_threshold = cv_threshold, cv_params = cv_param)
+  mpactr_object$cv_filter(cv_threshold = cv_threshold, cv_params = cv_param)
   return(mpactr_object)
 }
 
@@ -128,8 +134,8 @@ filter_cv <- function(mpactr_object, cv_threshold = NULL, cv_param, copy_object 
 ###########################
 #' Filter Insource ions
 #'
-#' @description 
-#' `filter_insource_ions()` determines insource ion fragments deconvolution via hierarchical clustering. Highly correlated ions with the same retention times are identified and removed. 
+#' @description
+#' `filter_insource_ions()` determines insource ion fragments deconvolution via hierarchical clustering. Highly correlated ions with the same retention times are identified and removed.
 #'
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
@@ -137,21 +143,22 @@ filter_cv <- function(mpactr_object, cv_threshold = NULL, cv_param, copy_object 
 #' @param copy_object A `boolean` paramter that allows users to return a copied object instead of modifying the object.
 #'
 #' @return an `mpactr_object`
-#' @export 
+#' @export
 #'
-#' @examples 
+#' @examples
 #' data <- import_data(example("coculture_peak_table.csv"),
-#'                     example("metadata.csv"))
+#'   example("metadata.csv"),
+#'   format = "Progenesis"
+#' )
 #'
 #' data_filter <- filter_insource_ions(data,
-#'                               cluster_threshold = 0.95)
+#'   cluster_threshold = 0.95
+#' )
 #'
 filter_insource_ions <- function(mpactr_object, cluster_threshold = 0.95, copy_object = FALSE) {
- if(copy_object)
-  {
+  if (copy_object) {
     mpactr_object <- clone(mpactr_object)
   }
   mpactr_object$filter_insource_ions(cluster_threshold = cluster_threshold)
   return(mpactr_object)
 }
-

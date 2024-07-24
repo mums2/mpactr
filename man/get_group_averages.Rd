@@ -17,7 +17,8 @@ a \code{data.table} retporting the average and relative standard deviation acros
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+                    example("metadata.csv"),
+                    format = "Progenesis")
 
 data_filter <- filter_group(data, group_to_remove = "Blanks")
 
