@@ -22,33 +22,42 @@ filter_mispicked_ions(
 
 \item{isowin}{Isotopic mass window. Defualt = 0.01.}
 
-\item{trwin}{A \code{numeric} denoting the retention time threhold for assessing if ions should be merged. Defulat = 0.005.}
+\item{trwin}{A \code{numeric} denoting the retention time threhold for assessing
+if ions should be merged. Defulat = 0.005.}
 
 \item{max_iso_shift}{A \code{numeric}. Default = 3.}
 
-\item{merge_peaks}{A \code{logical} to determine if peaks found to belong to the same ion should be merged in the feature table.}
+\item{merge_peaks}{A \code{logical} to determine if peaks found to belong to the
+same ion should be merged in the feature table.}
 
-\item{merge_method}{If merege_peaks is TRUE, a method for how similar peaks should be merged. Can be one of "sum".}
+\item{merge_method}{If merege_peaks is TRUE, a method for how similar peaks
+should be merged. Can be one of "sum".}
 
-\item{copy_object}{A \code{boolean} paramter that allows users to return a copied object instead of modifying the object.}
+\item{copy_object}{A \code{boolean} paramter that allows users to return a copied
+object instead of modifying the object.}
 }
 \value{
 an \code{mpactr_object}
 }
 \description{
-\code{filter_mispicked_ions()} identifies ions that were incorrectly split into separate features during preprocessing. This filter checks the feature table for similar ions in terms of mass and retention time. Peaks found to be similar are merged into a single feature given \code{merge_peaks} is \code{TRUE}.
+\code{filter_mispicked_ions()} identifies ions that were incorrectly split into
+separate features during preprocessing. This filter checks the feature table
+for similar ions in terms of mass and retention time. Peaks found to be
+similar are merged into a single feature given \code{merge_peaks} is \code{TRUE}.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"),
-                    format = "Progenesis")
+  example("metadata.csv"),
+  format = "Progenesis"
+)
 
 data_filter <- filter_mispicked_ions(data,
-                              ringwin = 0.5, 
-                              isowin = 0.01,
-                              trwin = 0.005,
-                              max_iso_shift = 3,
-                              merge_peaks = TRUE, 
-                              merge_method = "sum")
+  ringwin = 0.5,
+  isowin = 0.01,
+  trwin = 0.005,
+  max_iso_shift = 3,
+  merge_peaks = TRUE,
+  merge_method = "sum"
+)
 
 }

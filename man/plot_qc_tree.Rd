@@ -13,19 +13,23 @@ plot_qc_tree(mpactr_object)
 a tree map plot of class \code{ggplot}
 }
 \description{
-\code{plot_qc_tree()} visualizes the filtering summary as a treemap. Ion staus (see \code{\link[=qc_summary]{qc_summary()}}) is reported here as percentage of all pre-filtered ions.
+\code{plot_qc_tree()} visualizes the filtering summary as a treemap. Ion
+staus (see \code{\link[=qc_summary]{qc_summary()}}) is reported here as percentage of all
+pre-filtered ions.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"),
-                    format = "Progenesis")
+  example("metadata.csv"),
+  format = "Progenesis"
+)
 
-data_filter <- filter_mispicked_ions(data, 
-                                    ringwin = 0.5, 
-                                    isowin = 0.01, 
-                                    trwin = 0.005, 
-                                    max_iso_shift = 3,
-                                    merge_peaks = TRUE)
+data_filter <- filter_mispicked_ions(data,
+  ringwin = 0.5,
+  isowin = 0.01,
+  trwin = 0.005,
+  max_iso_shift = 3,
+  merge_peaks = TRUE
+)
 
 plot_qc_tree(data_filter)
 }

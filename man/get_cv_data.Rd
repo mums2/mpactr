@@ -7,22 +7,27 @@
 get_cv_data(mpactr_object)
 }
 \arguments{
-\item{mpactr_object}{The mpactr object that is created by calling the import_data() function.}
+\item{mpactr_object}{The mpactr object that is created by calling
+the import_data() function.}
 }
 \value{
-a \code{data.table} retporting the mean and median coefficient of variation for each input ion.
+a \code{data.table} retporting the mean and median coefficient
+of variation for each input ion.
 }
 \description{
-\code{get_cv_data()} is a wrapper function to return cv (coefficient of variation) calculated with \code{\link[=filter_cv]{filter_cv()}}.
+\code{get_cv_data()} is a wrapper function to return cv (coefficient of
+variation) calculated with \code{\link[=filter_cv]{filter_cv()}}.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"),
-                    format = "Progenesis")
+  example("metadata.csv"),
+  format = "Progenesis"
+)
 
 data_filter <- filter_cv(data,
-                              cv_threshold = 0.01,
-                              cv_param = "median")
+  cv_threshold = 0.01,
+  cv_param = "median"
+)
 
 cv <- get_cv_data(data_filter)
 head(cv)

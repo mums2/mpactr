@@ -1,5 +1,5 @@
 ---
-title: "filter"
+title: "Filter"
 ---
 
 ```{r, include = FALSE}
@@ -69,7 +69,7 @@ get_meta_data(data)[1:5, ]
 
 Note: mpactR is built on an R6 class-system, meaning it opperates on reference semantics in which data is updated *in-place*. Compared to a shallow copy, where only data pointers are copied, or a deep copy, where the entire data object is copied in memory, any changes to the original data object, regardless if they are assigned to a new object, result in changes to the original data object. We can see this below.
 
-Where the raw data object has 1303 ions in the feature table:
+Where the raw data object has `r nrow(get_peak_table(data))` ions in the feature table:
 
 ```{r}
 data2 <- import_data(example("cultures_peak_table.csv"),
@@ -95,7 +95,7 @@ data2_mispicked <- filter_mispicked_ions(data2,
 get_peak_table(data2_mispicked)[, 1:5]
 ```
 
-Even though we created an object called `data2_mispicked`, the original `data2` object was also updated and now has 1233 ions in the feature table:
+Even though we created an object called `data2_mispicked`, the original `data2` object was also updated and now has `r nrow(get_peak_table(data2_mispicked))` ions in the feature table:
 
 ```{r}
 get_peak_table(data2)[, 1:5]
@@ -225,67 +225,70 @@ cv %>%
 
 Here we can see that roughly 80% of features were below the CV threshold meaning 20% were removed at a CV theshold of 0.2.
 
-```{r, include=FALSE, eval=FALSE}
-cv <- cv %>%
-  mutate(
-    data = map(data, mutate, dist = cv - lag(cv)),
-    data = map(data, mutate, auc = dist * index_scale)
-  )
+# ```{r, include=FALSE, eval=FALSE}
+# additional statistics calculated in the original mpact
+# program that are not needed to plot cv. This will not run 
+# as written, but included as notes
+# cv <- cv %>%
+#   mutate(
+#     data = map(data, mutate, dist = cv - lag(cv)),
+#     data = map(data, mutate, auc = dist * index_scale)
+#   )
 
-# Replicability statistics
-mean_n <- get_meta_data(data_rep) %>%
-  summarise(count = n_distinct(Injection) / n_distinct(Sample_Code)) %>%
-  pull()
+# # Replicability statistics
+# mean_n <- get_meta_data(data_rep) %>%
+#   summarise(count = n_distinct(Injection) / n_distinct(Sample_Code)) %>%
+#   pull()
 
-stdev <- c(1, 0, 0 * (as.integer(mean_n) - 1))
-mod_stdev <- sd(stdev) / mean(stdev)
+# stdev <- c(1, 0, 0 * (as.integer(mean_n) - 1))
+# mod_stdev <- sd(stdev) / mean(stdev)
 
-mean_ord_med <- t$data[[2]] %>%
-  left_join(select(t$data[[1]], Compound, cv), by = "Compound") %>%
-  rename(
-    cv_median = cv.x,
-    cv = cv.y
-  ) %>%
-  arrange(cv_median) %>%
-  mutate(param = "mead_ord_med") %>%
-  select(param, cv, everything())
+# mean_ord_med <- t$data[[2]] %>%
+#   left_join(select(t$data[[1]], Compound, cv), by = "Compound") %>%
+#   rename(
+#     cv_median = cv.x,
+#     cv = cv.y
+#   ) %>%
+#   arrange(cv_median) %>%
+#   mutate(param = "mead_ord_med") %>%
+#   select(param, cv, everything())
 
-cv2 <- t %>%
-  unnest(cols = data) %>%
-  bind_rows(mean_ord_med) %>%
-  nest(.by = param)
+# cv2 <- t %>%
+#   unnest(cols = data) %>%
+#   bind_rows(mean_ord_med) %>%
+#   nest(.by = param)
 
-index_cv_mean <- function(x, df, sd) {
-  mean(df$index_scale[which(abs(df$cv - x - sd / 200) < sd / 200)])
-}
+# index_cv_mean <- function(x, df, sd) {
+#   mean(df$index_scale[which(abs(df$cv - x - sd / 200) < sd / 200)])
+# }
 
-s <- data.frame(val = 1:(mod_stdev * 100)) %>%
-  mutate(
-    pos = val / 100,
-    meanavg = map_dbl(pos, index_cv_mean, df = cv2$data[[1]], sd = mod_stdev),
-    meanmed = map_dbl(pos, index_cv_mean, df = cv2$data[[3]], sd = mod_stdev),
-    skew = abs(meanmed - meanavg),
-    skew_sd = skew * mod_stdev / 100
-  )
+# s <- data.frame(val = 1:(mod_stdev * 100)) %>%
+#   mutate(
+#     pos = val / 100,
+#     meanavg = map_dbl(pos, index_cv_mean, df = cv2$data[[1]], sd = mod_stdev),
+#     meanmed = map_dbl(pos, index_cv_mean, df = cv2$data[[3]], sd = mod_stdev),
+#     skew = abs(meanmed - meanavg),
+#     skew_sd = skew * mod_stdev / 100
+#   )
 
-sumskew <- s %>%
-  summarise(sum = sum(skew_sd, na.rm = TRUE)) %>%
-  pull(sum)
+# sumskew <- s %>%
+#   summarise(sum = sum(skew_sd, na.rm = TRUE)) %>%
+#   pull(sum)
 
-auc_groups <- t %>%
-  unnest(cols = data) %>%
-  summarise(auc = sum(auc, na.rm = TRUE), .by = param)
+# auc_groups <- t %>%
+#   unnest(cols = data) %>%
+#   summarise(auc = sum(auc, na.rm = TRUE), .by = param)
 
-filter(auc_groups, param == "median_cv") %>% pull(auc)
+# filter(auc_groups, param == "median_cv") %>% pull(auc)
 
-sumskew_n <- sumskew / ((filter(auc_groups, param == "median_cv") %>% pull(auc) + filter(auc_groups, param == "mean_cv") %>% pull(auc)) / 2)
-rep <- ((filter(auc_groups, param == "median_cv") %>% pull(auc) + filter(auc_groups, param == "mean_cv") %>% pull(auc)) / 2) / (mod_stdev * 100)
-qualscore <- (1 - sumskew_n) * rep * 100
+# sumskew_n <- sumskew / ((filter(auc_groups, param == "median_cv") %>% pull(auc) + filter(auc_groups, param == "mean_cv") %>% pull(auc)) / 2)
+# rep <- ((filter(auc_groups, param == "median_cv") %>% pull(auc) + filter(auc_groups, param == "mean_cv") %>% pull(auc)) / 2) / (mod_stdev * 100)
+# qualscore <- (1 - sumskew_n) * rep * 100
 
-paste0(
-  "Reproducibility: ", round(100 * rep, 1), "% ",
-  "Skewness: ", round(100 * sumskew_n, 1), "% ",
-  "Overall: ", round(qualscore, 1), "%"
+# paste0(
+#   "Reproducibility: ", round(100 * rep, 1), "% ",
+#   "Skewness: ", round(100 * sumskew_n, 1), "% ",
+#   "Overall: ", round(qualscore, 1), "%"
 )
 ```
 
@@ -340,7 +343,7 @@ Passing ions:
 head(mispicked_summary$passed_ions, 100)
 ```
 
-If you set `filter` to a filter name that you did not apply to your data, a warning message will be returned.
+If you set `filter` to a filter name that you did not apply to your data, an error message will be returned.
 
 ```{r, error=TRUE}
 filter_summary(data_filtered, filter = "insource")
