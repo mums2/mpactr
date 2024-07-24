@@ -1,22 +1,18 @@
 ---
-title: "Filter"
-vignette: >
-  %\VignetteIndexEntry{Vignette's Title}
-  %\VignetteEngine{quarto::html}
-  %\VignetteEncoding{UTF-8}
+title: "filter"
 ---
 
-```{r}
-#| include: false
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r setup}
-#| output: false
+```{r setup, message=FALSE}
+
 library(mpactR)
+# devtools::load_all()
 library(tidyverse)
 ```
 
@@ -175,8 +171,7 @@ head(cv)
 
 The nested data are tibbles with the columns `r colnames(cv$data[[1]])`:
 
-```{r}
-#| echo: false
+```{r, echo=FALSE}
 
 head(cv$data[[1]])
 ```
@@ -197,8 +192,8 @@ cv_thresh_percent
 
 Then we can plot percentage of features by CV:
 
-```{r}
-#| warning: false
+```{r, warning=FALSE}
+
 cv %>%
   unnest(cols = data) %>%
   mutate(param = factor(param, levels = c("mean_cv", "median_cv"), labels = c("mean", "median"))) %>%
@@ -222,9 +217,8 @@ cv %>%
 
 Here we can see that roughly 80% of features were below the CV threshold meaning 20% were removed at a CV theshold of 0.2.
 
-```{r}
-#| include: false
-#| eval: false
+```{r, include=FALSE, eval=FALSE}
+
 cv <- cv %>%
   mutate(data = map(data, mutate, dist = cv - lag(cv)),
          data = map(data, mutate, auc = dist * index_scale)) 
@@ -332,8 +326,8 @@ head(mispicked_summary$passed_ions, 100)
 
 If you set `filter` to a filter name that you did not apply to your data, a warning message will be returned.
 
-```{r}
-#| error: true
+```{r, error=TRUE}
+
 filter_summary(data_filtered, filter = "insource")
 ```
 

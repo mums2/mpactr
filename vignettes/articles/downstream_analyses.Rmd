@@ -1,12 +1,13 @@
 ---
 title: "Downstream Analyses"
-vignette: >
-  %\VignetteIndexEntry{Vignette's Title}
-  %\VignetteEngine{quarto::html}
-  %\VignetteEncoding{UTF-8}
-project:
-  render: ['*.qmd']
 ---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 The goal of mpactR is to correct for errors that occur during the pre-processing of raw tandem MS/MS data. Once filtering in complete, you should have a feature table containing high quality ms1 features. This table can be used for a variety of analyses that can be conducted in R to better understand if and how samples differ from one another. 
 
@@ -21,20 +22,12 @@ In this article, we will highlight just a few analyses. This is not an exhaustiv
     * conducting t-tests for fold change differences, calculating p-values, and calculating q-values for false discovery rate (FDR) correction
     * visualizing significant fold change differences in a volcano plot
 
-```{r}
-#| include: false
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
 
 # Load required libraries
 
 We will be using multiple libraries for data analysis and visualization, which can be loaded below. If you do not have some or all of the packages listed, you can install them with `install.packages("packagename")`.
 
-```{r setup}
-#| output: false
+```{r setup, message=FALSE}
 library(mpactR)
 # devtools::load_all()
 library(viridis)
@@ -179,8 +172,7 @@ counts_cor$r[ , 1]
 
 Finally, we can plot the correlations map with `corrplot`. Style options can be customized to your liking (see [corrplot](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html)).
 
-```{r}
-#| warning: false
+```{r, warning=FALSE}
 
 corrplot(counts_cor$r, 
          type = "lower", 
@@ -236,7 +228,7 @@ counts %>%
 
 Finally, we need to reformat the table so columns are sample codes for the correlation.
 
-```{r}
+```{r, warning=FALSE}
 #| warning: false
 
 sample_counts <- counts %>%
@@ -276,8 +268,7 @@ corrplot(sample_counts_cor$r,
 
 We can also look at the correlation between biological groups. In this dataset, technical replicates and biological groups are the same, however if you have multiple technical replicates you may also be interested in the correlation between biological groups. We will calculate mean intensity values for `Biological_Group` in the same manner as we did for `Sample_Code`.
 
-```{r}
-#| warning: false
+```{r, warning=FALSE}
 
 group_counts <- counts %>%
     rownames_to_column(var = "Compound") %>%
@@ -781,3 +772,4 @@ fc2 %>%
         axis.text = element_text(size = 15)
     )
 ```
+
