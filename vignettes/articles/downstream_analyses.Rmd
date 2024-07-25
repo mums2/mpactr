@@ -14,7 +14,7 @@ The goal of mpactR is to correct for errors that occur during the pre-processing
 In this article, we will highlight just a few analyses. This is not an exhaustive list, and there are certainly other ways to conduct the analyses show below - the beauty of R! We will walk you through how to do the following:
 
 - creating an interactive plot of input features and the filters they failed, if any, using `ggplot` and `plotly`
-- correlating sample profiles at mutliple levels (sample, technical replicates, and biological replicates) using `Hmisc` and `corrplot`
+- correlating sample profiles at multiple levels (sample, technical replicates, and biological replicates) using `Hmisc` and `corrplot`
 - visualizing sample clustering as a dendrogram with `ggdendro`
 - differential abundance analysis:
     * calculating fold change between two biological groups
@@ -29,7 +29,6 @@ We will be using multiple libraries for data analysis and visualization, which c
 
 ```{r setup, message=FALSE}
 library(mpactR)
-# devtools::load_all()
 library(viridis)
 library(plotly)
 library(data.table)
@@ -116,7 +115,7 @@ get_raw_data(data_filtered) %>%
   theme(legend.position = "top")
 ```
 
-We can also make the plot interactive with the `plotly` pacakge function `ggplotly`.
+We can also make the plot interactive with the `plotly` package function `ggplotly`.
 
 ```{r}
 feature_plot <- get_raw_data(data_filtered) %>%
@@ -155,7 +154,7 @@ ft[1:5, 1:7]
 
 ### Correlation between each individual samples
 
-First, we can look at the correlation between each individual sample, regadless of technical replicates and biological groups. This will show how well technical and biological replicates correlate, where we are expecting to see near perfect correlation replicates.
+First, we can look at the correlation between each individual sample, regardless of technical replicates and biological groups. This will show how well technical and biological replicates correlate, where we are expecting to see near perfect correlation replicates.
 
 We will use `Hmisc::rcorr()` to perform spearman correlations. This function is expecting a `matrix` where rows are samples to correlate and rows are features. Since the feature table has columns for both feature metadata and samples, we need to remove feature metadata for `rcorr()`. We can do this by extracting sample names from the metadata `Injection` column, which match sample column names in the feature table. We also need to remove any samples that no longer have any features post-filtering (likely solvent blanks).
 
@@ -212,7 +211,7 @@ counts %>%
   head()
 ```
 
-Next, we will join with sample meta data so we can cacluate averages by `Sample_Code`.
+Next, we will join with sample meta data so we can calcuate averages by `Sample_Code`.
 
 ```{r}
 counts %>%
@@ -314,7 +313,7 @@ group_counts <- counts %>%
 ```    
   
   
-Run the correlation analysis with `rorr()`:
+Run the correlation analysis with `rcorr()`:
     
 ```{r}
 group_counts_cor <- rcorr(as.matrix(group_counts), type = "spearman")
@@ -332,7 +331,7 @@ corrplot(group_counts_cor$r,
 )
 ```
 
-As expected, the biological group correlation matrix matches the tehcnical replicates correlation.
+As expected, the biological group correlation matrix matches the technical replicates correlation.
 
 # Dendrogram
 
@@ -368,7 +367,8 @@ ggplot(segment(den_data)) +
     size = 3,
     hjust = "outward"
   ) +
-  coord_cartesian(ylim = c((min(segment(den_data)$y) + 10), (max(segment(den_data)$y)))) +
+  coord_cartesian(ylim = c((min(segment(den_data)$y) + 10),
+                           (max(segment(den_data)$y)))) +
   coord_flip() +
   scale_y_reverse(expand = c(.5, 0)) +
   theme_dendro()
@@ -383,7 +383,7 @@ Say we wanted to compare metabolite profiles between our Coculture and ANG18 gro
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
   mutate(fc = Coculture / ANG18) %>%
@@ -397,10 +397,12 @@ Compounds that are not in either group are of no interest in this comparison and
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0, FALSE, TRUE)) %>%
+  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
+                                    FALSE,
+                                    TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
@@ -413,7 +415,7 @@ First, extract group averages from the `mpactr` object and select the two groups
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   head()
 ```
@@ -423,7 +425,7 @@ To calculate fold change, we need to have two columns: one for the control group
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
   head()
@@ -434,10 +436,12 @@ Now we can remove compounds with an intensity of 0 in both groups:
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0, FALSE, TRUE)) %>%
+  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
+                                    FALSE,
+                                    TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
   head()
 ```
@@ -447,10 +451,12 @@ Next, we calculate fold change for all remaining compounds:
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0, FALSE, TRUE)) %>%
+  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
+                                    FALSE,
+                                    TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
@@ -461,10 +467,12 @@ Now we correct the bounds: for compounds that have 0 intenisty in the control gr
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0, FALSE, TRUE)) %>%
+  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
+                                    FALSE,
+                                    TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
   mutate(
     fc = Coculture / ANG18,
@@ -481,10 +489,12 @@ Finally, transform fold change to log2:
 ```{r}
 foldchanges <- get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0, FALSE, TRUE)) %>%
+  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
+                                    FALSE,
+                                    TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
   mutate(
     fc = Coculture / ANG18,
@@ -572,7 +582,8 @@ head(stats)
 
 ```{r}
 denom <- stats %>%
-  summarise(den = combASD^2 / (neff), .by = c("Compound", "Biological_Group")) %>%
+  summarise(den = combASD^2 / (neff),
+            .by = c("Compound", "Biological_Group")) %>%
   mutate(den = if_else(!is.finite(den), 0, den)) %>%
   summarise(denom = sqrt(sum(den)), .by = c("Compound"))
 
@@ -626,14 +637,14 @@ fc <- foldchanges %>%
   left_join(t, by = "Compound") %>%
   arrange(p) %>%
   mutate(
-    qval = 1:(length(p)),
+    qval = seq_len(p),
     qval = p * num_ions / qval
   ) %>%
   arrange(desc(p))
 
 min_qval <- 1
 
-for (i in 1:nrow(fc)) {
+for (i in seq_len(nrow(fc))) {
   if (!is.finite(fc$qval[i])) {
     next
   }
@@ -653,7 +664,7 @@ fc2 <- fc %>%
 
 Now we can create a volcano plot to see the magnitude of metabolite abundance differences between the Cocoulture and ANG18 groups.
 
-We can plot log2 fold change values against log~10~ p-values or log~10~ q-values, both of which we calcuated in out t-tests above.
+We can plot log2 fold change values against log~10~ p-values or log~10~ q-values, both of which we calcuated in our t-tests above.
 
 *log2 fold change ~ log~10~ p-values*
 
@@ -664,11 +675,13 @@ fc2 %>%
   ggplot() +
   aes(x = logfc, y = neg_logp) +
   geom_point() +
-  labs(x = "log2 Fold Change", y = "-Log~10~ *P*", color = "Differential Abundance") +
+  labs(x = "log2 Fold Change",
+       y = "-Log~10~ *P*",
+       color = "Differential Abundance") +
   theme_bw()
 ```
 
-This is good, but we probably want know which compounds are above the p-value threshold and outside the log2 fold change threshold. Fold change threshold commonly ranges from 1.5 - 2. For this plot, we will show a p-value threshold of 0.05 and fold change threshold of 1.5. 
+This is good, but we probably want to know which compounds are above the p-value threshold and outside the log2 fold change threshold. Fold change threshold commonly ranges from 1.5 - 2. For this plot, we will show a p-value threshold of 0.05 and fold change threshold of 1.5. 
 
 First add add a horizontal line to denote the cutoff of -log~10~ 0.05:
 
@@ -678,7 +691,9 @@ fc2 %>%
   aes(x = logfc, y = neg_logp) +
   geom_point() +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
-  labs(x = "log2 Fold Change", y = "-Log~10~ *P*", color = "Differential Abundance") +
+  labs(x = "log2 Fold Change",
+       y = "-Log~10~ *P*",
+       color = "Differential Abundance") +
   theme_bw()
 ```
 
@@ -690,7 +705,9 @@ fc2 %>%
   aes(x = logfc, y = neg_logp) +
   geom_point() +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
-  labs(x = "log2 Fold Change", y = "-Log~10~ *P*", color = "Differential Abundance") +
+  labs(x = "log2 Fold Change",
+       y = "-Log~10~ *P*",
+       color = "Differential Abundance") +
   geom_vline(xintercept = log2(1.5), linetype = "dashed") +
   geom_vline(xintercept = -log2(1.5), linetype = "dashed") +
   theme_bw()
@@ -712,7 +729,8 @@ fc2 %>%
       TRUE ~ "Inconclusive"
     ),
     sig = factor(sig,
-      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"), labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
+      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"),
+      labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
     )
   ) %>%
   select(Compound, ANG18, Coculture, fc, logfc, p, sig) %>%
@@ -731,7 +749,8 @@ fc2 %>%
       TRUE ~ "Inconclusive"
     ),
     sig = factor(sig,
-      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"), labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
+      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"),
+      labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
     )
   ) %>%
   ggplot() +
@@ -761,7 +780,8 @@ fc2 %>%
       TRUE ~ "Inconclusive"
     ),
     sig = factor(sig,
-      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"), labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
+      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"),
+      labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
     )
   ) %>%
   ggplot() +
@@ -795,7 +815,8 @@ volcano <- fc2 %>%
       TRUE ~ "Inconclusive"
     ),
     sig = factor(sig,
-      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"), labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
+      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"),
+      labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
     )
   ) %>%
   ggplot() +
@@ -836,7 +857,8 @@ fc2 %>%
       TRUE ~ "Inconclusive"
     ),
     sig = factor(sig,
-      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"), labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
+      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"),
+      labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
     )
   ) %>%
   ggplot() +

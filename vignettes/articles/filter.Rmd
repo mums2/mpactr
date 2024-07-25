@@ -11,7 +11,6 @@ knitr::opts_chunk$set(
 
 ```{r setup, message=FALSE}
 library(mpactR)
-# devtools::load_all()
 library(tidyverse)
 ```
 
@@ -67,7 +66,7 @@ get_meta_data(data)[1:5, ]
 
 ## Reference semantics
 
-Note: mpactR is built on an R6 class-system, meaning it opperates on reference semantics in which data is updated *in-place*. Compared to a shallow copy, where only data pointers are copied, or a deep copy, where the entire data object is copied in memory, any changes to the original data object, regardless if they are assigned to a new object, result in changes to the original data object. We can see this below.
+Note: mpactR is built on an R6 class-system, meaning it operates on reference semantics in which data is updated *in-place*. Compared to a shallow copy, where only data pointers are copied, or a deep copy, where the entire data object is copied in memory, any changes to the original data object, regardless if they are assigned to a new object, result in changes to the original data object. We can see this below.
 
 Where the raw data object has `r nrow(get_peak_table(data))` ions in the feature table:
 
@@ -81,7 +80,7 @@ data2 <- import_data(example("cultures_peak_table.csv"),
 get_peak_table(data2)[, 1:5]
 ```
 
-Running the `filter_mispicked_ions` filter, with default setting `copy_object = FALSE` (operates on reference semtanics) results in 1233 ions in the feature table:
+Running the `filter_mispicked_ions` filter, with default setting `copy_object = FALSE` (operates on reference semantics) results in 1233 ions in the feature table:
 
 ```{r}
 data2_mispicked <- filter_mispicked_ions(data2,
@@ -165,11 +164,13 @@ data_rep <- filter_cv(data,
 
 In our example dataset, `r length(filter_summary(data_rep, "replicability")$failed_ions)` ions were flagged as nonreproducible. These ions were removed, leaving `r (length(filter_summary(data_rep, "replicability")$failed_ions) + length(filter_summary(data_rep, "replicability")$passed_ions)) - length(filter_summary(data_rep, "replicability")$failed_ions)` ions in the feature table.
 
-If you would like to visualize how the CV threshold performed on your dataset, you can extract the CV calculations using mpactR's `get_cv_data()` function and caclulate the percentage of features for plotting. You can look at both mean and median cv as shown in the example below, or you can filter the data by the parameter of choice. 
+If you would like to visualize how the CV threshold performed on your dataset, you can extract the CV calculations using mpactR's `get_cv_data()` function and calculate the percentage of features for plotting. You can look at both mean and median cv as shown in the example below, or you can filter the data by the parameter of choice. 
 
 ```{r}
 cv <- get_cv_data(data_rep) %>%
-  pivot_longer(cols = c("mean_cv", "median_cv"), names_to = "param", values_to = "cv") %>%
+  pivot_longer(cols = c("mean_cv", "median_cv"),
+               names_to = "param",
+               values_to = "cv") %>%
   nest(.by = param) %>%
   mutate(
     data = map(data, arrange, cv),
@@ -202,16 +203,24 @@ cv_thresh_percent
 
 Then we can plot percentage of features by CV:
 
-```{r, warning=FALSE}
+```{r}
 cv %>%
   unnest(cols = data) %>%
-  mutate(param = factor(param, levels = c("mean_cv", "median_cv"), labels = c("mean", "median"))) %>%
+  mutate(param = factor(param, levels = c("mean_cv", "median_cv"),
+                        labels = c("mean", "median"))) %>%
   ggplot() +
   aes(x = cv, y = index_scale, group = param, color = param) +
-  geom_line(size = 2) +
-  geom_vline(xintercept = 0.2, color = "darkgrey", linetype = "dashed", size = 1) +
-  geom_hline(yintercept = cv_thresh_percent, color = "darkgrey", size = 1) +
-  labs(x = "CV", y = "Percentage of Features", param = "Statistic") +
+  geom_line(linewidth = 2) +
+  geom_vline(xintercept = 0.2,
+             color = "darkgrey",
+             linetype = "dashed",
+             linewidth = 1) +
+  geom_hline(yintercept = cv_thresh_percent,
+             color = "darkgrey",
+             linewidth = 1) +
+  labs(x = "CV",
+       y = "Percentage of Features",
+       param = "Statistic") +
   theme_bw() +
   theme(
     axis.title = element_text(size = 20),
@@ -223,11 +232,11 @@ cv %>%
   )
 ```
 
-Here we can see that roughly 80% of features were below the CV threshold meaning 20% were removed at a CV theshold of 0.2.
+Here we can see that roughly 80% of features were below the CV threshold meaning 20% were removed at a CV threshold of 0.2.
 
-# ```{r, include=FALSE, eval=FALSE}
+```{r, include=FALSE, eval=FALSE}
 # additional statistics calculated in the original mpact
-# program that are not needed to plot cv. This will not run 
+# program that are not needed to plot cv. This will not run
 # as written, but included as notes
 # cv <- cv %>%
 #   mutate(
@@ -289,12 +298,12 @@ Here we can see that roughly 80% of features were below the CV threshold meaning
 #   "Reproducibility: ", round(100 * rep, 1), "% ",
 #   "Skewness: ", round(100 * sumskew_n, 1), "% ",
 #   "Overall: ", round(qualscore, 1), "%"
-)
+#)
 ```
 
-#### Remove insouce fragment ions
+#### Remove insource fragment ions
 
-Some ions produce fragments during the first ionization of tandem MS/MS, called insouce ions. This can result in ions from one compound being represented more than once in the feature table. If you would like to remove insource ions framgments, you can do so with mpactR's `filter_insource_ions()`. `filter_insource_ions()` conducts ion decovolution via retention time correlation matrices within MS1 scans. Highly correlated ion groups are determined by the `cluster_threshold` parameter and filtered to remvome the low mass features. The highest mass feature is identified as the likely parent ion and retained in the feature table. 
+Some ions produce fragments during ionization of tandem MS/MS, called insource ions. This can result in ions from one compound being represented more than once in the feature table. If you would like to remove insource ions fragments, you can do so with mpactR's `filter_insource_ions()`. `filter_insource_ions()` conducts ion deconvolution via retention time correlation matrices within MS1 scans. Highly correlated ion groups are determined by the `cluster_threshold` parameter and filtered to remove the low mass features. The highest mass feature is identified as the likely parent ion and retained in the feature table. 
 
 ```{r}
 data_insource <- filter_insource_ions(data,
@@ -307,7 +316,7 @@ data_insource <- filter_insource_ions(data,
 
 #### Chaining filters together
 
-Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering nonrepoducible or insouce ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying nonreproducible and insource fragment ions. Here we also demonstrate the removal of media blank components with the `filter_group()` function.
+Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering nonrepoducible or insource ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying nonreproducible and insource fragment ions. Here we also demonstrate the removal of media blank components with the `filter_group()` function.
 
 ```{r}
 data <- import_data(example("cultures_peak_table.csv"),
@@ -369,7 +378,7 @@ head(qc_summary(data_filtered)[order(compounds), ])
 
 You can visualize filtering efforts with a tree map using the filtering summary obtained from `qc_summary()` and the packages `ggplot2` and `treemapify`.
 
-First we need to determine the number of ions for each ion status in the summary table. You can report the count, however we need to calculate the percent of ions in each group. We have done this in the code chunk below, where we have used `data.table` syntax as the `qc_summary()` returns a `data.table` object. If you are not familar with the package data.table, check out their resources on [gitlab](https://rdatatable.gitlab.io/data.table/).
+First we need to determine the number of ions for each ion status in the summary table. You can report the count, however we need to calculate the percent of ions in each group. We have done this in the code chunk below, where we have used `data.table` syntax as the `qc_summary()` returns a `data.table` object. If you are not familiar with the package data.table, check out their resources on [gitlab](https://rdatatable.gitlab.io/data.table/).
 
 ```{r}
 library(ggplot2)
