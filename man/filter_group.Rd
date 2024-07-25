@@ -20,10 +20,10 @@ Default = 0.01.}
 
 \item{group_to_remove}{Biological group name to remove ions from.}
 
-\item{remove_ions}{A \code{boolean} parameter. If \code{TRUE} failing ions will be
-removed from the peak table. Default = TRUE.}
+\item{remove_ions}{A \code{logical}. If \code{TRUE} failing ions will be removed from
+the peak table. Default = TRUE.}
 
-\item{copy_object}{A \code{boolean} parameter that allows users to return a copied
+\item{copy_object}{A \code{boolean} paramter that allows users to return a copied
 object instead of modifying the object.}
 }
 \value{
@@ -39,8 +39,7 @@ relative ion abundance arcoss groups at the user-defined \code{group_threshold}.
 
 Filtering is assessed on function parameter \code{group_threshold}. The defualt
 is 0.01, meaning features present in \code{group_to_remove} at greater than 1\%
-are removed. If you would like to remove features fround in media blank
-samples, we recommend testing the \code{group_threshold}.
+are removed.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),

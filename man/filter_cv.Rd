@@ -11,11 +11,10 @@ filter_cv(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE)
 
 \item{cv_threshold}{Coefficient of variation threshold.}
 
-\item{cv_param}{Coefficient of variation (CV) statistic to use for filtering.
-Options are "mean" or "median", corresponding to mean and median CV,
-respectively.}
+\item{cv_param}{Coefficient of variation (CV) to use for filtering. Options
+are "mean" or "median", corresponding to mean and median CV, respectively.}
 
-\item{copy_object}{A \code{boolean} parameter that allows users to return a copied
+\item{copy_object}{A \code{boolean} paramter that allows users to return a copied
 object instead of modifying the object.}
 }
 \value{

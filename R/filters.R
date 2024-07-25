@@ -16,11 +16,11 @@
 #' @param trwin A `numeric` denoting the retention time threhold for assessing
 #' if ions should be merged. Defulat = 0.005.
 #' @param max_iso_shift A `numeric`. Default = 3.
-#' @param merge_peaks A `boolean` paramter to determine if peaks found to belong
-#' to the same ion should be merged in the feature table.
-#' @param merge_method If merge_peaks is TRUE, a method for how similar peaks
+#' @param merge_peaks A `logical` to determine if peaks found to belong to the
+#' same ion should be merged in the feature table.
+#' @param merge_method If merege_peaks is TRUE, a method for how similar peaks
 #' should be merged. Can be one of "sum".
-#' @param copy_object A `boolean` parameter that allows users to return a copied
+#' @param copy_object A `boolean` paramter that allows users to return a copied
 #' object instead of modifying the object.
 #' @return an `mpactr_object`
 #' @export
@@ -73,16 +73,15 @@ filter_mispicked_ions <- function(mpactr_object,
 #'
 #' Filtering is assessed on function parameter `group_threshold`. The defualt
 #' is 0.01, meaning features present in `group_to_remove` at greater than 1%
-#' are removed. If you would like to remove features fround in media blank
-#' samples, we recommend testing the `group_threshold`.
+#' are removed.
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param group_threshold Relative abundance threshold at which to remove ions.
 #' Default = 0.01.
 #' @param group_to_remove Biological group name to remove ions from.
-#' @param remove_ions A `boolean` parameter. If `TRUE` failing ions will be
-#' removed from the peak table. Default = TRUE.
-#' @param copy_object A `boolean` parameter that allows users to return a copied
+#' @param remove_ions A `logical`. If `TRUE` failing ions will be removed from
+#' the peak table. Default = TRUE.
+#' @param copy_object A `boolean` paramter that allows users to return a copied
 #' object instead of modifying the object.
 
 #' @return an `mpactr_object`
@@ -132,10 +131,9 @@ filter_group <- function(mpactr_object,
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param cv_threshold Coefficient of variation threshold.
-#' @param cv_param Coefficient of variation (CV) statistic to use for filtering.
-#' Options are "mean" or "median", corresponding to mean and median CV,
-#' respectively.
-#' @param copy_object A `boolean` parameter that allows users to return a copied
+#' @param cv_param Coefficient of variation (CV) to use for filtering. Options
+#' are "mean" or "median", corresponding to mean and median CV, respectively.
+#' @param copy_object A `boolean` paramter that allows users to return a copied
 #' object instead of modifying the object.
 #'
 #' @return an `mpactr_object`
@@ -179,15 +177,15 @@ filter_cv <- function(mpactr_object,
 #' Filter Insource ions
 #'
 #' @description
-#' `filter_insource_ions()` determines insource ion fragments and performs
-#' deconvolution via hierarchical clustering. Highly correlated ions with
-#' the same retention times are identified and removed.
+#' `filter_insource_ions()` determines insource ion fragments deconvolution
+#' via hierarchical clustering. Highly correlated ions with the same
+#' retention times are identified and removed.
 #'
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
-#' @param cluster_threshold Cluster threshold for ion deconvolution.
+#' @param cluster_threshold cluster threshold for ion deconvolution.
 #' Default = 0.95.
-#' @param copy_object A `boolean` parameter that allows users to return
+#' @param copy_object A `boolean` paramter that allows users to return
 #' a copied object instead of modifying the object.
 #'
 #' @return an `mpactr_object`
