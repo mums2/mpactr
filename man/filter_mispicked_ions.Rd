@@ -27,13 +27,13 @@ if ions should be merged. Defulat = 0.005.}
 
 \item{max_iso_shift}{A \code{numeric}. Default = 3.}
 
-\item{merge_peaks}{A \code{logical} to determine if peaks found to belong to the
-same ion should be merged in the feature table.}
+\item{merge_peaks}{A \code{boolean} paramter to determine if peaks found to belong
+to the same ion should be merged in the feature table.}
 
-\item{merge_method}{If merege_peaks is TRUE, a method for how similar peaks
+\item{merge_method}{If merge_peaks is TRUE, a method for how similar peaks
 should be merged. Can be one of "sum".}
 
-\item{copy_object}{A \code{boolean} paramter that allows users to return a copied
+\item{copy_object}{A \code{boolean} parameter that allows users to return a copied
 object instead of modifying the object.}
 }
 \value{
