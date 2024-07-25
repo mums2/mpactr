@@ -1,6 +1,12 @@
 test_that("mpactr class initialize works correctly", {
-  meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
-  pt_list <- progenesis_formatter(test_path("exttestdata", "102623_peaktable_coculture_simple.csv"))
+
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+
+  meta <- data.table(read_csv(test_path(directory, meta_data_name),
+                              show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
 
   mpactr_class <- mpactr$new(
     pt_list,
@@ -13,14 +19,19 @@ test_that("mpactr class initialize works correctly", {
   expect_error(mpactr$new(peak_table_path = 2, meta_data_path = 5), NULL)
 })
 
-test_that("mpactr isMultipleTechReps correctly dtermines if there are technical replicates", {
-  meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
-  pt_list <- progenesis_formatter(test_path("exttestdata", "102623_peaktable_coculture_simple.csv"))
+test_that("mpactr isMultipleTechReps correctly
+  determines if there are technical replicates", {
+            directory <- "exttestdata"
+            peak_table_name <- "102623_peaktable_coculture_simple.csv"
+            meta_data_name <- "102623_metadata_correct.csv"
+            meta <- data.table(read_csv(test_path(directory, meta_data_name),
+                                        show_col_types = FALSE))
+            pt_list <- progenesis_formatter(test_path(directory,
+                                                      peak_table_name))
 
-  mpactr_class <- mpactr$new(
-    pt_list,
-    meta
-  )
-  expect_true(mpactr_class$isMultipleTechReps())
-  # t <- c(1, 3, 3, 3, 3)
-})
+            mpactr_class <- mpactr$new(
+              pt_list,
+              meta
+            )
+            expect_true(mpactr_class$isMultipleTechReps())
+          })

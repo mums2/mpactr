@@ -1,6 +1,10 @@
 test_that("get_peak_table correctly returns the table", {
-  data <- import_data(test_path("exttestdata", "102623_peaktable_coculture_simple.csv"),
-    test_path("exttestdata", "102623_metadata_correct.csv"),
+
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+  data <- import_data(test_path(directory, peak_table_name),
+    test_path(directory, meta_data_name),
     format = "Progenesis"
   )
 
@@ -10,8 +14,11 @@ test_that("get_peak_table correctly returns the table", {
 })
 
 test_that("get_meta_data correctly returns the table", {
-  data <- import_data(test_path("exttestdata", "102623_peaktable_coculture_simple.csv"),
-    test_path("exttestdata", "102623_metadata_correct.csv"),
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+  data <- import_data(test_path(directory, peak_table_name),
+    test_path(directory, meta_data_name),
     format = "Progenesis"
   )
 
@@ -21,8 +28,11 @@ test_that("get_meta_data correctly returns the table", {
 })
 
 test_that("get_raw_data correctly returns the table", {
-  data <- import_data(test_path("exttestdata", "102623_peaktable_coculture_simple.csv"),
-    test_path("exttestdata", "102623_metadata_correct.csv"),
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+  data <- import_data(test_path(directory, peak_table_name),
+    test_path(directory, meta_data_name),
     format = "Progenesis"
   )
 
