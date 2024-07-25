@@ -73,7 +73,8 @@ filter_mispicked_ions <- function(mpactr_object,
 #'
 #' Filtering is assessed on function parameter `group_threshold`. The defualt
 #' is 0.01, meaning features present in `group_to_remove` at greater than 1%
-#' are removed. If you would like to remove features found in media blanks samples, #' we recommend testing the `group_threshold`.
+#' are removed. If you would like to remove features found in media blanks
+#' samples, we recommend testing the `group_threshold`.
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param group_threshold Relative abundance threshold at which to remove ions.
