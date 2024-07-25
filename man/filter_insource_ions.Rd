@@ -13,19 +13,19 @@ filter_insource_ions(
 \arguments{
 \item{mpactr_object}{An \code{mpactr_object}. See \code{\link[=import_data]{import_data()}}.}
 
-\item{cluster_threshold}{cluster threshold for ion deconvolution.
+\item{cluster_threshold}{Cluster threshold for ion deconvolution.
 Default = 0.95.}
 
-\item{copy_object}{A \code{boolean} paramter that allows users to return
+\item{copy_object}{A \code{boolean} parameter that allows users to return
 a copied object instead of modifying the object.}
 }
 \value{
 an \code{mpactr_object}
 }
 \description{
-\code{filter_insource_ions()} determines insource ion fragments deconvolution
-via hierarchical clustering. Highly correlated ions with the same
-retention times are identified and removed.
+\code{filter_insource_ions()} determines insource ion fragments and performs
+deconvolution via hierarchical clustering. Highly correlated ions with
+the same retention times are identified and removed.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
