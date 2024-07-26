@@ -46,6 +46,8 @@ navbar:
     href: reference/index.html
   - text: Articles
     menu:
+    - text: Reference Semantics
+      href: articles/reference_semantics.html
     - text: Filter
       href: articles/filter.html
     - text: Additional Analyses
