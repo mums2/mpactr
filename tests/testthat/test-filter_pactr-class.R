@@ -304,3 +304,39 @@ test_that("Test that mpactr can be printed from the filter-pactR class", {
   filter_class <- filter_pactr$new(mpactr_class)
   expect_output(filter_class$print())
 })
+
+test_that("is_filter_run correctly assesses if a filter has been run", {
+
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+  meta <- data.table(read_csv(test_path(directory,
+                                        meta_data_name),
+                              show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path(directory,
+                                            peak_table_name))
+
+
+  mpactr_class <- mpactr$new(
+    pt_list,
+    meta
+  )
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(
+    ringwin = 0.5,
+    isowin = 0.01,
+    trwin = 0.005,
+    max_iso_shift = 3,
+    merge_peaks = TRUE,
+    merge_method = "sum"
+  )
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+  filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
+
+  expect_true(filter_class$is_filter_run(filter = "group",
+                                         group = "Blanks"))
+
+  expect_false(filter_class$is_filter_run(filter = "insource"))
+})

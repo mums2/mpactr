@@ -9,6 +9,17 @@ filter_pactr <- R6Class("filter_pactr", public = list(
   print = function() {
     print(self$mpactr_data$get_peak_table())
   },
+  is_filter_run = function(filter, group = NULL) {
+    if (!is.null(group)) {
+      filter <- paste(filter, group, sep = "-")
+    }
+
+    if ((filter %in% names(self$logger$list_of_summaries))) {
+      return(TRUE)
+    } else {
+      return(FALSE)
+    }
+  },
   get_log = function(filter, group = NULL) {
     if (!(filter %in% c("mispicked", "group", "replicability", "insource"))) {
       cli::cli_abort("{.var filter} must be one of mpactR's supported filters:

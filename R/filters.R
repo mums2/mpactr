@@ -48,6 +48,17 @@ filter_mispicked_ions <- function(mpactr_object,
                                   merge_peaks = TRUE,
                                   merge_method = "sum",
                                   copy_object = FALSE) {
+
+  if (isTRUE(mpactr_object$is_filter_run(filter = "mispicked"))) {
+
+    cli::cli_abort("{.var filter_mispicked_ions()} has already been run on
+                   {deparse(substitute(mpactr_object))}. Reload the data
+                   and set {.var copy_object} to {.var TRUE} before
+                   running the filter if you would like to run more than once.
+                   See more by typing {.var ?? filter_mispicked_ions} in your
+                   terminal.")
+  }
+
   if (copy_object) {
     mpactr_object <- clone(mpactr_object)
   }
@@ -105,6 +116,17 @@ filter_group <- function(mpactr_object,
                          group_to_remove,
                          remove_ions = TRUE,
                          copy_object = FALSE) {
+  if (isTRUE(mpactr_object$is_filter_run(filter = "group",
+                                         group = group_to_remove))) {
+
+    cli::cli_abort("{.var filter_group()} has already been run for group
+                   {group_to_remove} on {deparse(substitute(mpactr_object))}.
+                   Reload the data and set {.var copy_object} to {.var TRUE}
+                   before running the filter if you would like to run more
+                   than once. See more by typing {.var ?? filter_group} in 
+                   your terminal.")
+  }
+
   if (copy_object) {
     mpactr_object <- clone(mpactr_object)
   }
@@ -162,6 +184,16 @@ filter_cv <- function(mpactr_object,
                       cv_threshold = NULL,
                       cv_param,
                       copy_object = FALSE) {
+
+  if (isTRUE(mpactr_object$is_filter_run(filter = "replicability"))) {
+
+    cli::cli_abort("{.var filter_cv()} has already been run on
+                   {deparse(substitute(mpactr_object))}. Reload the data
+                   and set {.var copy_object} to {.var TRUE} before
+                   running the filter if you would like to run more than once.
+                   See more by typing {.var ?? filter_cv} in your terminal.")
+  }
+
   if (copy_object) {
     mpactr_object <- clone(mpactr_object)
   }
@@ -206,6 +238,17 @@ filter_cv <- function(mpactr_object,
 filter_insource_ions <- function(mpactr_object,
                                  cluster_threshold = 0.95,
                                  copy_object = FALSE) {
+
+  if (isTRUE(mpactr_object$is_filter_run(filter = "insource"))) {
+
+    cli::cli_abort("{.var filter_insource_ions()} has already been run on
+                   {deparse(substitute(mpactr_object))}. Reload the data
+                   and set {.var copy_object} to {.var TRUE} before
+                   running the filter if you would like to run more than once.
+                   See more by typing {.var ?? filter_insource_ions} in your
+                   terminal.")
+  }
+
   if (copy_object) {
     mpactr_object <- clone(mpactr_object)
   }

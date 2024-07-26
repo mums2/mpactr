@@ -202,3 +202,36 @@ test_that("filter insource ions wrapper works as expected", {
   expect_true(all(!(insource_ion_expected_list %in% data_mpactr_copy$
                       mpactr_data$get_peak_table()$Compound)))
 })
+
+test_that("filters abort if the filter has already been run", {
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+  data <- import_data(test_path(directory, peak_table_name),
+    test_path(directory, meta_data_name),
+    format = "Progenesis"
+  )
+
+  data_mpactr <- filter_mispicked_ions(data,
+    ringwin = 0.5,
+    isowin = 0.01,
+    trwin = 0.005,
+    max_iso_shift = 3,
+    merge_peaks = TRUE,
+    merge_method = "sum"
+  )
+  data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
+  data_mpactr <- filter_cv(data_mpactr, cv_threshold = 0.2, cv_param = "median")
+  data_mpactr <- filter_insource_ions(data_mpactr, cluster_threshold = 0.95)
+
+  expect_error(filter_mispicked_ions(data_mpactr,
+                                     ringwin = 0.5,
+                                     isowin = 0.01,
+                                     trwin = 0.005,
+                                     max_iso_shift = 3,
+                                     merge_peaks = TRUE,
+                                     merge_method = "sum"))
+  expect_error(filter_group(data_mpactr, 0.01, "Blanks", TRUE))
+  expect_error(filter_cv(data_mpactr, cv_threshold = 0.2, cv_param = "median"))
+  expect_error(filter_insource_ions(data_mpactr, cluster_threshold = 0.95))
+})
