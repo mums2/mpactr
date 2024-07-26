@@ -41,6 +41,17 @@ Filtering is assessed on function parameter \code{group_threshold}. The defualt
 is 0.01, meaning features present in \code{group_to_remove} at greater than 1\%
 are removed. If you would like to remove features found in media blanks
 samples, we recommend testing the \code{group_threshold}.
+
+\code{copy_object}: mpactR is built on an R6 class-system, meaning it operates on
+reference semantics in which data is updated \emph{in-place}. Compared to a
+shallow copy, where only data pointers are copied, or a deep copy, where
+the entire data object is copied in memory, any changes to the original
+data object, regardless if they are assigned to a new object, result in
+changes to the original data object. We recommend using the default
+\code{copy_object = FALSE} as this makes for an extremely fast and
+memory-efficient way to chain mpactR filters together; however, if you
+would like to run the filters individually with traditional R style objects,
+you can set \code{copy_object} to \code{TRUE} as shown in the filter examples.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),

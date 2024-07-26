@@ -10,6 +10,17 @@
 #' for similar ions in terms of mass and retention time. Peaks found to be
 #' similar are merged into a single feature given `merge_peaks` is `TRUE`.
 #'
+#' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
+#' reference semantics in which data is updated *in-place*. Compared to a
+#' shallow copy, where only data pointers are copied, or a deep copy, where
+#' the entire data object is copied in memory, any changes to the original
+#' data object, regardless if they are assigned to a new object, result in
+#' changes to the original data object. We recommend using the default
+#' `copy_object = FALSE` as this makes for an extremely fast and
+#' memory-efficient way to chain mpactR filters together; however, if you
+#' would like to run the filters individually with traditional R style objects,
+#' you can set `copy_object` to `TRUE` as shown in the filter examples.
+#'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param ringwin Ringing mass window. Default = 0.5.
 #' @param isowin Isotopic mass window. Defualt = 0.01.
@@ -87,6 +98,17 @@ filter_mispicked_ions <- function(mpactr_object,
 #' are removed. If you would like to remove features found in media blanks
 #' samples, we recommend testing the `group_threshold`.
 #'
+#' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
+#' reference semantics in which data is updated *in-place*. Compared to a
+#' shallow copy, where only data pointers are copied, or a deep copy, where
+#' the entire data object is copied in memory, any changes to the original
+#' data object, regardless if they are assigned to a new object, result in
+#' changes to the original data object. We recommend using the default
+#' `copy_object = FALSE` as this makes for an extremely fast and
+#' memory-efficient way to chain mpactR filters together; however, if you
+#' would like to run the filters individually with traditional R style objects,
+#' you can set `copy_object` to `TRUE` as shown in the filter examples.
+#'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param group_threshold Relative abundance threshold at which to remove ions.
 #' Default = 0.01.
@@ -151,6 +173,16 @@ filter_group <- function(mpactr_object,
 #' such, this fitler is expecting an input dataset with at least two replicate
 #' injections per sample.
 #'
+#' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
+#' reference semantics in which data is updated *in-place*. Compared to a
+#' shallow copy, where only data pointers are copied, or a deep copy, where
+#' the entire data object is copied in memory, any changes to the original
+#' data object, regardless if they are assigned to a new object, result in
+#' changes to the original data object. We recommend using the default
+#' `copy_object = FALSE` as this makes for an extremely fast and
+#' memory-efficient way to chain mpactR filters together; however, if you
+#' would like to run the filters individually with traditional R style objects,
+#' you can set `copy_object` to `TRUE` as shown in the filter examples.
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param cv_threshold Coefficient of variation threshold.
@@ -215,6 +247,16 @@ filter_cv <- function(mpactr_object,
 #' deconvolution via hierarchical clustering. Highly correlated ions with
 #' the same retention times are identified and removed.
 #'
+#' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
+#' reference semantics in which data is updated *in-place*. Compared to a
+#' shallow copy, where only data pointers are copied, or a deep copy, where
+#' the entire data object is copied in memory, any changes to the original
+#' data object, regardless if they are assigned to a new object, result in
+#' changes to the original data object. We recommend using the default
+#' `copy_object = FALSE` as this makes for an extremely fast and
+#' memory-efficient way to chain mpactR filters together; however, if you
+#' would like to run the filters individually with traditional R style objects,
+#' you can set `copy_object` to `TRUE` as shown in the filter examples.
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param cluster_threshold Cluster threshold for ion deconvolution.
