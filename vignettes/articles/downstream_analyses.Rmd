@@ -637,7 +637,7 @@ fc <- foldchanges %>%
   left_join(t, by = "Compound") %>%
   arrange(p) %>%
   mutate(
-    qval = seq_len(p),
+    qval = seq_len(length(p)),
     qval = p * num_ions / qval
   ) %>%
   arrange(desc(p))
