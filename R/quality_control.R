@@ -41,7 +41,7 @@ qc_summary <- function(mpactr_object) {
 #'
 #' @description
 #' `plot_qc_tree()` visualizes the filtering summary as a treemap. Ion
-#' staus (see [qc_summary()]) is reported here as percentage of all
+#' status (see [qc_summary()]) is reported here as percentage of all
 #' pre-filtered ions.
 #'
 #' @param mpactr_object an `mpactr_object`

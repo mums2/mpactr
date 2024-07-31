@@ -10,6 +10,15 @@
 #' for similar ions in terms of mass and retention time. Peaks found to be
 #' similar are merged into a single feature given `merge_peaks` is `TRUE`.
 #'
+#' The parameter `ringwin` is the detector saturation mass window, specific for
+#' some instruments, such as Waters Synapse G2-Si-Q-ToF, to account for high
+#' concentration samples.
+#'
+#' Parameter `isowin` is the isotopic mass window, which accounts for isotopic
+#' peaks of the same precussor mass that were incorrectly assigned during
+#' preprocessing.
+#'
+#'
 #' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
 #' reference semantics in which data is updated *in-place*. Compared to a
 #' shallow copy, where only data pointers are copied, or a deep copy, where
@@ -22,13 +31,14 @@
 #' you can set `copy_object` to `TRUE` as shown in the filter examples.
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
-#' @param ringwin Ringing mass window. Default = 0.5.
-#' @param isowin Isotopic mass window. Defualt = 0.01.
-#' @param trwin A `numeric` denoting the retention time threhold for assessing
-#' if ions should be merged. Defulat = 0.005.
+#' @param ringwin Ringing mass window or detector saturation mass window.
+#' Default = 0.5 atomic mass units (AMU).
+#' @param isowin Isotopic mass window. Default = 0.01 AMU.
+#' @param trwin A `numeric` denoting the retention time threshold for assessing
+#' if ions should be merged. Default = 0.005.
 #' @param max_iso_shift A `numeric`. Default = 3.
-#' @param merge_peaks A `boolean` paramter to determine if peaks found to belong
-#' to the same ion should be merged in the feature table.
+#' @param merge_peaks A `boolean` parameter to determine if peaks found to
+#' belong to the same ion should be merged in the feature table.
 #' @param merge_method If merge_peaks is TRUE, a method for how similar peaks
 #' should be merged. Can be one of "sum".
 #' @param copy_object A `boolean` parameter that allows users to return a copied
@@ -89,14 +99,24 @@ filter_mispicked_ions <- function(mpactr_object,
 #' Filter Ions by Group
 #'
 #' @details
-#' `filter_group()` removes ions which have a signigifanct presence in the
-#' defined group (typically solvent blanks). Significance is determined by
-#' relative ion abundance arcoss groups at the user-defined `group_threshold`.
+#' `filter_group()` removes feature ions that are present in a user-defined
+#' group based on a relative abundance threshold. This could be particularly
+#' useful to filter out features found present in solvent blank samples.
+#' Further, this filter can be ultilized to remove features in media blank
+#' sample for experiments on microbial cultures.
+
+#' The presence or absence of features in a group of samples is determined by
+#' first averaging injection replicates and then averaging biological
+#' replicates within each biological treatment group. A feature is present in
+#' a group if its abundance is greater than the user-defined `group_threshold`.
+#' The default is 0.01, meaning a feature is removed if its abundance is 1% of
+#' that in the sample group in which it is most abundant. For example, blank
+#' filtering can remove features whose mean abundance in solvent blank
+#' injections is greater than 1% of their maximum mean abundance in experimental
+#' samples.
 #'
-#' Filtering is assessed on function parameter `group_threshold`. The defualt
-#' is 0.01, meaning features present in `group_to_remove` at greater than 1%
-#' are removed. If you would like to remove features found in media blanks
-#' samples, we recommend testing the `group_threshold`.
+#' If you would like to remove features found in media blank
+#' samples, we recommend testing the `group_threshold` parameter.
 #'
 #' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
 #' reference semantics in which data is updated *in-place*. Compared to a
@@ -108,6 +128,7 @@ filter_mispicked_ions <- function(mpactr_object,
 #' memory-efficient way to chain mpactR filters together; however, if you
 #' would like to run the filters individually with traditional R style objects,
 #' you can set `copy_object` to `TRUE` as shown in the filter examples.
+#'
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param group_threshold Relative abundance threshold at which to remove ions.
@@ -168,9 +189,9 @@ filter_group <- function(mpactr_object,
 #'
 #' @description
 #' `filter_cv()` removes feature ions that are found to be non-reproducible
-#' between technical inejction replicates. Replicability is assessed via mean
+#' between technical injection replicates. Reproducibility is assessed via mean
 #' or median coefficient of variation (CV) between technical replicates. As
-#' such, this fitler is expecting an input dataset with at least two replicate
+#' such, this filter is expecting an input dataset with at least two replicate
 #' injections per sample.
 #'
 #' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
@@ -186,6 +207,8 @@ filter_group <- function(mpactr_object,
 #'
 #' @param mpactr_object An `mpactr_object`. See [import_data()].
 #' @param cv_threshold Coefficient of variation threshold.
+#' A lower cv_threshold will result in more stringent filtering and higher
+#' reproducibility. Recommended values between 0.2 - 0.5.
 #' @param cv_param Coefficient of variation (CV) statistic to use for filtering
 #' Options are "mean" or "median", corresponding to mean and median CV,
 #' respectively.
@@ -243,9 +266,13 @@ filter_cv <- function(mpactr_object,
 #' Filter Insource ions
 #'
 #' @description
-#' `filter_insource_ions()` determines insource ion fragments and performs
-#' deconvolution via hierarchical clustering. Highly correlated ions with
-#' the same retention times are identified and removed.
+#' `filter_insource_ions()` identifies and removes in-source ion clusters based
+#' on a Pearson correlation threshold. Groups of co-eluting features with
+#' identical retention time are identified and used to generate Pearson
+#' correlation matrices. Clusters with self-similarity greater than the
+#' user-defined `cluster_threshold` within these matrices are identified as
+#' likely belonging to a single precursor ion and is associated insource ion.
+#' Highly correlated ions are identified and removed.
 #'
 #' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
 #' reference semantics in which data is updated *in-place*. Compared to a

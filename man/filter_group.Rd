@@ -33,14 +33,23 @@ an \code{mpactr_object}
 Filter Ions by Group
 }
 \details{
-\code{filter_group()} removes ions which have a signigifanct presence in the
-defined group (typically solvent blanks). Significance is determined by
-relative ion abundance arcoss groups at the user-defined \code{group_threshold}.
+\code{filter_group()} removes feature ions that are present in a user-defined
+group based on a relative abundance threshold. This could be particularly
+useful to filter out features found present in solvent blank samples.
+Further, this filter can be ultilized to remove features in media blank
+sample for experiments on microbial cultures.
+The presence or absence of features in a group of samples is determined by
+first averaging injection replicates and then averaging biological
+replicates within each biological treatment group. A feature is present in
+a group if its abundance is greater than the user-defined \code{group_threshold}.
+The default is 0.01, meaning a feature is removed if its abundance is 1\% of
+that in the sample group in which it is most abundant. For example, blank
+filtering can remove features whose mean abundance in solvent blank
+injections is greater than 1\% of their maximum mean abundance in experimental
+samples.
 
-Filtering is assessed on function parameter \code{group_threshold}. The defualt
-is 0.01, meaning features present in \code{group_to_remove} at greater than 1\%
-are removed. If you would like to remove features found in media blanks
-samples, we recommend testing the \code{group_threshold}.
+If you would like to remove features found in media blank
+samples, we recommend testing the \code{group_threshold} parameter.
 
 \code{copy_object}: mpactR is built on an R6 class-system, meaning it operates on
 reference semantics in which data is updated \emph{in-place}. Compared to a

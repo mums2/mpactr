@@ -40,7 +40,7 @@ filter_summary <- function(mpactr_object, filter, group = NULL) {
 #' @param mpactr_object The mpactr object that is created by calling the
 #' import_data() function.
 #'
-#' @return a `data.table` retporting the main ion and those found to be
+#' @return a `data.table` reporting the main ion and those found to be
 #' similar with [filter_mispicked_ions()].
 #' @export
 #'
@@ -68,8 +68,8 @@ get_similar_ions <- function(mpactr_object) {
 #' @param mpactr_object The mpactr object that is created by calling the
 #' import_data() function.
 #'
-#' @return a `data.table` retporting the average and relative standard
-#' deviation across biological groups and techincal replicates within
+#' @return a `data.table` reporting the average and relative standard
+#' deviation across biological groups and technical replicates within
 #' each group.
 #' @export
 #'
@@ -97,7 +97,7 @@ get_group_averages <- function(mpactr_object) {
 #' @param mpactr_object The mpactr object that is created by calling
 #' the import_data() function.
 #'
-#' @return a `data.table` retporting the mean and median coefficient
+#' @return a `data.table` reporting the mean and median coefficient
 #' of variation for each input ion.
 #' @export
 #'

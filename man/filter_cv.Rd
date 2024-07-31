@@ -9,7 +9,9 @@ filter_cv(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE)
 \arguments{
 \item{mpactr_object}{An \code{mpactr_object}. See \code{\link[=import_data]{import_data()}}.}
 
-\item{cv_threshold}{Coefficient of variation threshold.}
+\item{cv_threshold}{Coefficient of variation threshold.
+A lower cv_threshold will result in more stringent filtering and higher
+reproducibility. Recommended values between 0.2 - 0.5.}
 
 \item{cv_param}{Coefficient of variation (CV) statistic to use for filtering
 Options are "mean" or "median", corresponding to mean and median CV,
@@ -23,9 +25,9 @@ an \code{mpactr_object}
 }
 \description{
 \code{filter_cv()} removes feature ions that are found to be non-reproducible
-between technical inejction replicates. Replicability is assessed via mean
+between technical injection replicates. Reproducibility is assessed via mean
 or median coefficient of variation (CV) between technical replicates. As
-such, this fitler is expecting an input dataset with at least two replicate
+such, this filter is expecting an input dataset with at least two replicate
 injections per sample.
 
 \code{copy_object}: mpactR is built on an R6 class-system, meaning it operates on

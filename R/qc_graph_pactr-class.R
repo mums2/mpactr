@@ -35,9 +35,8 @@ graph_qc_pactr <- R6Class("graph_qc_pactr", public = list(
       treemapify::geom_treemap() +
       treemapify::geom_treemap_text(
         aes(
-          label = paste(status, paste0(round(percent, 2), "%"),
-            sep = "\n"
-          )
+          label = paste(status, count, paste0("(", round(percent, 2), "%)"),
+                        sep = "\n")
         ),
         colour = "darkorchid1",
         fontface = c("bold")

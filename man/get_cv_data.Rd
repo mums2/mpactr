@@ -11,7 +11,7 @@ get_cv_data(mpactr_object)
 the import_data() function.}
 }
 \value{
-a \code{data.table} retporting the mean and median coefficient
+a \code{data.table} reporting the mean and median coefficient
 of variation for each input ion.
 }
 \description{

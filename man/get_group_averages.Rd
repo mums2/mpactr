@@ -11,8 +11,8 @@ get_group_averages(mpactr_object)
 import_data() function.}
 }
 \value{
-a \code{data.table} retporting the average and relative standard
-deviation across biological groups and techincal replicates within
+a \code{data.table} reporting the average and relative standard
+deviation across biological groups and technical replicates within
 each group.
 }
 \description{

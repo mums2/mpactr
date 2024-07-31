@@ -14,7 +14,7 @@ a tree map plot of class \code{ggplot}
 }
 \description{
 \code{plot_qc_tree()} visualizes the filtering summary as a treemap. Ion
-staus (see \code{\link[=qc_summary]{qc_summary()}}) is reported here as percentage of all
+status (see \code{\link[=qc_summary]{qc_summary()}}) is reported here as percentage of all
 pre-filtered ions.
 }
 \examples{

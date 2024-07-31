@@ -23,9 +23,13 @@ a copied object instead of modifying the object.}
 an \code{mpactr_object}
 }
 \description{
-\code{filter_insource_ions()} determines insource ion fragments and performs
-deconvolution via hierarchical clustering. Highly correlated ions with
-the same retention times are identified and removed.
+\code{filter_insource_ions()} identifies and removes in-source ion clusters based
+on a Pearson correlation threshold. Groups of co-eluting features with
+identical retention time are identified and used to generate Pearson
+correlation matrices. Clusters with self-similarity greater than the
+user-defined \code{cluster_threshold} within these matrices are identified as
+likely belonging to a single precursor ion and is associated insource ion.
+Highly correlated ions are identified and removed.
 
 \code{copy_object}: mpactR is built on an R6 class-system, meaning it operates on
 reference semantics in which data is updated \emph{in-place}. Compared to a

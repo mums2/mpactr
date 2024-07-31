@@ -11,7 +11,7 @@ get_similar_ions(mpactr_object)
 import_data() function.}
 }
 \value{
-a \code{data.table} retporting the main ion and those found to be
+a \code{data.table} reporting the main ion and those found to be
 similar with \code{\link[=filter_mispicked_ions]{filter_mispicked_ions()}}.
 }
 \description{

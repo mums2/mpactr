@@ -18,17 +18,18 @@ filter_mispicked_ions(
 \arguments{
 \item{mpactr_object}{An \code{mpactr_object}. See \code{\link[=import_data]{import_data()}}.}
 
-\item{ringwin}{Ringing mass window. Default = 0.5.}
+\item{ringwin}{Ringing mass window or detector saturation mass window.
+Default = 0.5 atomic mass units (AMU).}
 
-\item{isowin}{Isotopic mass window. Defualt = 0.01.}
+\item{isowin}{Isotopic mass window. Default = 0.01 AMU.}
 
-\item{trwin}{A \code{numeric} denoting the retention time threhold for assessing
-if ions should be merged. Defulat = 0.005.}
+\item{trwin}{A \code{numeric} denoting the retention time threshold for assessing
+if ions should be merged. Default = 0.005.}
 
 \item{max_iso_shift}{A \code{numeric}. Default = 3.}
 
-\item{merge_peaks}{A \code{boolean} paramter to determine if peaks found to belong
-to the same ion should be merged in the feature table.}
+\item{merge_peaks}{A \code{boolean} parameter to determine if peaks found to
+belong to the same ion should be merged in the feature table.}
 
 \item{merge_method}{If merge_peaks is TRUE, a method for how similar peaks
 should be merged. Can be one of "sum".}
@@ -44,6 +45,14 @@ an \code{mpactr_object}
 separate features during preprocessing. This filter checks the feature table
 for similar ions in terms of mass and retention time. Peaks found to be
 similar are merged into a single feature given \code{merge_peaks} is \code{TRUE}.
+
+The parameter \code{ringwin} is the detector saturation mass window, specific for
+some instruments, such as Waters Synapse G2-Si-Q-ToF, to account for high
+concentration samples.
+
+Parameter \code{isowin} is the isotopic mass window, which accounts for isotopic
+peaks of the same precussor mass that were incorrectly assigned during
+preprocessing.
 
 \code{copy_object}: mpactR is built on an R6 class-system, meaning it operates on
 reference semantics in which data is updated \emph{in-place}. Compared to a
