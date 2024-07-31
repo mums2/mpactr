@@ -22,7 +22,7 @@ filter_pactr$set(
 
     number_of_rows <- nrow(self$mpactr_data$get_peak_table())
 
-    for (i in seq_along(1:number_of_rows)) {
+    for (i in seq_along(1:(number_of_rows - 1))) {
       current_feature <- self$mpactr_data$get_peak_table()[
         i, c("Compound", "mz", "rt")
       ]
@@ -31,41 +31,16 @@ filter_pactr$set(
       current_ion <- current_feature$Compound
 
       if (!(current_ion %in% cut_ions)) {
-        for (j in (i + 1):number_of_rows) {
-          if (j > number_of_rows) {
-            break
-          }
-          if (self$mpactr_data$get_peak_table()$Compound[j] %in% cut_ions) {
-            next
-          }
-          mass_diff <- self$mpactr_data$get_peak_table()$mz[j] - current_mass
-          kmd_diff <- mass_diff - floor(mass_diff)
-
-          if (abs(mass_diff) > max_iso_shift - 0.4) { # BL  - why 0.4??
-            break
-          }
-
-          rt_diff <- self$mpactr_data$get_peak_table()$rt[j] - current_rt
-          ring_band <- floor(abs(mass_diff) * (1 / ringwin)) %% (1 / ringwin)
-          double_band <- kmd_diff -
-            .5004 -
-            (floor(mass_diff) * .007) # BL - why 0.500 and 0.007?
-
-          if ((abs(rt_diff) <= trwin) &&
-                (mass_diff <= max_iso_shift - 0.4) &&
-                (ring_band == 0 ||
-                   double_band < isowin)) {
-            cut_ions <- c(
-              cut_ions,
-              self$mpactr_data$get_peak_table()$Compound[j]
-            )
-            merge_groups[[as.character(current_ion)]] <-
-              c(
-                merge_groups[[as.character(current_ion)]],
-                self$mpactr_data$get_peak_table()$Compound[j]
-              )
-          }
-        }
+        ions <- private$get_merged_ions(ringwin,
+                                        isowin,
+                                        trwin,
+                                        max_iso_shift,
+                                        number_of_rows,
+                                        cut_ions,
+                                        merge_groups,
+                                        i)
+        cut_ions <- ions$cut_ions
+        merge_groups <- ions$merge_groups
       }
     }
     # TODO Look into removing merge groups
@@ -91,6 +66,48 @@ filter_pactr$set(
     self$logger$list_of_summaries$mispicked$summarize()
   }
 )
+
+filter_pactr$set("private", "get_merged_ions", function(ringwin,
+                                                        isowin,
+                                                        trwin,
+                                                        max_iso_shift,
+                                                        number_of_rows,
+                                                        cut_ions,
+                                                        merge_groups,
+                                                        i) {
+  peak_table <- self$mpactr_data$get_peak_table()
+  for (j in i:(number_of_rows - 1)) {
+    if (peak_table$Compound[j + 1] %in% cut_ions) {
+      next
+    }
+    mass_diff <- peak_table$mz[j + 1] - peak_table$mz[i]
+    kmd_diff <- mass_diff - floor(mass_diff)
+    shift_diff <- abs(mass_diff) > max_iso_shift - 0.4
+    # if (abs(mass_diff) > max_iso_shift - 0.4) { # BL  - why 0.4??
+    #   break
+    # }
+    rt_diff <- peak_table$rt[j + 1] - peak_table$rt[i]
+    ring_band <- floor(abs(mass_diff) * (1 / ringwin)) %% (1 / ringwin)
+    double_band <- kmd_diff -
+      .5004 -
+      (floor(mass_diff) * .007) # BL - why 0.500 and 0.007?
+    between_ion_calculation <- abs(rt_diff) <= trwin &&
+      (mass_diff <= max_iso_shift - 0.4) &&
+      (ring_band == 0 || double_band < isowin)
+    if (!shift_diff && between_ion_calculation) {
+      cut_ions <- c(
+        cut_ions,
+        peak_table$Compound[j + 1]
+      )
+      merge_groups[[as.character(peak_table$Compound[i])]] <-
+        c(
+          merge_groups[[as.character(peak_table$Compound[i])]],
+          peak_table$Compound[j + 1]
+        )
+    }
+  }
+  return(list(cut_ions = cut_ions, merge_groups = merge_groups))
+})
 
 filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
   if (is.null(method)) {
