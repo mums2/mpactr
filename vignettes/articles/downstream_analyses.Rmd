@@ -408,7 +408,7 @@ get_group_averages(data_filtered) %>%
   head()
 ```
 
-There are multiple ways to handle compounds that are found in the one group but not the other. Here we will set upper and lower bounds.
+There are multiple ways to handle compounds that are found in the one group but not the other. Here we will create pseudo-counts by adding a small number (0.001) to all counts prior to calculating fold change. This will alleviate division by 0. 
 
 First, extract group averages from the `mpactr` object and select the two groups of interest. Here we are interested in the columns Coculture and ANG18:
 
@@ -427,19 +427,33 @@ get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
   head()
 ```
 
-Now we can remove compounds with an intensity of 0 in both groups:
+
+Now we create pseudo-counts by adding 0.001 to the counts column:
 
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
+  mutate(average = average + 0.001) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
+  head()
+```
+
+
+Now we can remove compounds with an intensity of 0 in both groups. This equates to a pseuo-count of 0.001:
+
+```{r}
+get_group_averages(data_filtered) %>%
+  filter(Biological_Group == "Coculture" |
+           Biological_Group == "ANG18") %>%
+  select(Compound, Biological_Group, average) %>%
+  mutate(average = average + 0.001) %>%
+  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
@@ -453,34 +467,13 @@ get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
+  mutate(average = average + 0.001) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
+  mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
   mutate(fc = Coculture / ANG18) %>%
-  head()
-```
-
-Now we correct the bounds: for compounds that have 0 intenisty in the control group we will set fold change to 100, and for those with 0 intensity in the experimental group we set the fold change to 0.01.
-
-```{r}
-get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
-                                    FALSE,
-                                    TRUE)) %>%
-  filter(nonzero_compound == TRUE) %>%
-  mutate(
-    fc = Coculture / ANG18,
-    fc = case_when(fc >= 100 ~ 100,
-      fc <= 0.01 ~ 0.01,
-      .default = fc
-    )
-  ) %>%
   head()
 ```
 
@@ -491,19 +484,14 @@ foldchanges <- get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
+  mutate(average = average + 0.001) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
+  mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
-  mutate(
-    fc = Coculture / ANG18,
-    fc = case_when(fc >= 100 ~ 100,
-      fc <= 0.01 ~ 0.01,
-      .default = fc
-    ),
-    logfc = log2(fc)
-  )
+  mutate(fc = Coculture / ANG18,
+         logfc = log2(fc))
 
 head(foldchanges)
 ```
