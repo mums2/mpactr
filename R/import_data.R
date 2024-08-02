@@ -34,7 +34,7 @@
 #' must have the compound metadata columns "Compound", "mz", and "rt". Where
 #' "Compound" is the compound id, and can be `numeric` or `character`. "mz" is
 #' the compound m/z, and should be `numeric`. "rt" is the retention time, in
-#' mintues, and should be `numeric`. The remainig columns should be samples,
+#' mintues, and should be `numeric`. The remaining columns should be samples,
 #' and match the names in the "Injection" column of the `meta_data` file.
 
 #' 2. `meta_data`: a table with sample information. Either a file path or
@@ -46,7 +46,8 @@
 #' added, and is encouraged for downstream analysis following filtering with
 #' mpactR.
 #'
-#' @param peak_table The file path to your feature table file.
+#' @param peak_table The file path or valid `https` url to your feature table
+#' file.
 #' @param meta_data The file path to your meta_data file or `data.frame`.
 #' @param format The expected exported type of your peak table, can be
 #' one of "Progenesis", "Metaboscape", "None".

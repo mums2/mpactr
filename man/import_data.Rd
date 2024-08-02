@@ -7,7 +7,8 @@
 import_data(peak_table, meta_data, format = "none")
 }
 \arguments{
-\item{peak_table}{The file path to your feature table file.}
+\item{peak_table}{The file path or valid \code{https} url to your feature table
+file.}
 
 \item{meta_data}{The file path to your meta_data file or \code{data.frame}.}
 
@@ -52,7 +53,7 @@ features, while columns are compound metadata and samples. The feature table
 must have the compound metadata columns "Compound", "mz", and "rt". Where
 "Compound" is the compound id, and can be \code{numeric} or \code{character}. "mz" is
 the compound m/z, and should be \code{numeric}. "rt" is the retention time, in
-mintues, and should be \code{numeric}. The remainig columns should be samples,
+mintues, and should be \code{numeric}. The remaining columns should be samples,
 and match the names in the "Injection" column of the \code{meta_data} file.
 2. \code{meta_data}: a table with sample information. Either a file path or
 \code{data.frame} can be supplied. At minimum the following columns are expected:

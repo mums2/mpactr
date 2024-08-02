@@ -7,8 +7,9 @@ format_by_type <- function(peak_table_path,
                     MzMine, Metaboscape, or none. See documentation
                     for more details.")
   }
-  if (!file.exists(peak_table_path)) {
-    cli::cli_abort("Your peak_table_path is not a valid file path,
+  if (isFALSE(grepl("https://", peak_table_path)) &&
+        !file.exists(peak_table_path)) {
+    cli::cli_abort("Your peak_table is not a valid file path,
                     please eneter a new one")
   }
   if (type_of_peak_table == "Progenesis") {
