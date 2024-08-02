@@ -43,7 +43,7 @@
 #' should be merged. Can be one of "sum".
 #' @param copy_object A `boolean` parameter that allows users to return a copied
 #' object instead of modifying the object.
-#' @return an `mpactr_object`
+#' @return an `mpactr_object`.
 #' @export
 #'
 #' @examples
@@ -139,7 +139,7 @@ filter_mispicked_ions <- function(mpactr_object,
 #' @param copy_object A `boolean` parameter that allows users to return a copied
 #' object instead of modifying the object.
 
-#' @return an `mpactr_object`
+#' @return an `mpactr_object`.
 #' @export
 #'
 #' @examples
@@ -215,7 +215,7 @@ filter_group <- function(mpactr_object,
 #' @param copy_object A `boolean` parameter that allows users to return a copied
 #' object instead of modifying the object.
 #'
-#' @return an `mpactr_object`
+#' @return an `mpactr_object`.
 #' @export
 #'
 #' @examples

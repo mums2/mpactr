@@ -44,9 +44,9 @@ qc_summary <- function(mpactr_object) {
 #' status (see [qc_summary()]) is reported here as percentage of all
 #' pre-filtered ions.
 #'
-#' @param mpactr_object an `mpactr_object`
+#' @param mpactr_object an `mpactr_object`.
 #'
-#' @return a tree map plot of class `ggplot`
+#' @return a tree map plot of class `ggplot`.
 #' @export
 #'
 #' @examples

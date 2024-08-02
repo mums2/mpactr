@@ -38,7 +38,7 @@ should be merged. Can be one of "sum".}
 object instead of modifying the object.}
 }
 \value{
-an \code{mpactr_object}
+an \code{mpactr_object}.
 }
 \description{
 \code{filter_mispicked_ions()} identifies ions that were incorrectly split into

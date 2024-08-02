@@ -27,7 +27,7 @@ removed from the peak table. Default = TRUE.}
 object instead of modifying the object.}
 }
 \value{
-an \code{mpactr_object}
+an \code{mpactr_object}.
 }
 \description{
 Filter Ions by Group

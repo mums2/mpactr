@@ -7,7 +7,7 @@
 #' @param mpactr_object The mpactr object that is created by calling
 #' the import_data() function.
 #'
-#' @return a `data.table`
+#' @return a `data.table`.
 #' @export
 #'
 #' @examples
@@ -31,7 +31,7 @@ get_peak_table <- function(mpactr_object) {
 #' @param mpactr_object The mpactr object that is created by calling
 #' the import_data() function.
 #'
-#' @return a `data.table`
+#' @return a `data.table`.
 #' @export
 #'
 #' @examples
@@ -55,7 +55,7 @@ get_meta_data <- function(mpactr_object) {
 #' @param mpactr_object The mpactr object that is created by calling the
 #' import_data() function.
 #'
-#' @return a `data.table`
+#' @return a `data.table`.
 #' @export
 #'
 #' @examples

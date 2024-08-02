@@ -7,10 +7,10 @@
 plot_qc_tree(mpactr_object)
 }
 \arguments{
-\item{mpactr_object}{an \code{mpactr_object}}
+\item{mpactr_object}{an \code{mpactr_object}.}
 }
 \value{
-a tree map plot of class \code{ggplot}
+a tree map plot of class \code{ggplot}.
 }
 \description{
 \code{plot_qc_tree()} visualizes the filtering summary as a treemap. Ion

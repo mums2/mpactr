@@ -11,7 +11,7 @@ get_raw_data(mpactr_object)
 import_data() function.}
 }
 \value{
-a \code{data.table}
+a \code{data.table}.
 }
 \description{
 \code{get_raw_data} a wrapper function to return the meta data object of the

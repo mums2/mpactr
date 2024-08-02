@@ -51,7 +51,7 @@
 #' @param format The expected exported type of your peak table, can be
 #' one of "Progenesis", "Metaboscape", "None".
 #'
-#' @return an `mpactr_object`
+#' @return an `mpactr_object`.
 #' @export
 #'
 #' @examples

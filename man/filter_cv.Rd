@@ -21,7 +21,7 @@ respectively.}
 object instead of modifying the object.}
 }
 \value{
-an \code{mpactr_object}
+an \code{mpactr_object}.
 }
 \description{
 \code{filter_cv()} removes feature ions that are found to be non-reproducible

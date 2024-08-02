@@ -11,7 +11,7 @@ get_peak_table(mpactr_object)
 the import_data() function.}
 }
 \value{
-a \code{data.table}
+a \code{data.table}.
 }
 \description{
 \code{get_peak_table()} a wrapper function to return the peak table

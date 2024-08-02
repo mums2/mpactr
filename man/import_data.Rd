@@ -15,7 +15,7 @@ import_data(peak_table, meta_data, format = "none")
 one of "Progenesis", "Metaboscape", "None".}
 }
 \value{
-an \code{mpactr_object}
+an \code{mpactr_object}.
 }
 \description{
 \code{import_data()} takes two file paths, one for the pre-processed feature
