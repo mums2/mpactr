@@ -10,18 +10,19 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, message=FALSE}
-library(mpactR)
+# library(mpactR)
+devtools::load_all()
 library(tidyverse)
 ```
 
 ## Load data into R
 
-mpactR requires 2 files as imput: a feature table and metadata file. Both are expected to be comma separated files (*.csv*).
+mpactR requires 2 files as input: a feature table and metadata file. Both are expected to be comma separated files (*.csv*).
 
 1. peak_table: a peak table in Progenesis format is expected. To export a compatable peak table in Progenesis, navigate to the *Review Compounds* tab then File -> Export Compound Measurements. Select the following properties: Compound, m/z, Retention time (min), and Raw abundance and click ok. 
-2. metadata: a table with sample information. At minimum the following columns are expected: Injection, Sample_Code, Biological_Group. Injection is the sample name and is expected to match sample column names in the peak_table. Sample_Code is the id for technical replicate groups. Biological_Group is the id for biological replicate groups. Other sample metadata can be added, and is encouraged for downstream analysis following filtering with mpactR.
+2. metadata: a table with sample information. At minimum the following columns are expected: Injection, Sample_Code, and Biological_Group. Injection is the sample name and is expected to match sample column names in the peak_table. Sample_Code is the id for technical replicate groups. Biological_Group is the id for biological replicate groups. Other sample metadata can be added, and is encouraged for downstream analysis following filtering with mpactR.
 
-To import these data into R, use the mpactR function `import_data()`, which has the arguments: `peak_table_file_path` and `meta_data_file_path`. Note - you do not need to use `example()` if you are using your own files. This is a package function that allows access to internal package data. If you simply want to play around with the packge using example data, you can run the `import_data` function as shown above, otherwise, provide file paths for your own files.
+To import your data into R, use the mpactR function `import_data()`, which has the arguments: `peak_table_file_path` and `meta_data_file_path`. Note - you do not need to use `example()` if you are using your own files. This is a package function that allows access to internal package data. If you simply want to play around with the packge using example data, you can run the `import_data` function as shown above, otherwise, provide file paths for your own files. The function is expecting files the the extension `.csv`. The `meta_data` argument will also accept an R `data.frame` or `data.table` object, assuming it is in the correct format. This can be useful of you need to manually format an existing metadata file, or want to extract metadata information from your peak table column names. 
 
 ```{r}
 data <- import_data(example("cultures_peak_table.csv"),
@@ -44,7 +45,7 @@ You can extract the peak table or metadata at any point with `get_raw_data()`, `
 
 ### Extract peak table
 
-To extract the raw input peak table with `get_raw_data()`:
+The raw peak table is the unfiltered peak table used as input to mpactR. To extract the raw input peak table, use the function `get_raw_data()`. 
 
 ```{r}
 get_raw_data(data)[1:5, 1:8]
@@ -66,7 +67,7 @@ get_meta_data(data)[1:5, ]
 
 ## Reference semantics
 
-Note: mpactR is built on an R6 class-system, meaning it operates on reference semantics in which data is updated *in-place*. Compared to a shallow copy, where only data pointers are copied, or a deep copy, where the entire data object is copied in memory, any changes to the original data object, regardless if they are assigned to a new object, result in changes to the original data object. We can see this below.
+mpactR is built on an R6 class-system, meaning it operates on reference semantics in which data is updated *in-place*. Compared to a shallow copy, where only data pointers are copied, or a deep copy, where the entire data object is copied in memory, any changes to the original data object, regardless if they are assigned to a new object, result in changes to the original data object. We can see this below.
 
 Where the raw data object has `r nrow(get_peak_table(data))` ions in the feature table:
 
@@ -80,7 +81,7 @@ data2 <- import_data(example("cultures_peak_table.csv"),
 get_peak_table(data2)[, 1:5]
 ```
 
-Running the `filter_mispicked_ions` filter, with default setting `copy_object = FALSE` (operates on reference semantics) results in 1233 ions in the feature table:
+We can run the `filter_mispicked_ions` filter, with default setting `copy_object = FALSE` (operates on reference semantics).
 
 ```{r}
 data2_mispicked <- filter_mispicked_ions(data2,
@@ -94,15 +95,13 @@ data2_mispicked <- filter_mispicked_ions(data2,
 get_peak_table(data2_mispicked)[, 1:5]
 ```
 
-Even though we created an object called `data2_mispicked`, the original `data2` object was also updated and now has `r nrow(get_peak_table(data2_mispicked))` ions in the feature table:
+This results in `r nrow(get_peak_table(data2_mispicked))` ions in the feature table (above). Even though we created an object called `data2_mispicked`, the original `data2` object was also updated and now has `r nrow(get_peak_table(data2))` ions in the feature table:
 
 ```{r}
 get_peak_table(data2)[, 1:5]
 ```
 
-We recommend using the default `copy_object = FALSE` as this makes for an extremely fast and memory-efficient way to chain mpactR filters together (see **Chaining filters together** section); however, if you would like to run the filters individually with traditional R style objects, you can set `copy_object` to `TRUE` as shown in the filter examples. 
-
-If you are interested in the groups of similar ions flagged in this filter, you can use `get_similar_ions()`. This function returns a `data.table` report the main ion (the ion retained post-merging) and the ions similar to it.
+We recommend using the default `copy_object = FALSE` as this makes for an extremely fast and memory-efficient way to chain mpactR filters together (see **Chaining filters together** section and [Reference Semantics](articles/reference_semantics.html)); however, if you would like to run the filters individually with traditional R style objects, you can set `copy_object` to `TRUE` as shown in the filter examples. 
 
 ## Filtering
 
@@ -132,7 +131,7 @@ data_mispicked <- filter_mispicked_ions(data,
 
 Each filter reports progress of filtering, here we can see that `r length(filter_summary(data_mispicked, "mispicked")$failed_ions) + length(filter_summary(data_mispicked, "mispicked")$passed_ions)` ions were present prior to checking for mispicked ions. `r length(filter_summary(data_mispicked, "mispicked")$failed_ions)` ions were found to be similar to another ion and following merging, `r (length(filter_summary(data_mispicked, "mispicked")$failed_ions) + length(filter_summary(data_mispicked, "mispicked")$passed_ions)) - length(filter_summary(data_mispicked, "mispicked")$failed_ions)` ions remain.
 
-You can look at which ions were found to similar to one another with the `get_similar_ions()` function.
+If you are interested in the groups of similar ions flagged in this filter, you can use `get_similar_ions()`. This function returns a `data.table` reporting the main ion (the ion retained post-merging) and the ions similar to it.
 
 ```{r}
 head(get_similar_ions(data_mispicked))
@@ -164,7 +163,7 @@ data_media_blank <- filter_group(data,
 
 #### Remove non-reproducible ions
 
-Ions whose abundance are not consisent between technical replicates (*i.e.*, non-reproducible) may not be reliable for analysis and therefore should be removed from the feature table. Non-reproducible ions are identified by mean or median coefficient of variation (cv) between technical replicates with `filter_cv()`. 
+Ions whose abundance are not consisent between technical replicates (*i.e.*, non-reproducible) may not be reliable for analysis and therefore should be removed from the feature table. Non-reproducible ions are identified by mean or median coefficient of variation (CV) between technical replicates with `filter_cv()`. Note - this filter cannot be applied to data that does not contain technical replicates. 
 
 ```{r}
 data_rep <- filter_cv(data,
@@ -175,7 +174,7 @@ data_rep <- filter_cv(data,
 
 In our example dataset, `r length(filter_summary(data_rep, "replicability")$failed_ions)` ions were flagged as non-reproducible. These ions were removed, leaving `r (length(filter_summary(data_rep, "replicability")$failed_ions) + length(filter_summary(data_rep, "replicability")$passed_ions)) - length(filter_summary(data_rep, "replicability")$failed_ions)` ions in the feature table.
 
-If you would like to visualize how the CV threshold performed on your dataset, you can extract the CV calculations using mpactR's `get_cv_data()` function and calculate the percentage of features for plotting. You can look at both mean and median cv as shown in the example below, or you can filter the data by the parameter of choice. 
+If you would like to visualize how the CV threshold performed on your dataset, you can extract the CV calculated during `filer_cv()` using mpactR's `get_cv_data()` function, and calculate the percentage of features for plotting. You can look at both mean and median CV as shown in the example below, or you can filter the data by the parameter of choice. 
 
 ```{r}
 cv <- get_cv_data(data_rep) %>%

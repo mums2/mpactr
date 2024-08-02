@@ -9,9 +9,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-The goal of mpactR is to correct for errors that occur during the pre-processing of raw tandem MS/MS data. This data needs to be filtered prior to downstream analyses because of limitations in mass spectrometry detection capabilities. Once filtering in complete, you should have a feature table containing high quality MS1 features. This table can be used for a variety of analyses that can be conducted in R to better understand if and how samples differ from one another. 
+The goal of mpactR is to correct for errors that occur during the pre-processing of raw tandem MS/MS data. This data needs to be filtered prior to downstream analyses because of limitations in mass spectrometry detection capabilities. Once filtering is complete, you should have a feature table containing high quality MS1 features. This table can be used for a variety of analyses that can be conducted in R to better understand if and how samples differ from one another. 
 
-In this article, we will highlight just a few analyses. This is not an exhaustive list, and there are certainly other ways to conduct the analyses show below - the beauty of R! We will walk you through how to do the following:
+In this article, we will highlight just a few analyses. This is not an exhaustive list, and there are certainly other ways to conduct the analyses shown below - the beauty of R! We will walk you through how to do the following:
 
 - creating an interactive plot of input features and the filters they failed, if any, using `ggplot` and `plotly`
 - correlating sample profiles at multiple levels (sample, technical replicates, and biological replicates) using `Hmisc` and `corrplot`
