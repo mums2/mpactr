@@ -14,18 +14,27 @@ a \code{data.table} reporting the number of high quality ions
 ("Passed") or the filter in which they were removed.
 }
 \description{
-Parses an mpactr object and exracts a summary of all applied filters. Specifically, the fate of each input ion is reported as ion status. Status options are: Passed, mispicked, group, replicability, and insouce. A status of Passed ions is returned for ions that passed all applied filters and therefore are expected to be high quaility ions. Ions tagged as group, mispicked, replicability, or ionsource were removed during the correspoding filter.
+Parses an mpactr object and exracts a summary of all applied filters.
+Specifically, the fate of each input ion is reported as ion status. Status
+options are: Passed, mispicked, group, replicability, and insouce. A status
+of Passed ions is returned for ions that passed all applied filters and
+therefore are expected to be high quaility ions. Ions tagged as group,
+mispicked, replicability, or ionsource were removed during the correspoding
+filter.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+  example("metadata.csv"),
+  format = "Progenesis"
+)
 
-data_filter <- filter_mispicked_ions(data, 
-                                    ringwin = 0.5, 
-                                    isowin = 0.01, 
-                                    trwin = 0.005, 
-                                    max_iso_shift = 3,
-                                    merge_peaks = TRUE)
+data_filter <- filter_mispicked_ions(data,
+  ringwin = 0.5,
+  isowin = 0.01,
+  trwin = 0.005,
+  max_iso_shift = 3,
+  merge_peaks = TRUE
+)
 
 summary <- qc_summary(data_filter)
 summary

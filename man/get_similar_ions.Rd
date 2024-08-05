@@ -7,17 +7,22 @@
 get_similar_ions(mpactr_object)
 }
 \arguments{
-\item{mpactr_object}{The mpactr object that is created by calling the import_data() function.}
+\item{mpactr_object}{The mpactr object that is created by calling the
+import_data() function.}
 }
 \value{
-a \code{data.table} retporting the main ion and those found to be similar with \code{\link[=filter_mispicked_ions]{filter_mispicked_ions()}}.
+a \code{data.table} reporting the main ion and those found to be
+similar with \code{\link[=filter_mispicked_ions]{filter_mispicked_ions()}}.
 }
 \description{
-\code{get_similar_ions()} is a wrapper function to return similar ion groups determined with the \code{\link[=filter_mispicked_ions]{filter_mispicked_ions()}}.
+\code{get_similar_ions()} is a wrapper function to return similar ion groups
+determined with the \code{\link[=filter_mispicked_ions]{filter_mispicked_ions()}}.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"))
+  example("metadata.csv"),
+  format = "Progenesis"
+)
 
 data_filter <- filter_mispicked_ions(data)
 

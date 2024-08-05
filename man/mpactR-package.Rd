@@ -8,6 +8,13 @@
 \description{
 A fast tool for the correction of pre-processed tandem MS/MS features.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{http://www.schlosslab.org/mpactR/}
+}
+
+}
 \author{
 \strong{Maintainer}: Patrick Schloss \email{pschloss@umich.edu} (\href{https://orcid.org/0000-0002-6935-4275}{ORCID})
 

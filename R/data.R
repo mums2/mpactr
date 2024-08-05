@@ -3,19 +3,20 @@
 #' A `mpactr` R6 class object of contining a feature table and associated sample
 #' metadata.
 #'
-#' @format ## `ColcultureData`
+#' @format ## `culture_data`
 #' A `mpactr` with 2 attributes:
 #' \describe{
 #'  \item{peak_table}{A feature table of class `data.table`}
 #'  \item{meta_data}{A `data.table` with associated sample metadata}
 #'  }
-"CulturesData"
+"cultures_data"
 
 
 #' Get file paths for examples
 #'
-#' mpactr contains a number of example files in the `inst\extdata` directory. This function makes them accessible in
-#' that shows how file paths are used in function examples.
+#' mpactr contains a number of example files in the `inst\extdata` directory.
+#' This function makes them accessible in documentation that shows how file
+#' paths are used in function examples.
 #'
 #' @param file Name of a file. If `NULL`, all examples files will be listed.
 #'

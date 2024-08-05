@@ -1,35 +1,32 @@
-summary <- R6::R6Class("summary", public = list(
-  initialize = function(filter, failed_ions, passed_ions)
-  {
-    stopifnot(any(class(filter) == "character"))
-    stopifnot(class(failed_ions) == "numeric")
-    stopifnot(class(passed_ions) == "numeric")
-    private$filter = filter
-    private$failed_ions = failed_ions
-    private$passed_ions = passed_ions
-  },
-  summarize = function(x)
-  {
-    cli::cli_alert_success("{length(private$failed_ions)} ions failed the {private$filter} filter, {length(private$passed_ions)} ions remain.")
-    
-  },
-  get_failed_ions = function()
-  {
-    return(private$failed_ions)
-  },
-  get_passed_ions = function()
-  {
-    return(private$passed_ions)
-  },
-  get_filter = function()
-  {
-    return(private$filter)
-  }
-),
- private = list(
-   filter = NA,
-   failed_ions = NA,
-   passed_ions = NA
- )
+summary <- R6::R6Class("summary",
+  public = list(
+    initialize = function(filter, failed_ions, passed_ions) {
+      stopifnot(any(class(filter) == "character"))
+      stopifnot(any(class(failed_ions) == c("numeric", "character")))
+      stopifnot(any(class(failed_ions) == c("numeric", "character")))
+      private$filter <- filter
+      private$failed_ions <- failed_ions
+      private$passed_ions <- passed_ions
+    },
+    summarize = function(x) {
+      cli::cli_alert_success("{length(private$failed_ions)} ions failed the
+                              {private$filter} filter,
+                               {length(private$passed_ions)}
+                               ions remain.")
+    },
+    get_failed_ions = function() {
+      return(private$failed_ions)
+    },
+    get_passed_ions = function() {
+      return(private$passed_ions)
+    },
+    get_filter = function() {
+      return(private$filter)
+    }
+  ),
+  private = list(
+    filter = NA,
+    failed_ions = NA,
+    passed_ions = NA
+  )
 )
-

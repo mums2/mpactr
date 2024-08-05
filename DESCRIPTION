@@ -18,7 +18,7 @@ Suggests:
 Config/testthat/edition: 3
 Depends: 
     data.table,
-    R (>= 3.5.0)
+    R (>= 4.1.0)
 Imports: 
     cli,
     ggplot2,
@@ -28,4 +28,12 @@ Imports:
     treemapify,
     viridis
 LazyData: true
-Config/Needs/website: rmarkdown
+Config/Needs/website: rmarkdown,
+    tidyverse,
+    viridis,
+    plotly,
+    Hmisc,
+    corrplot,
+    ggdendro,
+    ggtext
+URL: http://www.schlosslab.org/mpactR/
