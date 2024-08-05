@@ -12,6 +12,7 @@ filter_mispicked_ions(
   max_iso_shift = 3,
   merge_peaks = TRUE,
   merge_method = "sum",
+  merge_method = "sum",
   copy_object = FALSE
 )
 }
