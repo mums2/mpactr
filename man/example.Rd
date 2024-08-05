@@ -10,8 +10,9 @@ example(file = NULL)
 \item{file}{Name of a file. If \code{NULL}, all examples files will be listed.}
 }
 \description{
-mpactr contains a number of example files in the \verb{inst\\extdata} directory. This function makes them accessible in
-that shows how file paths are used in function examples.
+mpactr contains a number of example files in the \verb{inst\\extdata} directory.
+This function makes them accessible in documentation that shows how file
+paths are used in function examples.
 }
 \examples{
 example()

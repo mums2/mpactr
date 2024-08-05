@@ -7,18 +7,21 @@
 get_meta_data(mpactr_object)
 }
 \arguments{
-\item{mpactr_object}{The mpactr object that is created by calling the import_data() function.}
+\item{mpactr_object}{The mpactr object that is created by calling
+the import_data() function.}
 }
 \value{
-a \code{data.table}
+a \code{data.table}.
 }
 \description{
-\code{get_meta_data()} a wrapper function to return the meta data object of the given mpactr object.
+\code{get_meta_data()} a wrapper function to return the meta data object
+of the given mpactr object.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"),
-                    format = "Progenesis")
+  example("metadata.csv"),
+  format = "Progenesis"
+)
 
 meta_data <- get_meta_data(data)
 

@@ -9,12 +9,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-The goal of mpactR is to correct for errors that occur during the pre-processing of raw tandem MS/MS data. Once filtering in complete, you should have a feature table containing high quality ms1 features. This table can be used for a variety of analyses that can be conducted in R to better understand if and how samples differ from one another. 
+The goal of mpactR is to correct for errors that occur during the pre-processing of raw tandem MS/MS data. This data needs to be filtered prior to downstream analyses because of limitations in mass spectrometry detection capabilities. Once filtering is complete, you should have a feature table containing high quality MS1 features. This table can be used for a variety of analyses that can be conducted in R to better understand if and how samples differ from one another. 
 
-In this article, we will highlight just a few analyses. This is not an exhaustive list, and there are certainly other ways to conduct the analyses show below - the beauty of R! We will walk you through how to do the following:
+In this article, we will highlight just a few analyses. This is not an exhaustive list, and there are certainly other ways to conduct the analyses shown below - the beauty of R! We will walk you through how to do the following:
 
 - creating an interactive plot of input features and the filters they failed, if any, using `ggplot` and `plotly`
-- correlating sample profiles at mutliple levels (sample, technical replicates, and biological replicates) using `Hmisc` and `corrplot`
+- correlating sample profiles at multiple levels (sample, technical replicates, and biological replicates) using `Hmisc` and `corrplot`
 - visualizing sample clustering as a dendrogram with `ggdendro`
 - differential abundance analysis:
     * calculating fold change between two biological groups
@@ -29,7 +29,6 @@ We will be using multiple libraries for data analysis and visualization, which c
 
 ```{r setup, message=FALSE}
 library(mpactR)
-# devtools::load_all()
 library(viridis)
 library(plotly)
 library(data.table)
@@ -40,7 +39,7 @@ library(ggdendro)
 library(ggtext)
 ```
 
-# Filter ms1 feature table with `mpactR`
+# Filter MS1 feature table with `mpactR`
 
 ```{r}
 data <- import_data(example("cultures_peak_table.csv"),
@@ -51,7 +50,7 @@ data <- import_data(example("cultures_peak_table.csv"),
 
 We will be using example data in the `mpactR` package, which has `r nrow(get_meta_data(data))` samples and `r length(unique(get_meta_data(data)$Biological_Group))` biological groups. Biological groups are: `r unique(get_meta_data(data)$Biological_Group)`.
 
-We will check our feature table for mispicked ions, remove solvent blank and media blanks features with an abundance > 0.01, relative to other groups, and check ions for replicability.
+We will check our feature table for mispicked ions, remove solvent blank and media blanks features with a relative ion abundance > 0.01, relative to other groups, and check ions for replicability.
 
 ```{r}
 data_filtered <- data |>
@@ -67,7 +66,7 @@ Overall, `r nrow(get_peak_table(data_filtered))` ions remain in the feature tabl
 plot_qc_tree(data_filtered)
 ```
 
-# Interactive scatter plot of all input ions an their fate during filtering
+# Interactive scatter plot of all input ions and their fate during filtering
 
 Visualizing each compound by m/z and retention time, and their fate during filtering may be useful to see if filters are removing features at certain retention time or m/z ranges. To create this plot, we first need to extract the raw data table, which has all pre-filtered ions (including m/z and retention time). We can do this with the mpactR function `get_raw_data()`, and then select the Compound, mz, and rt columns.
 
@@ -77,7 +76,7 @@ get_raw_data(data_filtered) %>%
   head()
 ```
 
-Next, we need to extract the ion status with `mpactR` function `qc_summary()`. This function returns a `data.table` reporting the ion status for each input ion. This includes which filter each ion failed, or passing, if the ion passed all applied filters.
+Next, we need to extract the ion status with `mpactR` function `qc_summary()`. This function returns a `data.table` reporting the ion status for each input ion. This includes which filter each ion failed or passed, or if the ion passed all applied filters.
 
 ```{r}
 qc_summary(data_filtered) %>%
@@ -116,7 +115,7 @@ get_raw_data(data_filtered) %>%
   theme(legend.position = "top")
 ```
 
-We can also make the plot interactive with the `plotly` pacakge function `ggplotly`.
+We can also make the plot interactive with the `plotly` package function `ggplotly`.
 
 ```{r}
 feature_plot <- get_raw_data(data_filtered) %>%
@@ -145,7 +144,7 @@ ggplotly(feature_plot)
 
 # Correlation between samples at different levels
 
-We may be interested in how individual samples, or biological group sample correlate to each other. For this analysis, we will need to extract the filtered feature table with `mpactR` function `get_peak_table()`. This function will return the filtered `data.table` where rows are features and columns are either compound metadata or intensity values for samples.
+We may be interested in how individual samples, or biological groups correlate to each other. For this analysis, we will need to extract the filtered feature table with `mpactR` function `get_peak_table()`. This function will return the filtered `data.table` where rows are features and columns are either compound metadata or intensity values for samples.
 
 ```{r}
 ft <- get_peak_table(data_filtered)
@@ -153,11 +152,11 @@ ft <- get_peak_table(data_filtered)
 ft[1:5, 1:7]
 ```
 
-### Correlation between each individual samples
+### Correlation between each individual sample
 
-First, we can look at the correlation between each individual sample, regadless of technical replicates and biological groups. This will show how well technical and biological replicates correlate, where we are expecting to see near perfect correlation replicates.
+First, we can look at the correlation between each individual sample, regardless of technical replicates and biological groups. This will show how well technical and biological replicates correlate, where we are expecting to see near perfect correlation replicates.
 
-We will use `Hmisc::rcorr()` to perform spearman correlations. This function is expecting a `matrix` where rows are samples to correlate and rows are features. Since the feature table has columns for both feature metadata and samples, we need to remove feature metadata for `rcorr()`. We can do this by extracting sample names from the metadata `Injection` column, which match sample column names in the feature table. We also need to remove any samples that no longer have any features post-filtering (likely solvent blanks).
+We will use `Hmisc::rcorr()` to perform spearman correlations. This function is expecting a `matrix` where columns are samples to correlate and rows are features. Since the feature table has columns for both feature metadata and samples, we need to remove feature metadata for `rcorr()`. We can do this by extracting sample names from the metadata `Injection` column, which match sample column names in the feature table. We also need to remove any samples that no longer have any features post-filtering (likely solvent blanks).
 
 ```{r}
 counts <- ft %>%
@@ -197,7 +196,7 @@ corrplot(counts_cor$r,
 
 Next, we can look at the correlation between technical replicates to see how they compare across the dataset. For this, we will calculate the average intensity for each compound across technical replicates and run a correlation in the same manner shown above.
 
-In the original `counts` table, we set the row names from the column `Compound`, which holds the compound id. Here we need to reset out `Compound` column and pivot the data table for calculating averages.
+In the original `counts` table, we set the row names from the column `Compound`, which holds the compound id. Here we need to reset our `Compound` column and pivot the data table for calculating averages.
 
 ```{r}
 meta <- get_meta_data(data_filtered)
@@ -212,7 +211,7 @@ counts %>%
   head()
 ```
 
-Next, we will join with sample meta data so we can cacluate averages by `Sample_Code`.
+Next, we will join with sample meta data so we can calcuate averages by `Sample_Code`.
 
 ```{r}
 counts %>%
@@ -291,7 +290,7 @@ corrplot(sample_counts_cor$r,
 
 ### Correlation between biological replicates
 
-We can also look at the correlation between biological groups. In this dataset, technical replicates and biological groups are the same, however if you have multiple technical replicates you may also be interested in the correlation between biological groups. We will calculate mean intensity values for `Biological_Group` in the same manner as we did for `Sample_Code`.
+We can also look at the correlation between biological groups. In this dataset, technical replicates and biological groups are the same; however if you have multiple technical replicates you may also be interested in the correlation between biological groups. We will calculate mean intensity values for `Biological_Group` in the same manner as we did for `Sample_Code`.
 
 ```{r, warning=FALSE}
 group_counts <- counts %>%
@@ -314,7 +313,7 @@ group_counts <- counts %>%
 ```    
   
   
-Run the correlation analysis with `rorr()`:
+Run the correlation analysis with `rcorr()`:
     
 ```{r}
 group_counts_cor <- rcorr(as.matrix(group_counts), type = "spearman")
@@ -332,20 +331,20 @@ corrplot(group_counts_cor$r,
 )
 ```
 
-As expected, the biological group correlation matrix matches the tehcnical replicates correlation.
+As expected, the biological group correlation matrix matches the technical replicates correlation.
 
 # Dendrogram
 
 You may be interested in visualizing how similar samples are with a dendrogram. For this we will need to calculate the distance between samples with `stats::dist()`, cluster with `hclust()`, and visualize with `ggplot` and `ggdendro` packages.
 
-First, calculate distance and and cluster:
+First, calculate distance and cluster:
 
 ```{r}
 dist <- stats::dist(t(counts), method = "euclidian")
 cluster <- stats::hclust(dist, method = "complete")
 ```
 
-Calculate dendrogram compoents with `stats::as.dendrogram()`:
+Calculate dendrogram components with `stats::as.dendrogram()`:
 
 ```{r}
 dendro <- as.dendrogram(cluster)
@@ -368,7 +367,8 @@ ggplot(segment(den_data)) +
     size = 3,
     hjust = "outward"
   ) +
-  coord_cartesian(ylim = c((min(segment(den_data)$y) + 10), (max(segment(den_data)$y)))) +
+  coord_cartesian(ylim = c((min(segment(den_data)$y) + 10),
+                           (max(segment(den_data)$y)))) +
   coord_flip() +
   scale_y_reverse(expand = c(.5, 0)) +
   theme_dendro()
@@ -383,37 +383,39 @@ Say we wanted to compare metabolite profiles between our Coculture and ANG18 gro
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
 ```
 
-Inherently, tandem MS/MS datasets can be filled with many zeros. In some instances a coumpound is found in the experimental group but not in the control group, or vice versa. In these cases, the fold change calculation yields an infinite number as there is a zero either in the numerator or denominator ($fold chage = experimental / control$). There is also the chance that the compound is not found in either group, yielding a fold change on NaN (0/0). 
+Inherently, tandem MS/MS datasets can be filled with many zeros. In some instances a compound is found in the experimental group but not in the control group, or vice versa. In these cases, the fold change calculation yields an infinite number as there is a zero either in the numerator or denominator ($fold chage = experimental / control$). There is also the chance that the compound is not found in either group, yielding a fold change on NaN (0/0). 
 
 Compounds that are not in either group are of no interest in this comparison and can therefore be removed from the analysis. 
 
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0, FALSE, TRUE)) %>%
+  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
+                                    FALSE,
+                                    TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
 ```
 
-There mutliple ways to handle compounds that are found in the one group but not the other. Here we will set an upper and lower bounds.
+There are multiple ways to handle compounds that are found in the one group but not the other. Here we will create pseudo-counts by adding a small number (0.001) to all counts prior to calculating fold change. This will alleviate division by 0. 
 
 First, extract group averages from the `mpactr` object and select the two groups of interest. Here we are interested in the columns Coculture and ANG18:
 
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
   head()
 ```
@@ -423,21 +425,37 @@ To calculate fold change, we need to have two columns: one for the control group
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
   head()
 ```
 
-Now we can remove compounds with an intensity of 0 in both groups:
+
+Now we create pseudo-counts by adding 0.001 to the counts column:
 
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
+  mutate(average = average + 0.001) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0, FALSE, TRUE)) %>%
+  head()
+```
+
+
+Now we can remove compounds with an intensity of 0 in both groups. This equates to a pseuo-count of 0.001:
+
+```{r}
+get_group_averages(data_filtered) %>%
+  filter(Biological_Group == "Coculture" |
+           Biological_Group == "ANG18") %>%
+  select(Compound, Biological_Group, average) %>%
+  mutate(average = average + 0.001) %>%
+  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
+                                    FALSE,
+                                    TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
   head()
 ```
@@ -447,32 +465,15 @@ Next, we calculate fold change for all remaining compounds:
 ```{r}
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
+  mutate(average = average + 0.001) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0, FALSE, TRUE)) %>%
+  mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
+                                    FALSE,
+                                    TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
   mutate(fc = Coculture / ANG18) %>%
-  head()
-```
-
-Now we correct the bounds: for compounds that have 0 intenisty in the control group we will set fold change to 100, and for those with 0 intensity in the experimental group we set the fold change to 0.01.
-
-```{r}
-get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0, FALSE, TRUE)) %>%
-  filter(nonzero_compound == TRUE) %>%
-  mutate(
-    fc = Coculture / ANG18,
-    fc = case_when(fc >= 100 ~ 100,
-      fc <= 0.01 ~ 0.01,
-      .default = fc
-    )
-  ) %>%
   head()
 ```
 
@@ -481,19 +482,16 @@ Finally, transform fold change to log2:
 ```{r}
 foldchanges <- get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
-    Biological_Group == "ANG18") %>%
+           Biological_Group == "ANG18") %>%
   select(Compound, Biological_Group, average) %>%
+  mutate(average = average + 0.001) %>%
   pivot_wider(names_from = Biological_Group, values_from = average) %>%
-  mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0, FALSE, TRUE)) %>%
+  mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
+                                    FALSE,
+                                    TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
-  mutate(
-    fc = Coculture / ANG18,
-    fc = case_when(fc >= 100 ~ 100,
-      fc <= 0.01 ~ 0.01,
-      .default = fc
-    ),
-    logfc = log2(fc)
-  )
+  mutate(fc = Coculture / ANG18,
+         logfc = log2(fc))
 
 head(foldchanges)
 ```
@@ -530,9 +528,9 @@ plot_ly(fc_plotting,
 
 ### Test for compounds with significant fold changes
 
-For the t-tests, we have already calculated variation for compounds within biological groups as well as within techincal replicates in biological groups. We can calculate the t statisic and degrees of freedom and use the t distribution (`pt()`) to calculate the p-value.
+For the t-tests, we have already calculated variation for compounds within biological groups as well as within technical replicates in biological groups. We can calculate the t statistic and degrees of freedom and use the t distribution (`pt()`) to calculate the p-value.
 
-*combine biological and technical variaition and calcualte sample size*
+*combine biological and technical variation and calculate sample size*
 
 ```{r}
 # Satterwaite
@@ -568,11 +566,12 @@ stats <- get_group_averages(data_filtered) %>%
 head(stats)
 ```
 
-*calculate the t statitstic*
+*calculate the t statistic*
 
 ```{r}
 denom <- stats %>%
-  summarise(den = combASD^2 / (neff), .by = c("Compound", "Biological_Group")) %>%
+  summarise(den = combASD^2 / (neff),
+            .by = c("Compound", "Biological_Group")) %>%
   mutate(den = if_else(!is.finite(den), 0, den)) %>%
   summarise(denom = sqrt(sum(den)), .by = c("Compound"))
 
@@ -626,14 +625,14 @@ fc <- foldchanges %>%
   left_join(t, by = "Compound") %>%
   arrange(p) %>%
   mutate(
-    qval = 1:(length(p)),
+    qval = seq_len(length(p)),
     qval = p * num_ions / qval
   ) %>%
   arrange(desc(p))
 
 min_qval <- 1
 
-for (i in 1:nrow(fc)) {
+for (i in seq_len(nrow(fc))) {
   if (!is.finite(fc$qval[i])) {
     next
   }
@@ -653,7 +652,7 @@ fc2 <- fc %>%
 
 Now we can create a volcano plot to see the magnitude of metabolite abundance differences between the Cocoulture and ANG18 groups.
 
-We can plot log2 fold change values against log~10~ p-values or log~10~ q-values, both of which we calcuated in out t-tests above.
+We can plot log2 fold change values against log~10~ p-values or log~10~ q-values, both of which we calculated in our t-tests above.
 
 *log2 fold change ~ log~10~ p-values*
 
@@ -664,13 +663,15 @@ fc2 %>%
   ggplot() +
   aes(x = logfc, y = neg_logp) +
   geom_point() +
-  labs(x = "log2 Fold Change", y = "-Log~10~ *P*", color = "Differential Abundance") +
+  labs(x = "log2 Fold Change",
+       y = "-Log~10~ *P*",
+       color = "Differential Abundance") +
   theme_bw()
 ```
 
-This is good, but we probably want know which compounds are above the p-value threshold and outside the log2 fold change threshold. Fold change threshold commonly ranges from 1.5 - 2. For this plot, we will show a p-value threshold of 0.05 and fold change threshold of 1.5. 
+This is good, but we probably want to know which compounds are above the p-value threshold and outside the log2 fold change threshold. Fold change threshold commonly ranges from 1.5 - 2. For this plot, we will show a p-value threshold of 0.05 and fold change threshold of 1.5. 
 
-First add add a horizontal line to denote the cutoff of -log~10~ 0.05:
+First add a horizontal line to denote the cutoff of -log~10~ 0.05:
 
 ```{r}
 fc2 %>%
@@ -678,7 +679,9 @@ fc2 %>%
   aes(x = logfc, y = neg_logp) +
   geom_point() +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
-  labs(x = "log2 Fold Change", y = "-Log~10~ *P*", color = "Differential Abundance") +
+  labs(x = "log2 Fold Change",
+       y = "-Log~10~ *P*",
+       color = "Differential Abundance") +
   theme_bw()
 ```
 
@@ -690,48 +693,52 @@ fc2 %>%
   aes(x = logfc, y = neg_logp) +
   geom_point() +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed") +
-  labs(x = "log2 Fold Change", y = "-Log~10~ *P*", color = "Differential Abundance") +
+  labs(x = "log2 Fold Change",
+       y = "-Log~10~ *P*",
+       color = "Differential Abundance") +
   geom_vline(xintercept = log2(1.5), linetype = "dashed") +
   geom_vline(xintercept = -log2(1.5), linetype = "dashed") +
   theme_bw()
 ```
 
-So now we can see the thresholds, but its difficult to make out which compounds have significant fold change values. It would be nice to color the compounds by their significance. Specifically, compounds whose intensity are signigicantly higher in the experimental group, compounds whose intensity are significantly lower in the experimental group, compounds with significant p-values but the fold change is below the fold change threshold, and compounds whose fold change are not significant.
+So now we can see the thresholds, but it's difficult to make out which compounds have significant fold change values. It would be nice to color the compounds by their significance. Specifically, compounds whose intensity are significantly higher in the experimental group, compounds whose intensity are significantly lower in the experimental group, compounds with significant p-values but the fold change is below the fold change threshold, and compounds whose fold change are not significant.
 
 We can do this by adding a new variable to our dataset and using this variable to color our points.
 
-First, add a new variable `sig` which with values `Increased` (fold change > 1.5 & pvalue < 0.05), `Decreased` (fold change < -1.5 & pvalue < 0.05), `Inconclusive` (fold change -1.5 - 1.5 & pvalue < 0.05), and `not_sig` (pvalue > 0.05).
+First, add a new variable `sig` which has values `Increased` (fold change > 1.5 & pvalue < 0.05), `Decreased` (fold change < -1.5 & pvalue < 0.05), `Inconclusive` (fold change -1.5 - 1.5 & pvalue < 0.05), and `not_sig` (pvalue > 0.05).
 
 ```{r}
 fc2 %>%
   mutate(
     sig = case_when(
       p > 0.05 ~ "not_sig",
-      p <= 0.05 & logfc >= log2(1.5) ~ "Increased",
+      p <= 0.05 & logfc > log2(1.5) ~ "Increased",
       p <= 0.05 & logfc < -log2(1.5) ~ "Decreased",
       TRUE ~ "Inconclusive"
     ),
     sig = factor(sig,
-      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"), labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
+      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"),
+      labels = c("Increased", "Decreased", "Inconclusive", "Not significant")
     )
   ) %>%
   select(Compound, ANG18, Coculture, fc, logfc, p, sig) %>%
   head()
 ```
 
-Now we can set the color aestheic to the variable `sig` and select custom colors with `scale_color_manual()`:
+Now we can set the color aesthetic to the variable `sig` and select custom colors with `scale_color_manual()`:
 
 ```{r}
 fc2 %>%
   mutate(
     sig = case_when(
       p > 0.05 ~ "not_sig",
-      p <= 0.05 & logfc >= log2(1.5) ~ "Increased",
+      p <= 0.05 & logfc > log2(1.5) ~ "Increased",
       p <= 0.05 & logfc < -log2(1.5) ~ "Decreased",
       TRUE ~ "Inconclusive"
     ),
     sig = factor(sig,
-      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"), labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
+      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"),
+      labels = c("Increased", "Decreased", "Inconclusive", "Not significant")
     )
   ) %>%
   ggplot() +
@@ -756,12 +763,13 @@ fc2 %>%
   mutate(
     sig = case_when(
       p > 0.05 ~ "not_sig",
-      p <= 0.05 & logfc >= log2(1.5) ~ "Increased",
+      p <= 0.05 & logfc > log2(1.5) ~ "Increased",
       p <= 0.05 & logfc < -log2(1.5) ~ "Decreased",
       TRUE ~ "Inconclusive"
     ),
     sig = factor(sig,
-      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"), labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
+      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"),
+      labels = c("Increased", "Decreased", "Inconclusive", "Not significant")
     )
   ) %>%
   ggplot() +
@@ -783,19 +791,20 @@ fc2 %>%
   )
 ```
 
-Use can also make the plot interactive, showing the compound id for each point:
+We can also make the plot interactive, showing the compound id for each point:
 
 ```{r}
 volcano <- fc2 %>%
   mutate(
     sig = case_when(
       p > 0.05 ~ "not_sig",
-      p <= 0.05 & logfc >= log2(1.5) ~ "Increased",
+      p <= 0.05 & logfc > log2(1.5) ~ "Increased",
       p <= 0.05 & logfc < -log2(1.5) ~ "Decreased",
       TRUE ~ "Inconclusive"
     ),
     sig = factor(sig,
-      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"), labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
+      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"),
+      labels = c("Increased", "Decreased", "Inconclusive", "Not significant")
     )
   ) %>%
   ggplot() +
@@ -824,19 +833,20 @@ ggplotly(volcano)
 
 *log2 fold change ~ log~10~ q-values*
 
-You can also look at the volcano plot with the q value to control for false discovery rate (FDR) using the same approch shown for p values:
+You can also look at the volcano plot with the q value to control for false discovery rate (FDR) using the same approach shown for p values:
 
 ```{r}
 fc2 %>%
   mutate(
     sig = case_when(
       qval > 0.05 ~ "not_sig",
-      qval <= 0.05 & logfc >= log2(1.5) ~ "Increased",
+      qval <= 0.05 & logfc > log2(1.5) ~ "Increased",
       qval <= 0.05 & logfc < -log2(1.5) ~ "Decreased",
       TRUE ~ "Inconclusive"
     ),
     sig = factor(sig,
-      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"), labels = c("Increased", "Decreased", "Inconclusive", "Not sigificant")
+      levels = c("Increased", "Decreased", "Inconclusive", "not_sig"),
+      labels = c("Increased", "Decreased", "Inconclusive", "Not significant")
     )
   ) %>%
   ggplot() +

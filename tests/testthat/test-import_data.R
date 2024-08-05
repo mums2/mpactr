@@ -1,7 +1,12 @@
 test_that("import_data creates a proper mpactr and filter-pactr object", {
+
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+
   data <- import_data(
-    peak_table = test_path("exttestdata", "102623_peaktable_coculture_simple.csv"),
-    meta_data = test_path("exttestdata", "102623_metadata_correct.csv"),
+    peak_table = test_path(directory, peak_table_name),
+    meta_data = test_path(directory,  meta_data_name),
     format = "Progenesis"
   )
 
@@ -13,13 +18,19 @@ test_that("import_data creates a proper mpactr and filter-pactr object", {
 })
 
 
-test_that("import_data aborts when expected metadata columns are not provided", {
-  meta_data_abort <- read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE)
-  colnames(meta_data_abort) <- c("Injection", "Sample", "Biological_Group")
+test_that("import_data aborts when expected
+ metadata columns are not provided", {
+            directory <- "exttestdata"
+            peak_table_name <- "102623_peaktable_coculture_simple.csv"
+            meta_data_name <- "102623_metadata_correct.csv"
+            meta_data_abort <- read_csv(test_path(directory,  meta_data_name),
+                                        show_col_types = FALSE)
+            colnames(meta_data_abort) <- c("Injection",
+                                           "Sample", "Biological_Group")
 
-  expect_error(import_data(
-    peak_table = test_path("exttestdata", "102623_peaktable_coculture_simple.csv"),
-    meta_data = meta_data_abort,
-    format = "Progenesis"
-  ))
-})
+            expect_error(import_data(
+              peak_table = test_path(directory, peak_table_name),
+              meta_data = meta_data_abort,
+              format = "Progenesis"
+            ))
+          })

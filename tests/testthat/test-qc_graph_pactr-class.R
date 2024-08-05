@@ -1,6 +1,10 @@
 test_that("plot_QC_Tree generates the correct plot", {
-  meta <- data.table(read_csv(test_path("exttestdata", "102623_metadata_correct.csv"), show_col_types = FALSE))
-  pt_list <- progenesis_formatter(test_path("exttestdata", "102623_peaktable_coculture_simple.csv"))
+
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta <- data.table(read_csv(test_path("exttestdata",
+                                        "102623_metadata_correct.csv"),
+                              show_col_types = FALSE))
+  pt_list <- progenesis_formatter(test_path("exttestdata", peak_table_name))
 
   mpactr_class <- mpactr$new(
     pt_list,
@@ -9,8 +13,12 @@ test_that("plot_QC_Tree generates the correct plot", {
   mpactr_class$setup()
   filter_class <- filter_pactr$new(mpactr_class)
   filter_class$check_mismatched_peaks(
-    ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-      TRUE, merge_method = "sum"
+    ringwin = 0.5,
+    isowin = 0.01,
+    trwin = 0.005,
+    max_iso_shift = 3,
+    merge_peaks = TRUE,
+    merge_method = "sum"
   )
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)

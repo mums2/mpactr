@@ -7,18 +7,23 @@
 get_group_averages(mpactr_object)
 }
 \arguments{
-\item{mpactr_object}{The mpactr object that is created by calling the import_data() function.}
+\item{mpactr_object}{The mpactr object that is created by calling the
+import_data() function.}
 }
 \value{
-a \code{data.table} retporting the average and relative standard deviation across biological groups and techincal replicates within each group.
+a \code{data.table} reporting the average and relative standard
+deviation across biological groups and technical replicates within
+each group.
 }
 \description{
-\code{get_group_averages()} is a wrapper function to return group averages for the filtered peak table.
+\code{get_group_averages()} is a wrapper function to return group averages
+for the filtered peak table.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"),
-                    format = "Progenesis")
+  example("metadata.csv"),
+  format = "Progenesis"
+)
 
 data_filter <- filter_group(data, group_to_remove = "Blanks")
 

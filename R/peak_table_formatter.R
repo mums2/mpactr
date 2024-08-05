@@ -1,9 +1,16 @@
-format_by_type <- function(peak_table_path, type_of_peak_table, sample_names = NULL) {
-  if (!(type_of_peak_table %in% c("Progenesis", "MzMine", "Metaboscape", "None"))) {
-    cli::cli_abort("{.var type_of_peak_table} must be one of Progenesis, MzMine, Metaboscape, or none. See documentation for more details.")
+format_by_type <- function(peak_table_path,
+                           type_of_peak_table,
+                           sample_names = NULL) {
+  if (!(type_of_peak_table
+        %in% c("Progenesis", "MzMine", "Metaboscape", "None"))) {
+    cli::cli_abort("{.var type_of_peak_table} must be one of Progenesis,
+                    MzMine, Metaboscape, or none. See documentation
+                    for more details.")
   }
-  if (!file.exists(peak_table_path)) {
-    cli::cli_abort("Your peak_table_path is not a valid file path, please eneter a new one")
+  if (isFALSE(grepl("https://", peak_table_path)) &&
+        !file.exists(peak_table_path)) {
+    cli::cli_abort("Your peak_table is not a valid file path,
+                    please eneter a new one")
   }
   if (type_of_peak_table == "Progenesis") {
     return(progenesis_formatter(peak_table_path))
@@ -24,10 +31,16 @@ format_by_type <- function(peak_table_path, type_of_peak_table, sample_names = N
 
 
 progenesis_formatter <- function(peak_table) {
-  peak_table <- data.table(readr::read_csv(peak_table, skip = 2, show_col_types = FALSE))
+  peak_table <- data.table(readr::read_csv(peak_table,
+    skip = 2,
+    show_col_types = FALSE
+  ))
   raw_peak_table <- peak_table
-  with(peak_table, setnames(peak_table, c("m/z", "Retention time (min)"), c("mz", "rt")))
-  # setnames(peak_table, c("m/z", "Retention time (min)"), c("mz", "rt"))
+  with(peak_table, setnames(
+    peak_table,
+    c("m/z", "Retention time (min)"),
+    c("mz", "rt")
+  ))
 
   return(list(
     "peak_table" = peak_table,
@@ -37,7 +50,10 @@ progenesis_formatter <- function(peak_table) {
 
 
 mz_mine_formatter <- function(peak_table) {
-  peak_table <- data.table(readr::read_csv(peak_table, skip = 2, show_col_types = FALSE))
+  peak_table <- data.table(readr::read_csv(peak_table,
+    skip = 2,
+    show_col_types = FALSE
+  ))
   raw_peak_table <- peak_table
 
   return(list(
@@ -48,11 +64,16 @@ mz_mine_formatter <- function(peak_table) {
 metaboscape_formatter <- function(peak_table, sample_names) {
   peak_table <- data.table(readr::read_csv(peak_table, show_col_types = FALSE))
   peak_table_convert <- data.table::copy(peak_table)
-  adduct_data <- utils::read.csv(system.file("extdata/ion_masses", "DefinedIons.csv", package = "mpactR"))
-  peak_table_convert <- with(peak_table_convert, peak_table_convert[, ion := gsub(
-    ".*\\[(.+)\\].*", "\\1",
-    ADDUCT
-  )][
+  adduct_data <- utils::read.csv(system.file("extdata/ion_masses",
+    "DefinedIons.csv",
+    package = "mpactR"
+  ))
+  peak_table_convert <- with(peak_table_convert, peak_table_convert[
+    , ion := gsub(
+      ".*\\[(.+)\\].*", "\\1",
+      ADDUCT
+    )
+  ][
     , charge_string := gsub(".*\\](.+)", "\\1", ADDUCT)
   ][
     charge_string == "+", charge := 1
@@ -67,12 +88,18 @@ metaboscape_formatter <- function(peak_table, sample_names) {
     , mz := (PEPMASS / charge) + MASS
   ])
 
-  # setnames(peak_table_convert, c("FEATURE_ID", "RT"), c("Compound", "rt"))
-  with(peak_table_convert, setnames(peak_table_convert, c("FEATURE_ID", "RT"), c("Compound", "rt")))
-  peak_table_mpactr <- with(peak_table_convert, peak_table_convert[, .SD, .SDcols = c(
-    "Compound", "mz", "rt",
-    sample_names
-  )])
+  with(peak_table_convert, setnames(
+    peak_table_convert,
+    c("FEATURE_ID", "RT"),
+    c("Compound", "rt")
+  ))
+  peak_table_mpactr <- with(peak_table_convert, peak_table_convert[
+    , .SD,
+    .SDcols = c(
+      "Compound", "mz", "rt",
+      sample_names
+    )
+  ])
 
   return(list(
     "peak_table" = peak_table_mpactr,

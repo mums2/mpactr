@@ -7,18 +7,21 @@
 get_peak_table(mpactr_object)
 }
 \arguments{
-\item{mpactr_object}{The mpactr object that is created by calling the import_data() function.}
+\item{mpactr_object}{The mpactr object that is created by calling
+the import_data() function.}
 }
 \value{
-a \code{data.table}
+a \code{data.table}.
 }
 \description{
-\code{get_peak_table()} a wrapper function to return the peak table object of the given mpactr object.
+\code{get_peak_table()} a wrapper function to return the peak table
+object of the given mpactr object.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"),
-                    format = "Progenesis")
+  example("metadata.csv"),
+  format = "Progenesis"
+)
 
 peak_table <- get_peak_table(data)
 

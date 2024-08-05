@@ -1,9 +1,11 @@
 # Code to generate metadata.csv
-# metadata.csv is a file of sample metadata in mpactR format, for the data provided in cultures_peak_table.csv.
+# metadata.csv is a file of sample metadata in mpactR format,
+# for the data provided in cultures_peak_table.csv.
 
 library(tidyverse)
 
-ft <- read_csv(here::here("tests/testthat/exttestdata/102623_peaktable_MonoVsCoculture_expandedgradient.csv"), skip = 2)
+ft <- read_csv(test_path("exttestdata", "102623_MonoVCoculture_pt.csv"),
+               skip = 2)
 
 data.frame(Injection = colnames(ft)) %>%
   filter(startsWith(Injection, "10")) %>%
@@ -28,10 +30,12 @@ data.frame(Injection = colnames(ft)) %>%
 
 # Filter the feature table by diltion for a simple example dataset
 colnames(ft)
-samples <- read_csv(here::here("inst/extdata/cultures_metadata.csv")) %>% pull(sample_id)
+samples <- read_csv(here::here("inst/extdata/cultures_metadata.csv")) %>%
+  pull(sample_id)
 
 pt <- ft %>%
   select(Compound, `m/z`, `Retention time (min)`, all_of(samples)) %>%
   rbind(rep(NA, ncol(.)), rep(NA, ncol(.)), colnames(.), .)
 
-write_csv(pt, here::here("inst/extdata/cultures_peak_table.csv"), col_names = FALSE)
+write_csv(pt, here::here("inst/extdata/cultures_peak_table.csv"),
+          col_names = FALSE)
