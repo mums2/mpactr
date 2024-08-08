@@ -223,6 +223,7 @@ filter_pactr$set(
   function(group, remove_ions = TRUE) {
     groups <- unique(self$mpactr_data$get_meta_data()$Biological_Group)
     if (isFALSE(group %in% groups)) {
+
       cli::cli_abort(c("{.var group} {group} is not in ",
                        "{.var Biological_Group}.",
                        "Options are: {groups}"))
