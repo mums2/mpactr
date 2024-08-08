@@ -49,7 +49,7 @@ navbar:
     - text: Reference Semantics
       href: articles/reference_semantics.html
     - text: Filter
-      href: articles/filter.html
+      href: articles/filter2.html
     - text: Additional Analyses
       href: articles/downstream_analyses.html
   right:
