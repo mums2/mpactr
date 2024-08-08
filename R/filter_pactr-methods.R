@@ -7,8 +7,8 @@ filter_pactr$set(
            max_iso_shift,
            merge_peaks,
            merge_method = NULL) {
-    cli::cli_alert_info("Checking {nrow(self$mpactr_data$get_peak_table())}
-                      peaks for mispicked peaks.")
+    l <- nrow(self$mpactr_data$get_peak_table())
+    cli::cli_alert_info("Checking {l} peaks for mispicked peaks.")
 
     ion_filter_list <- list()
     cut_ions <- c() # list
@@ -49,13 +49,14 @@ filter_pactr$set(
     self$logger[["check_mismatched_peaks"]] <- ion_filter_list
 
     if (isTRUE(merge_peaks)) {
-      cli::cli_alert_info("Argument merge_peaks is: {merge_peaks}.
-                         Merging mispicked peaks with method {merge_method}.")
+      cli::cli_alert_info(c("Argument merge_peaks is: {merge_peaks}. ",
+                            "Merging mispicked peaks with method ",
+                            "{merge_method}."))
 
       private$merge_ions(ion_filter_list, merge_method)
     } else {
-      cli::cli_alert_warning("Argument merge_peaks is: {merge_peaks}.
-                           Mispicked peaks will not be merged.")
+      cli::cli_alert_warning(c("Argument merge_peaks is: {merge_peaks}. ",
+                               "Mispicked peaks will not be merged."))
     }
 
     self$logger$list_of_summaries$mispicked <- summary$new(
@@ -111,8 +112,8 @@ filter_pactr$set("private", "get_merged_ions", function(ringwin,
 
 filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
   if (is.null(method)) {
-    cli::cli_abort("No method has been supplied for merging peaks.
-                   method must be one of: sum")
+    cli::cli_abort(c("No method has been supplied for merging peaks. ",
+                     "{.var method} must be one of: sum"))
   }
 
   if (method == "sum") {
@@ -222,21 +223,23 @@ filter_pactr$set(
   function(group, remove_ions = TRUE) {
     groups <- unique(self$mpactr_data$get_meta_data()$Biological_Group)
     if (isFALSE(group %in% groups)) {
-      cli::cli_abort("{.var group} {group} is not in {.var Biological_Group}.
-                     Options are: {groups}")
+
+      cli::cli_abort(c("{.var group} {group} is not in ",
+                       "{.var Biological_Group}.",
+                       "Options are: {groups}"))
     }
 
-    cli::cli_alert_info("Parsing {nrow(self$mpactr_data$get_peak_table())}
-                      peaks based on the following sample group: {group}.")
+    l <- nrow(self$mpactr_data$get_peak_table())
+    cli::cli_alert_info("Parsing {l} peaks based on the sample group: {group}.")
 
     if (isFALSE(remove_ions)) {
-      cli::cli_alert_warning("Argument remove_ions is {remove_ions}.
-                           Peaks from {group} will not be removed.")
+      cli::cli_alert_warning(c("Argument remove_ions is {remove_ions}. ",
+                               "Peaks from {group} will not be removed."))
       return()
     }
 
-    cli::cli_alert_info("Argument remove_ions is: {remove_ions}.
-                      Removing peaks from {group}.")
+    cli::cli_alert_info(c("Argument remove_ions is: {remove_ions}.",
+                          "Removing peaks from {group}."))
 
     ions <- self$logger[["group_filter-failing_list"]][[group]]
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
@@ -269,14 +272,15 @@ filter_pactr$set(
 
     ## abort if there are no technical replicates.
     if (isFALSE(self$mpactr_data$isMultipleTechReps())) {
-      cli::cli_abort("There are no technical replicates in the dataset
-                   provided. In order to run the replicability filter,
-                   technical replicates are required.")
+      cli_abort(c("There are no technical replicates in the dataset provided. ",
+                  "In order to run the replicability filter, technical ",
+                  "replicates are required."))
     }
 
     input_ions <- self$mpactr_data$get_peak_table()$Compound
-    cli::cli_alert_info("Parsing {length(input_ions)} peaks for
-                      replicability across technical replicates.")
+    cli <- cli::cli_alert_info
+    n <- length(input_ions)
+    cli("Parsing {n} peaks for replicability across technical replicates.")
 
     cv <- data.table::melt(self$mpactr_data$get_peak_table(),
       id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =

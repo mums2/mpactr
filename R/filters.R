@@ -227,12 +227,14 @@ filter_group <- function(mpactr_object,
 #'
 #' data_filter <- filter_cv(data,
 #'   cv_threshold = 0.01,
-#'   cv_param = "mean"
+#'   cv_param = "mean",
+#'   copy_object = TRUE
 #' )
 #'
 #' data_filter <- filter_cv(data,
 #'   cv_threshold = 0.01,
-#'   cv_param = "median"
+#'   cv_param = "median",
+#'   copy_object = TRUE
 #' )
 #'
 filter_cv <- function(mpactr_object,
@@ -258,7 +260,6 @@ filter_cv <- function(mpactr_object,
   )
   return(mpactr_object)
 }
-
 
 ###########################
 ### Insource ions filter ##
