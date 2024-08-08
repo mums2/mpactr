@@ -63,10 +63,6 @@ mz_mine_formatter <- function(peak_table) {
 metaboscape_formatter <- function(peak_table, sample_names) {
   peak_table <- data.table(readr::read_csv(peak_table, show_col_types = FALSE))
   peak_table_convert <- data.table::copy(peak_table)
-  adduct_data <- utils::read.csv(system.file("extdata/ion_masses",
-    "DefinedIons.csv",
-    package = "mpactR"
-  ))
   peak_table_convert <- with(peak_table_convert, peak_table_convert[
     , ion := gsub(
       ".*\\[(.+)\\].*", "\\1",
@@ -81,7 +77,10 @@ metaboscape_formatter <- function(peak_table, sample_names) {
   ][
     charge_string == "3+", charge := 3
   ][
-    adduct_data,
+    utils::read.csv(system.file("extdata/ion_masses",
+      "DefinedIons.csv",
+      package = "mpactR"
+    )),
     on = .(ion = IONS)
   ][
     , mz := (PEPMASS / charge) + MASS

@@ -87,6 +87,7 @@ We can join these two `data.table`s for plotting data set:
 
 ```{r}
 get_raw_data(data_filtered) %>%
+  mutate(Compound = as.character(Compound)) %>%
   select(Compound, mz, rt) %>%
   left_join(qc_summary(data_filtered),
     by = join_by("Compound" == "compounds")
@@ -98,6 +99,7 @@ Now we can create a scatter plot to show the input features (m/z ~ retention tim
 
 ```{r}
 get_raw_data(data_filtered) %>%
+  mutate(Compound = as.character(Compound)) %>% 
   select(Compound, mz, rt) %>%
   left_join(qc_summary(data_filtered),
     by = join_by("Compound" == "compounds")
@@ -119,6 +121,7 @@ We can also make the plot interactive with the `plotly` package function `ggplot
 
 ```{r}
 feature_plot <- get_raw_data(data_filtered) %>%
+  mutate(Compound = as.character(Compound)) %>%
   select(Compound, mz, rt) %>%
   left_join(qc_summary(data_filtered),
     by = join_by("Compound" == "compounds")
