@@ -11,8 +11,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-# library(mpactR)
-devtools::load_all()
+library(mpactR)
 ```
 
 ## Reference semantics
