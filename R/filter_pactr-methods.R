@@ -215,10 +215,17 @@ filter_pactr$set(
   }
 )
 
+
 # Given a group name, removes flagged ions from the peak table.
 filter_pactr$set(
   "public", "apply_group_filter",
   function(group, remove_ions = TRUE) {
+    groups <- unique(self$mpactr_data$get_meta_data()$Biological_Group)
+    if (isFALSE(group %in% groups)) {
+      cli::cli_abort("{.var group} {group} is not in {.var Biological_Group}.
+                     Options are: {groups}")
+    }
+
     cli::cli_alert_info("Parsing {nrow(self$mpactr_data$get_peak_table())}
                       peaks based on the following sample group: {group}.")
 
@@ -239,7 +246,7 @@ filter_pactr$set(
 
     self$logger$list_of_summaries[[paste0("group-", group)]] <- summary$new(
       filter = group,
-      failed_ions = as.numeric(ions),
+      failed_ions = ions,
       passed_ions = self$mpactr_data$get_peak_table()$Compound
     )
 
@@ -362,8 +369,6 @@ filter_pactr$set(
     cut_tree <- stats::cutree(cluster, h = 1 - cluster_threshold)
 
     x <- as.data.table(cut_tree, keep.rownames = "Compound")[
-      , Compound := as.numeric(Compound)
-    ][
       group_1,
       on = .(Compound = Compound)
     ][
