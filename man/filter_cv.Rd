@@ -5,7 +5,6 @@
 \title{Filter Non-reproducible ions}
 \usage{
 filter_cv(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE)
-filter_cv(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE)
 }
 \arguments{
 \item{mpactr_object}{An \code{mpactr_object}. See \code{\link[=import_data]{import_data()}}.}
@@ -51,12 +50,14 @@ data <- import_data(example("coculture_peak_table.csv"),
 
 data_filter <- filter_cv(data,
   cv_threshold = 0.01,
-  cv_param = "mean"
+  cv_param = "mean",
+  copy_object = TRUE
 )
 
 data_filter <- filter_cv(data,
   cv_threshold = 0.01,
-  cv_param = "median"
+  cv_param = "median",
+  copy_object = TRUE
 )
 
 }
