@@ -9,30 +9,55 @@ filter_cv(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE)
 \arguments{
 \item{mpactr_object}{An \code{mpactr_object}. See \code{\link[=import_data]{import_data()}}.}
 
-\item{cv_threshold}{Coefficient of variation threshold.}
+\item{cv_threshold}{Coefficient of variation threshold.
+A lower cv_threshold will result in more stringent filtering and higher
+reproducibility. Recommended values between 0.2 - 0.5.}
 
-\item{cv_param}{Coefficient of variation (CV) to use for filtering. Options are "mean" or "median", corresponding to mean and median CV, respectively.}
+\item{cv_param}{Coefficient of variation (CV) statistic to use for filtering
+Options are "mean" or "median", corresponding to mean and median CV,
+respectively.}
 
-\item{copy_object}{A \code{boolean} paramter that allows users to return a copied object instead of modifying the object.}
+\item{copy_object}{A \code{boolean} parameter that allows users to return a copied
+object instead of modifying the object.}
 }
 \value{
-an \code{mpactr_object}
+an \code{mpactr_object}.
 }
 \description{
-\code{filter_cv()} removes feature ions that are found to be non-reproducible between technical inejction replicates. Replicability is assessed via mean or median coefficient of variation (CV) between technical replicates. As such, this fitler is expecting an input dataset with at least two replicate injections per sample.
+\code{filter_cv()} removes feature ions that are found to be non-reproducible
+between technical injection replicates. Reproducibility is assessed via mean
+or median coefficient of variation (CV) between technical replicates. As
+such, this filter is expecting an input dataset with at least two replicate
+injections per sample.
+
+\code{copy_object}: mpactR is built on an R6 class-system, meaning it operates on
+reference semantics in which data is updated \emph{in-place}. Compared to a
+shallow copy, where only data pointers are copied, or a deep copy, where
+the entire data object is copied in memory, any changes to the original
+data object, regardless if they are assigned to a new object, result in
+changes to the original data object. We recommend using the default
+\code{copy_object = FALSE} as this makes for an extremely fast and
+memory-efficient way to chain mpactR filters together; however, if you
+would like to run the filters individually with traditional R style objects,
+you can set \code{copy_object} to \code{TRUE} as shown in the filter examples.
 }
 \examples{
 
 data <- import_data(example("coculture_peak_table.csv"),
-                    example("metadata.csv"),
-                    format = "Progenesis")
+  example("metadata.csv"),
+  format = "Progenesis"
+)
 
 data_filter <- filter_cv(data,
-                              cv_threshold = 0.01,
-                              cv_param = "mean")
+  cv_threshold = 0.01,
+  cv_param = "mean",
+  copy_object = TRUE
+)
 
 data_filter <- filter_cv(data,
-                              cv_threshold = 0.01,
-                              cv_param = "median")
+  cv_threshold = 0.01,
+  cv_param = "median",
+  copy_object = TRUE
+)
 
 }

@@ -17,7 +17,7 @@ Filters in this package address the following issues:
 - `filter_mispicked_ions()`: removal of mispicked peaks, or those
   isotopic patterns that are incorrectly split during preprocessing.
 - `filter_group()`: removal of features overrepresented in a specific
-  group of samples; for example removal of features present is solvent
+  group of samples; for example removal of features present in solvent
   blanks due to carryover between samples.
 - `filter_cv()`: removal of non-reproducible features, or those that are
   inconsistent between technical replicates.
@@ -25,7 +25,8 @@ Filters in this package address the following issues:
   first ionization in the tandem MS/MS workflow.
 
 All filters are independent, meaning they can be used to create a
-project-specific workflow, or you can learn more in **cite vignette**.
+project-specific workflow, or you can learn more in [the Filter
+vignette](articles/filter2.html).
 
 ## Installation
 
@@ -39,7 +40,7 @@ devtools::install_github("SchlossLab/mpactR")
 
 ## Get started
 
-See articles to get started.
+See [the Filter vignette](articles/filter2.html) to get started.
 
 ## Getting help
 

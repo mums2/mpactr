@@ -6,12 +6,12 @@ mpactr$set("private", "initialize_data", function() {
     private$peak_table[, .SD, .SDcols = private$meta_data$Injection]
   ) > 0), ]
   private$set_kmd()
+  private$peak_table$Compound <- as.character(private$peak_table$Compound)
 })
 mpactr$set("private", "set_kmd", function() {
   private$peak_table[, kmd := mz - floor(mz)]
 })
-mpactr$set("public", "get_peak_table", function() # make a R facing accessor and make private?
-{
+mpactr$set("public", "get_peak_table", function() {
   return(private$peak_table)
 })
 mpactr$set("public", "set_peak_table", function(peak_table) {

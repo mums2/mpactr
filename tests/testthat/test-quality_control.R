@@ -1,12 +1,16 @@
 test_that("qc_summary returns a summary data.table", {
-  data <- import_data(test_path("exttestdata", "102623_peaktable_coculture_simple.csv"),
+  data <- import_data(test_path("exttestdata",
+                                "102623_peaktable_coculture_simple.csv"),
     test_path("exttestdata", "102623_metadata_correct.csv"),
     format = "Progenesis"
   )
 
   data_mpactr <- filter_mispicked_ions(data,
-    ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-      TRUE
+    ringwin = 0.5,
+    isowin = 0.01,
+    trwin = 0.005,
+    max_iso_shift = 3,
+    merge_peaks = TRUE
   )
   data_mpactr <- filter_group(data, 0.01, "Blanks", TRUE)
   data_mpactr <- filter_group(data, 0.01, "Coculture", TRUE)
@@ -21,14 +25,18 @@ test_that("qc_summary returns a summary data.table", {
 })
 
 test_that("qc plot returns a generates a plot", {
-  data <- import_data(test_path("exttestdata", "102623_peaktable_coculture_simple.csv"),
+  data <- import_data(test_path("exttestdata",
+                                "102623_peaktable_coculture_simple.csv"),
     test_path("exttestdata", "102623_metadata_correct.csv"),
     format = "Progenesis"
   )
 
   data_mpactr <- filter_mispicked_ions(data,
-    ringwin = 0.5, isowin = 0.01, trwin = 0.005, max_iso_shift = 3, merge_peaks =
-      TRUE
+    ringwin = 0.5,
+    isowin = 0.01,
+    trwin = 0.005,
+    max_iso_shift = 3,
+    merge_peaks = TRUE
   )
   data_mpactr <- filter_group(data, 0.01, "Blanks", TRUE)
   data_mpactr <- filter_insource_ions(data, cluster_threshold = 0.95)

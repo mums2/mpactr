@@ -1,6 +1,5 @@
-
 ---
-title: "Filter"
+title: "Filter with mpact original data"
 ---
 
 ```{r, include = FALSE}
@@ -18,16 +17,38 @@ library(tidyverse)
 
 ## Load data into R
 
-mpactR requires 2 files as input: a feature table and metadata file. Both are expected to be comma separated files (*.csv*).
+mpactR requires 2 files as imput: a feature table and metadata file. Both are expected to be comma separated files (*.csv*).
 
 1. peak_table: a peak table in Progenesis format is expected. To export a compatable peak table in Progenesis, navigate to the *Review Compounds* tab then File -> Export Compound Measurements. Select the following properties: Compound, m/z, Retention time (min), and Raw abundance and click ok. 
-2. metadata: a table with sample information. At minimum the following columns are expected: Injection, Sample_Code, and Biological_Group. Injection is the sample name and is expected to match sample column names in the peak_table. Sample_Code is the id for technical replicate groups. Biological_Group is the id for biological replicate groups. Other sample metadata can be added, and is encouraged for downstream analysis following filtering with mpactR.
+2. metadata: a table with sample information. At minimum the following columns are expected: Injection, Sample_Code, Biological_Group. Injection is the sample name and is expected to match sample column names in the peak_table. Sample_Code is the id for technical replicate groups. Biological_Group is the id for biological replicate groups. Other sample metadata can be added, and is encouraged for downstream analysis following filtering with mpactR.
 
-To import your data into R, use the mpactR function `import_data()`, which has the arguments: `peak_table_file_path` and `meta_data_file_path`. Note - you do not need to use `example()` if you are using your own files. This is a package function that allows access to internal package data. If you simply want to play around with the packge using example data, you can run the `import_data` function as shown above, otherwise, provide file paths for your own files. The function is expecting files the the extension `.csv`. The `meta_data` argument will also accept an R `data.frame` or `data.table` object, assuming it is in the correct format. This can be useful of you need to manually format an existing metadata file, or want to extract metadata information from your peak table column names. 
+To import these data into R, use the mpactR function `import_data()`, which has the arguments: `peak_table_file_path` and `meta_data_file_path`. This tutorial will show you examples with data from the original mpact program, found on [GitHub](https://github.com/BalunasLab/mpact/tree/main/rawdata/PTY087I2). This dataset contain 38 samples for biological groups solvent blanks, media blanks, Streptomyces sp. PTY08712 grown with (250um_Ce) and without (0um_Ce) rare earth element cerium. For more information about the experiments conducted see [Samples, Puckett, and Balunas 2023](https://pubs.acs.org/doi/abs/10.1021/acs.analchem.2c04632). 
+
+The original program has sample metadata split across two files: the sample list and metadata. mpactR accepts a single file, so we need to combine these in one prior to import with `import_data()`.
+
+Load the sample list and metadata files. 
 
 ```{r}
-data <- import_data(example("cultures_peak_table.csv"),
-  example("cultures_metadata.csv"),
+samplelist <- read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/samplelist.csv")
+metadata <- read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/extractmetadata.csv")
+```
+
+
+Our sample list contains additional blank samples that are not in the feature table, and therefore should be removed prior to import.
+
+```{r}
+samples <- colnames(read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv", skip = 2)) %>% str_subset(., "200826")
+
+meta_data <- samplelist %>%
+  left_join(metadata, by = "Sample_Code") %>%
+  filter(Injection %in% samples)
+```
+
+Now we can import the data. We will provide the url for the `peak_table`, and our reformatted meta_data object. This peak table was exported from Progenesis, so we will set the `format` argument to Progenesis.
+
+```{r}
+data <- import_data(peak_table = "https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv",
+  meta_data = meta_data,
   format = "Progenesis"
 )
 ```
@@ -58,9 +79,9 @@ The raw peak table will not change as filters are applied to the data. If you wa
 get_peak_table(data)[1:5, 1:8]
 ```
 
-
 ### Extract metadata
 
+Metadata can be accessed with `get_meta_data()`:
 
 ```{r}
 get_meta_data(data)[1:5, ]
@@ -73,11 +94,10 @@ mpactR is built on an R6 class-system, meaning it operates on reference semantic
 Where the raw data object has `r nrow(get_peak_table(data))` ions in the feature table:
 
 ```{r}
-data2 <- import_data(example("cultures_peak_table.csv"),
-  example("cultures_metadata.csv"),
+data2 <- import_data(peak_table = "https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv",
+  meta_data = meta_data,
   format = "Progenesis"
 )
-
 
 get_peak_table(data2)[, 1:5]
 ```
@@ -140,17 +160,17 @@ head(get_similar_ions(data_mispicked))
 
 #### Remove ions that are above a threshold in one biological group
 
-Removing solvent blank impurities is important for correcting for between-sample carryover and contamination in experimental samples. You can identify and remove these ions with mpactR's `filter_group()` function. `filter_group()` identifies ions above a relative abundance threshold (`group_threshold`) in a specific group (`group_to_remove`). To remove solvent blank impurities, set `group_to_remove` to the `Biological_Group` in your metadata file which corresponds to your solvent blank samples, here "Solvent_Blank". 
+Removing solvent blank impurities is important for correcting for between-sample carryover and contamination in experimental samples. You can identify and remove these ions with mpactR's `filter_group()` function. `filter_group()` identifies ions above a relative abundance threshold (`group_threshold`) in a specific group (`group_to_remove`). To remove solvent blank impurities, set `group_to_remove` to the `Biological_Group` in your metadata file which corresponds to your solvent blank samples, here "Blanks". 
 
 ```{r}
 data_blank <- filter_group(data,
   group_threshold = 0.01,
-  group_to_remove = "Solvent_Blank", remove_ions = TRUE,
+  group_to_remove = "Blanks", remove_ions = TRUE,
   copy_object = TRUE
 )
 ```
 
-In this example, `r length(filter_summary(data_blank, "group", "Solvent_Blank")$failed_ions) + length(filter_summary(data_blank, "group", "Solvent_Blank")$passed_ions)` ions were present prior to the group filter. `r length(filter_summary(data_blank, "group", "Solvent_Blank")$failed_ions)` ions were found to be above the relative abundance threshold of 0.01 in "Solvent_Blank" samples, leaving `r (length(filter_summary(data_blank, "group", "Solvent_Blank")$failed_ions) + length(filter_summary(data_blank, "group", "Solvent_Blank")$passed_ions)) - length(filter_summary(data_blank, "group", "Solvent_Blank")$failed_ions)`  ions in the peak table.
+In this example, `r length(filter_summary(data_blank, "group", "Blanks")$failed_ions) + length(filter_summary(data_blank, "group", "Blanks")$passed_ions)` ions were present prior to the group filter. `r length(filter_summary(data_blank, "group", "Blanks")$failed_ions)` ions were found to be above the relative abundance threshold of 0.01 in "Solvent_Blank" samples, leaving `r (length(filter_summary(data_blank, "group", "Blanks")$failed_ions) + length(filter_summary(data_blank, "group", "Blanks")$passed_ions)) - length(filter_summary(data_blank, "group", "Blanks")$failed_ions)`  ions in the peak table.
 
 We can also use this filter to remove ions from other groups, such as media blanks. This can be useful for experiments on cell cultures. The example data contains samples belonging to the `Biological_Group` "Media". These samples are from media blanks, which are negative controls from the growth experiments conducted in this study. We can remove features whose abundance is greater than 1% of the largest group in media blank samples by specifying `group_to_remove` = "Media". We recommend removing media blank ions following all other filters so all high-quality ions are identified (see Chaining filters together below).
 
@@ -243,7 +263,7 @@ cv %>%
   )
 ```
 
-Here we can see that roughly 80% of features were below the CV threshold meaning 20% were removed at a CV threshold of 0.2.
+Here we can see that roughly `r round(cv_thresh_percent, 0)`% of features were below the CV threshold meaning `r 100 - round(cv_thresh_percent, 0)`% were removed at a CV threshold of 0.2.
 
 ```{r, include=FALSE, eval=FALSE}
 # additional statistics calculated in the original mpact
@@ -330,15 +350,15 @@ data_insource <- filter_insource_ions(data,
 Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering non-repoducible or insource ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying non-reproducible and insource fragment ions. Here we also demonstrate the removal of media blank components with the `filter_group()` function after identification of high-quality ions.
 
 ```{r}
-data <- import_data(example("cultures_peak_table.csv"),
-  example("cultures_metadata.csv"),
+data <- import_data(peak_table = "https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv",
+  meta_data = meta_data,
   format = "Progenesis"
 )
 
 data_filtered <- filter_mispicked_ions(data, merge_method = "sum") |>
-  filter_group(group_to_remove = "Solvent_Blank") |>
+  filter_group(group_to_remove = "Blanks") |>
   filter_cv(cv_threshold = 0.2, cv_param = "median") |>
-  filter_group(group_to_remove = "Media") 
+  filter_group(group_to_remove = "Media")
 ```
 
 ## Summary
@@ -355,7 +375,7 @@ mispicked_summary <- filter_summary(data_filtered, filter = "mispicked")
 
 Failed ions: 
 ```{r}
-mispicked_summary$failed_ions
+head(mispicked_summary$failed_ions, 100)
 ```
 
 Passing ions:
@@ -371,8 +391,8 @@ filter_summary(data_filtered, filter = "insource")
 
 If you want to retrieve the filter summary for the group filter, you must also supply the group name with the `group` argument:
 
-```{r}
-filter_summary(data_filtered, filter = "group", group = "Solvent_Blank")
+```{r, eval = FALSE}
+filter_summary(data_filtered, filter = "group", group = "Blanks")
 ```
 
 `group` must always be supplied for this filter, even if only one group filter has been applied.

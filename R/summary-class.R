@@ -3,13 +3,19 @@ summary <- R6::R6Class("summary",
     initialize = function(filter, failed_ions, passed_ions) {
       stopifnot(any(class(filter) == "character"))
       stopifnot(any(class(failed_ions) == c("numeric", "character")))
-      stopifnot(any(class(failed_ions) == c("numeric", "character")))
+      stopifnot(any(class(passed_ions) == c("numeric", "character")))
+
       private$filter <- filter
       private$failed_ions <- failed_ions
       private$passed_ions <- passed_ions
     },
     summarize = function(x) {
-      cli::cli_alert_success("{length(private$failed_ions)} ions failed the {private$filter} filter, {length(private$passed_ions)} ions remain.")
+      l <- length(private$failed_ions)
+      f <- private$filter
+      r <- length(private$passed_ions)
+
+      cli::cli_alert_success(c("{l} ions failed the {f} filter, ",
+                               "{r} ions remain."))
     },
     get_failed_ions = function() {
       return(private$failed_ions)
