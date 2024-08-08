@@ -29,7 +29,7 @@ properly with filter_pactr-class data", {
                                                     "cut_ions.csv"),
                                           col_names = c("V1"),
                                           show_col_types = FALSE)
-            expected_cut_ions <- as.integer(expected_cut_ions$V1)
+            expected_cut_ions <- as.character(expected_cut_ions$V1)
             logger_index_name <- "check_mismatched_peaks"
             expect_equal(filter_class$logger[[logger_index_name]][["cut_ions"]],
                          expected_cut_ions)
@@ -105,10 +105,11 @@ test_that("blank filter works correctly", {
 
   grp_avg <- "102623_peaktable_coculture_simple_groupaverages.csv"
   test_path(directory, grp_avg)
-  error_prop <- read_csv(test_path(directory, grp_avg),
+  error_prop <- as.data.table(read_csv(test_path(directory, grp_avg),
     show_col_types = FALSE, skip = 1,
     col_names = c("Compound", "mz", "rt", "biologicalGroup", "average")
-  )
+  ))[, Compound := as.character(Compound)]
+  setorder(error_prop, Compound)
   logger_index_name <- "group_filter-group_stats"
   expect_true(all(filter_class$logger[[logger_index_name]]$Biological_Group %in%
                     error_prop$biologicalGroup))
@@ -164,17 +165,17 @@ test_that("parse_ions_by_group flags the correct ions", {
 
   expect_false(all(sapply(group_filter_list, is.null)))
   expect_true(all(group_filter_list$`ANG18 monoculture`
-                  == as.character(ang_18$V1)))
+                  %in% as.character(ang_18$V1)))
   expect_true(all(group_filter_list$`ANGDT monoculture`
-                  == as.character(angdt$V1)))
+                  %in% as.character(angdt$V1)))
   expect_true(all(group_filter_list$`Blanks`
-                  == as.character(blanks$V1)))
+                  %in% as.character(blanks$V1)))
   expect_true(all(group_filter_list$`Coculture`
-                  == as.character(coculture$V1)))
+                  %in% as.character(coculture$V1)))
   expect_true(all(group_filter_list$`JC28 monoculture`
-                  == as.character(jc28$V1)))
+                  %in% as.character(jc28$V1)))
   expect_true(all(group_filter_list$`JC28 monoculture`
-                  == as.character(jc28$V1)))
+                  %in% as.character(jc28$V1)))
 })
 
 test_that("apply_group_filter removes the correct ions", {

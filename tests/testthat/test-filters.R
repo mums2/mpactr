@@ -22,7 +22,7 @@ test_that("filter mismatch ions wrapper works
                                                     "cut_ions.csv"),
                                           col_names = c("V1"),
                                           show_col_types = FALSE)
-            expected_cut_ions <- as.integer(expected_cut_ions$V1)
+            expected_cut_ions <- as.character(expected_cut_ions$V1)
 
             expect_equal(nrow(data_mpactr$mpactr_data$get_peak_table()),
                          nrow((data_mpactr$mpactr_data$get_peak_table())))
