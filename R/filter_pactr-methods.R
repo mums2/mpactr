@@ -215,6 +215,7 @@ filter_pactr$set(
   }
 )
 
+
 # Given a group name, removes flagged ions from the peak table.
 filter_pactr$set(
   "public", "apply_group_filter",
