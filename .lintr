@@ -1,0 +1,8 @@
+linters: linters_with_defaults() # see vignette("lintr")
+encoding: "UTF-8"
+exclusions: list(
+    "vignettes/articles/filter.Rmd",
+    "vignettes/articles/filter2.Rmd",
+    "vignettes/articles/downstream_analyses.Rmd",
+    "vignettes/articles/reference_semantics.Rmd"
+  )

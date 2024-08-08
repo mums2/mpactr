@@ -29,7 +29,6 @@ format_by_type <- function(peak_table_path,
   } # default condition = NULL
 }
 
-
 progenesis_formatter <- function(peak_table) {
   peak_table <- data.table(readr::read_csv(peak_table,
     skip = 2,
