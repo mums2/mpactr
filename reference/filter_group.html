@@ -18,7 +18,8 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/filter.html">Filter</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/reference_semantics.html">Reference Semantics</a></li>
+    <li><a class="dropdown-item" href="../articles/filter2.html">Filter</a></li>
     <li><a class="dropdown-item" href="../articles/downstream_analyses.html">Additional Analyses</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/SchlossLab/mpactR"><span class="fa fa-github fa-lg"></span></a></li>
@@ -59,7 +60,8 @@
 
 
 <dt id="arg-group-threshold">group_threshold<a class="anchor" aria-label="anchor" href="#arg-group-threshold"></a></dt>
-<dd><p>Relative abundance threshold at which to remove ions. Default = 0.01.</p></dd>
+<dd><p>Relative abundance threshold at which to remove ions.
+Default = 0.01.</p></dd>
 
 
 <dt id="arg-group-to-remove">group_to_remove<a class="anchor" aria-label="anchor" href="#arg-group-to-remove"></a></dt>
@@ -67,35 +69,63 @@
 
 
 <dt id="arg-remove-ions">remove_ions<a class="anchor" aria-label="anchor" href="#arg-remove-ions"></a></dt>
-<dd><p>A <code>logical</code>. If <code>TRUE</code> failing ions will be removed from the peak table. Default = TRUE.</p></dd>
+<dd><p>A <code>boolean</code> parameter. If <code>TRUE</code> failing ions will be
+removed from the peak table. Default = TRUE.</p></dd>
 
 
 <dt id="arg-copy-object">copy_object<a class="anchor" aria-label="anchor" href="#arg-copy-object"></a></dt>
-<dd><p>A <code>boolean</code> paramter that allows users to return a copied object instead of modifying the object.</p></dd>
+<dd><p>A <code>boolean</code> parameter that allows users to return a copied
+object instead of modifying the object.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>an <code>mpactr_object</code></p>
+    <p>an <code>mpactr_object</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>filter_group()</code> removes ions which have a signigifanct presence in the defined group (typically solvent blanks). Significance is determined by relative ion abundance arcoss groups at the user-defined <code>group_threshold</code>.</p>
-<p>Filtering is assessed on function parameter <code>group_threshold</code>. The defualt is 0.01, meaning features present in <code>group_to_remove</code> at greater than 1% are removed.</p>
+    <p><code>filter_group()</code> removes feature ions that are present in a user-defined
+group based on a relative abundance threshold. This could be particularly
+useful to filter out features found present in solvent blank samples.
+Further, this filter can be ultilized to remove features in media blank
+sample for experiments on microbial cultures.
+The presence or absence of features in a group of samples is determined by
+first averaging injection replicates and then averaging biological
+replicates within each biological treatment group. A feature is present in
+a group if its abundance is greater than the user-defined <code>group_threshold</code>.
+The default is 0.01, meaning a feature is removed if its abundance is 1% of
+that in the sample group in which it is most abundant. For example, blank
+filtering can remove features whose mean abundance in solvent blank
+injections is greater than 1% of their maximum mean abundance in experimental
+samples.</p>
+<p>If you would like to remove features found in media blank
+samples, we recommend testing the <code>group_threshold</code> parameter.</p>
+<p><code>copy_object</code>: mpactR is built on an R6 class-system, meaning it operates on
+reference semantics in which data is updated <em>in-place</em>. Compared to a
+shallow copy, where only data pointers are copied, or a deep copy, where
+the entire data object is copied in memory, any changes to the original
+data object, regardless if they are assigned to a new object, result in
+changes to the original data object. We recommend using the default
+<code>copy_object = FALSE</code> as this makes for an extremely fast and
+memory-efficient way to chain mpactR filters together; however, if you
+would like to run the filters individually with traditional R style objects,
+you can set <code>copy_object</code> to <code>TRUE</code> as shown in the filter examples.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="import_data.html">import_data</a></span><span class="op">(</span><span class="fu"><a href="example.html">example</a></span><span class="op">(</span><span class="st">"coculture_peak_table.csv"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                    <span class="fu"><a href="example.html">example</a></span><span class="op">(</span><span class="st">"metadata.csv"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                    format <span class="op">=</span> <span class="st">"Progenesis"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="example.html">example</a></span><span class="op">(</span><span class="st">"metadata.csv"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">data_filter</span> <span class="op">&lt;-</span> <span class="fu">filter_group</span><span class="op">(</span><span class="va">data</span>,</span></span>
-<span class="r-in"><span>                              group_threshold <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
-<span class="r-in"><span>                              group_to_remove <span class="op">=</span> <span class="st">"Blanks"</span>,</span></span>
-<span class="r-in"><span>                              remove_ions <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Parsing 1303 peaks based on the following sample group: Blanks.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Argument remove_ions is: TRUE. Removing peaks from Blanks.</span>
+<span class="r-in"><span>  group_threshold <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>  group_to_remove <span class="op">=</span> <span class="st">"Blanks"</span>,</span></span>
+<span class="r-in"><span>  remove_ions <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Parsing 1303 peaks based on the sample group: Blanks.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Argument remove_ions is: TRUE.Removing peaks from Blanks.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> 796 ions failed the Blanks filter, 507 ions remain.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
