@@ -10,7 +10,6 @@ filter_pactr$set(
     l <- nrow(self$mpactr_data$get_peak_table())
     cli::cli_alert_info("Checking {l} peaks for mispicked peaks.")
 
-
     ion_filter_list <- list()
     cut_ions <- c() # list
     cut_ions_dict <- new.env(hash = TRUE)
