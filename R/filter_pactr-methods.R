@@ -12,6 +12,7 @@ filter_pactr$set(
 
     ion_filter_list <- list()
     cut_ions <- c() # list
+    cut_ions_dict <- new.env(hash = TRUE)
     merge_groups <- list() # dictonary
 
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
@@ -38,6 +39,7 @@ filter_pactr$set(
                                         number_of_rows,
                                         cut_ions,
                                         merge_groups,
+                                        cut_ions_dict,
                                         i)
         cut_ions <- ions$cut_ions
         merge_groups <- ions$merge_groups
@@ -75,19 +77,27 @@ filter_pactr$set("private", "get_merged_ions", function(ringwin,
                                                         number_of_rows,
                                                         cut_ions,
                                                         merge_groups,
+                                                        cut_ion_dict,
                                                         i) {
+
   peak_table <- self$mpactr_data$get_peak_table()
+  mz_peak_table <- peak_table$mz
+  rt_peak_table <- peak_table$rt
+  compound_peak_table <- peak_table$Compound
   for (j in i:(number_of_rows - 1)) {
-    if (peak_table$Compound[j + 1] %in% cut_ions) {
-      next
+    # if (peak_table$Compound[j + 1] %in% cut_ions) {
+    #   next
+    # }
+    if(!is.null(cut_ion_dict[[as.character(compound_peak_table[j + 1])]])){
+        next
     }
-    mass_diff <- peak_table$mz[j + 1] - peak_table$mz[i]
+    mass_diff <- mz_peak_table[j + 1] - mz_peak_table[i]
     kmd_diff <- mass_diff - floor(mass_diff)
     shift_diff <- abs(mass_diff) > max_iso_shift - 0.4
     # if (abs(mass_diff) > max_iso_shift - 0.4) { # BL  - why 0.4??
     #   break
     # }
-    rt_diff <- peak_table$rt[j + 1] - peak_table$rt[i]
+    rt_diff <- rt_peak_table[j + 1] - rt_peak_table[i]
     ring_band <- floor(abs(mass_diff) * (1 / ringwin)) %% (1 / ringwin)
     double_band <- kmd_diff -
       .5004 -
@@ -98,12 +108,13 @@ filter_pactr$set("private", "get_merged_ions", function(ringwin,
     if (!shift_diff && between_ion_calculation) {
       cut_ions <- c(
         cut_ions,
-        peak_table$Compound[j + 1]
+        compound_peak_table[j + 1]
       )
-      merge_groups[[as.character(peak_table$Compound[i])]] <-
+      cut_ion_dict[[as.character(compound_peak_table[j + 1])]] <- 1
+      merge_groups[[as.character(compound_peak_table[i])]] <-
         c(
-          merge_groups[[as.character(peak_table$Compound[i])]],
-          peak_table$Compound[j + 1]
+          merge_groups[[as.character(compound_peak_table[i])]],
+          compound_peak_table[j + 1]
         )
     }
   }
