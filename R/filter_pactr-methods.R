@@ -12,7 +12,9 @@ filter_pactr$set(
 
     ion_filter_list <- list()
     cut_ions <- c() # list
+
     cut_ions_dict <- new.env(hash = TRUE)
+
     merge_groups <- list() # dictonary
 
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
@@ -92,12 +94,14 @@ filter_pactr$set("private", "get_merged_ions", function(ringwin,
         next
     }
     mass_diff <- mz_peak_table[j + 1] - mz_peak_table[i]
+
     kmd_diff <- mass_diff - floor(mass_diff)
     shift_diff <- abs(mass_diff) > max_iso_shift - 0.4
     # if (abs(mass_diff) > max_iso_shift - 0.4) { # BL  - why 0.4??
     #   break
     # }
     rt_diff <- rt_peak_table[j + 1] - rt_peak_table[i]
+
     ring_band <- floor(abs(mass_diff) * (1 / ringwin)) %% (1 / ringwin)
     double_band <- kmd_diff -
       .5004 -
