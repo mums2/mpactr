@@ -90,8 +90,8 @@ filter_pactr$set("private", "get_merged_ions", function(ringwin,
     # if (peak_table$Compound[j + 1] %in% cut_ions) {
     #   next
     # }
-    if(!is.null(cut_ion_dict[[as.character(compound_peak_table[j + 1])]])){
-        next
+    if (!is.null(cut_ion_dict[[as.character(compound_peak_table[j + 1])]])) {
+      next
     }
     mass_diff <- mz_peak_table[j + 1] - mz_peak_table[i]
 
