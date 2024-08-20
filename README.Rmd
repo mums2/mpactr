@@ -16,6 +16,10 @@ knitr::opts_chunk$set(
 # mpactr
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/SchlossLab/mpactr/actions/workflows/r.yml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/r.yml)
+[![test-coverage](https://github.com/SchlossLab/mpactr/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/test-coverage.yml)
+[![lint](https://github.com/SchlossLab/mpactr/actions/workflows/lintr.yml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/lintr.yml)
+[![pkgdown](https://github.com/SchlossLab/mpactr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/pkgdown.yaml)
 <!-- badges: end -->
 
 ## Overview
@@ -34,9 +38,15 @@ All filters are independent, meaning they can be used to create a project-specif
 
 ## Installation
 
+You can install the CRAN version with:
+
+```{r, eval = FALSE}
+install.packages("mpactr")
+```
+
 You can install the development version of mpactr from [GitHub](https://github.com/SchlossLab/mpactr) with:
 
-``` r
+```{r, eval = FALSE}
 # install.packages("devtools")
 devtools::install_github("SchlossLab/mpactr")
 ```

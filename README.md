@@ -4,6 +4,11 @@
 # mpactr
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/SchlossLab/mpactr/actions/workflows/r.yml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/r.yml)
+[![test-coverage](https://github.com/SchlossLab/mpactr/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/test-coverage.yml)
+[![lint](https://github.com/SchlossLab/mpactr/actions/workflows/lintr.yml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/lintr.yml)
+[![pkgdown](https://github.com/SchlossLab/mpactr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/pkgdown.yaml)
 <!-- badges: end -->
 
 ## Overview
@@ -29,6 +34,12 @@ project-specific workflow, or you can learn more in [the Filter
 vignette](https://www.schlosslab.org/mpactr/articles/filter2.html).
 
 ## Installation
+
+You can install the CRAN version with:
+
+``` r
+install.packages("mpactr")
+```
 
 You can install the development version of mpactr from
 [GitHub](https://github.com/SchlossLab/mpactr) with:
