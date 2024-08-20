@@ -9,6 +9,9 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
+  schedule: [{cron: '0 4 * * 1'}]
+  # run every monday at 4 am.
 
 name: R-CMD-check
 
