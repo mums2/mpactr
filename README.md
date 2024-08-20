@@ -28,6 +28,7 @@ All filters are independent, meaning they can be used to create a
 project-specific workflow, or you can learn more in [the Filter
 vignette](https://www.schlosslab.org/mpactR/articles/filter2.html).
 
+
 ## Installation
 
 You can install the development version of mpactR from
@@ -40,9 +41,9 @@ devtools::install_github("SchlossLab/mpactR")
 
 ## Get started
 
-See [the Filter
-vignette](https://www.schlosslab.org/mpactR/articles/filter2.html) to
+See [the Filter vignette](https://www.schlosslab.org/mpactR/articles/filter2.html) to
 get started.
+
 
 ## Getting help
 
