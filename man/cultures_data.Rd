@@ -17,6 +17,9 @@ A \code{mpactr} with 2 attributes:
 \usage{
 cultures_data
 }
+\value{
+An \code{mpactr} R6 class object.
+}
 \description{
 A \code{mpactr} R6 class object of contining a feature table and associated sample
 metadata.

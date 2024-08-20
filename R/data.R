@@ -3,6 +3,7 @@
 #' A `mpactr` R6 class object of contining a feature table and associated sample
 #' metadata.
 #'
+#' @return An `mpactr` R6 class object.
 #' @format ## `culture_data`
 #' A `mpactr` with 2 attributes:
 #' \describe{
@@ -14,13 +15,15 @@
 
 #' Get file paths for examples
 #'
-#' mpactr contains a number of example files in the `inst\extdata` directory.
+#' mpactr contains a number of example files in the `inst/extdata` directory.
 #' This function makes them accessible in documentation that shows how file
 #' paths are used in function examples.
 #'
 #' @param file Name of a file. If `NULL`, all examples files will be listed.
 #'
 #' @export
+#' @return A file path to example data stored in the `inst/extdata` directory
+#' of the package.
 #' @examples
 #' example()
 #'
