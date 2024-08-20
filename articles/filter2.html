@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Filter with mpact original data • mpactR</title>
+<title>Filter with mpact original data • mpactr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="default" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">mpactR</a>
+    <a class="navbar-brand me-2" href="../index.html">mpactr</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
 
@@ -40,7 +40,7 @@
 </li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SchlossLab/mpactR"><span class="fa fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SchlossLab/mpactr"><span class="fa fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -57,20 +57,20 @@
       <h1>Filter with mpact original data</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/SchlossLab/mpactR/blob/main/vignettes/articles/filter2.Rmd" class="external-link"><code>vignettes/articles/filter2.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/SchlossLab/mpactr/blob/main/vignettes/articles/filter2.Rmd" class="external-link"><code>vignettes/articles/filter2.Rmd</code></a></small>
       <div class="d-none name"><code>filter2.Rmd</code></div>
     </div>
 
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># library(mpactR)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.schlosslab.org/mpactR/" class="external-link">mpactR</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="co"># library(mpactr)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.schlosslab.org/mpactr/" class="external-link">mpactr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="load-data-into-r">Load data into R<a class="anchor" aria-label="anchor" href="#load-data-into-r"></a>
 </h2>
-<p>mpactR requires 2 files as imput: a feature table and metadata file.
+<p>mpactr requires 2 files as imput: a feature table and metadata file.
 Both are expected to be comma separated files (<em>.csv</em>).</p>
 <ol style="list-style-type: decimal">
 <li>peak_table: a peak table in Progenesis format is expected. To export
@@ -84,9 +84,9 @@ Injection is the sample name and is expected to match sample column
 names in the peak_table. Sample_Code is the id for technical replicate
 groups. Biological_Group is the id for biological replicate groups.
 Other sample metadata can be added, and is encouraged for downstream
-analysis following filtering with mpactR.</li>
+analysis following filtering with mpactr.</li>
 </ol>
-<p>To import these data into R, use the mpactR function
+<p>To import these data into R, use the mpactr function
 <code><a href="../reference/import_data.html">import_data()</a></code>, which has the arguments:
 <code>peak_table_file_path</code> and <code>meta_data_file_path</code>.
 This tutorial will show you examples with data from the original mpact
@@ -97,7 +97,7 @@ without (0um_Ce) rare earth element cerium. For more information about
 the experiments conducted see <a href="https://pubs.acs.org/doi/abs/10.1021/acs.analchem.2c04632" class="external-link">Samples,
 Puckett, and Balunas 2023</a>.</p>
 <p>The original program has sample metadata split across two files: the
-sample list and metadata. mpactR accepts a single file, so we need to
+sample list and metadata. mpactr accepts a single file, so we need to
 combine these in one prior to import with
 <code><a href="../reference/import_data.html">import_data()</a></code>.</p>
 <p>Load the sample list and metadata files.</p>
@@ -333,7 +333,7 @@ the terminal:</p>
 <h3 id="extract-peak-table">Extract peak table<a class="anchor" aria-label="anchor" href="#extract-peak-table"></a>
 </h3>
 <p>The raw peak table is the unfiltered peak table used as input to
-mpactR. To extract the raw input peak table, use the function
+mpactr. To extract the raw input peak table, use the function
 <code><a href="../reference/get_raw_data.html">get_raw_data()</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_raw_data.html">get_raw_data</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span></span>
@@ -403,7 +403,7 @@ have been applied, use <code><a href="../reference/get_peak_table.html">get_peak
 <div class="section level2">
 <h2 id="reference-semantics">Reference semantics<a class="anchor" aria-label="anchor" href="#reference-semantics"></a>
 </h2>
-<p>mpactR is built on an R6 class-system, meaning it operates on
+<p>mpactr is built on an R6 class-system, meaning it operates on
 reference semantics in which data is updated <em>in-place</em>. Compared
 to a shallow copy, where only data pointers are copied, or a deep copy,
 where the entire data object is copied in memory, any changes to the
@@ -509,7 +509,7 @@ feature table:</p>
 <span><span class="co">#&gt; 4686:                  31.83990</span></span></code></pre></div>
 <p>We recommend using the default <code>copy_object = FALSE</code> as
 this makes for an extremely fast and memory-efficient way to chain
-mpactR filters together (see <strong>Chaining filters together</strong>
+mpactr filters together (see <strong>Chaining filters together</strong>
 section and <a href="articles/reference_semantics.html">Reference
 Semantics</a>); however, if you would like to run the filters
 individually with traditional R style objects, you can set
@@ -519,7 +519,7 @@ examples.</p>
 <div class="section level2">
 <h2 id="filtering">Filtering<a class="anchor" aria-label="anchor" href="#filtering"></a>
 </h2>
-<p>mpactR provides filters to correct for the following issues observed
+<p>mpactr provides filters to correct for the following issues observed
 during preprocessing of tandem MS/MS data:</p>
 <ul>
 <li>mispicked ions: isotopic patterns that are incorrectly split during
@@ -537,7 +537,7 @@ fragmentation in the tandem MS/MS workflow.</li>
 <div class="section level4">
 <h4 id="mispicked-ions-filter">Mispicked ions filter<a class="anchor" aria-label="anchor" href="#mispicked-ions-filter"></a>
 </h4>
-<p>To check for mispicked ions, use mpactR function
+<p>To check for mispicked ions, use mpactr function
 <code><a href="../reference/filter_mispicked_ions.html">filter_mispicked_ions()</a></code>. This function takes an
 <code>mpactr object</code> as input, and checks for similar ions with
 the arguments <code>ringwin</code>, <code>isowin</code>,
@@ -582,7 +582,7 @@ retained post-merging) and the ions similar to it.</p>
 </h4>
 <p>Removing solvent blank impurities is important for correcting for
 between-sample carryover and contamination in experimental samples. You
-can identify and remove these ions with mpactR’s
+can identify and remove these ions with mpactr’s
 <code><a href="../reference/filter_group.html">filter_group()</a></code> function. <code><a href="../reference/filter_group.html">filter_group()</a></code>
 identifies ions above a relative abundance threshold
 (<code>group_threshold</code>) in a specific group
@@ -644,7 +644,7 @@ replicates.</p>
 These ions were removed, leaving 2777 ions in the feature table.</p>
 <p>If you would like to visualize how the CV threshold performed on your
 dataset, you can extract the CV calculated during
-<code>filer_cv()</code> using mpactR’s <code><a href="../reference/get_cv_data.html">get_cv_data()</a></code>
+<code>filer_cv()</code> using mpactr’s <code><a href="../reference/get_cv_data.html">get_cv_data()</a></code>
 function, and calculate the percentage of features for plotting. You can
 look at both mean and median CV as shown in the example below, or you
 can filter the data by the parameter of choice.</p>
@@ -728,7 +728,7 @@ threshold meaning 44% were removed at a CV threshold of 0.2.</p>
 <p>Some mass species can be fragmented during ionization in tandem
 MS/MS, creating insource ions. This can result in ions from one compound
 being represented more than once in the feature table. If you would like
-to remove insource ions fragments, you can do so with mpactR’s
+to remove insource ions fragments, you can do so with mpactr’s
 <code><a href="../reference/filter_insource_ions.html">filter_insource_ions()</a></code>. <code><a href="../reference/filter_insource_ions.html">filter_insource_ions()</a></code>
 conducts ion deconvolution via retention time correlation matrices
 within MS1 scans. Highly correlated ion groups are determined by the
@@ -783,7 +783,7 @@ high-quality ions.</p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
-<p>mpactR offers mutliple ways to view a summary of data filtering.</p>
+<p>mpactr offers mutliple ways to view a summary of data filtering.</p>
 <div class="section level4">
 <h4 id="view-passing-and-failed-ions-for-a-single-filter">View passing and failed ions for a single filter<a class="anchor" aria-label="anchor" href="#view-passing-and-failed-ions-for-a-single-filter"></a>
 </h4>

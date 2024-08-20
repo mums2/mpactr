@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Reference Semantics • mpactR</title>
+<title>Reference Semantics • mpactr</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
@@ -18,7 +18,7 @@
 
     <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="default" aria-label="Site navigation"><div class="container">
 
-    <a class="navbar-brand me-2" href="../index.html">mpactR</a>
+    <a class="navbar-brand me-2" href="../index.html">mpactr</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
 
@@ -40,7 +40,7 @@
 </li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SchlossLab/mpactR"><span class="fa fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/SchlossLab/mpactr"><span class="fa fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -57,24 +57,24 @@
       <h1>Reference Semantics</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/SchlossLab/mpactR/blob/main/vignettes/articles/reference_semantics.Rmd" class="external-link"><code>vignettes/articles/reference_semantics.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/SchlossLab/mpactr/blob/main/vignettes/articles/reference_semantics.Rmd" class="external-link"><code>vignettes/articles/reference_semantics.Rmd</code></a></small>
       <div class="d-none name"><code>reference_semantics.Rmd</code></div>
     </div>
 
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.schlosslab.org/mpactR/" class="external-link">mpactR</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.schlosslab.org/mpactr/" class="external-link">mpactr</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: data.table</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'mpactR'</span></span>
+<span><span class="co">#&gt; Attaching package: 'mpactr'</span></span>
 <span><span class="co">#&gt; The following object is masked from 'package:utils':</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     example</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="reference-semantics">Reference semantics<a class="anchor" aria-label="anchor" href="#reference-semantics"></a>
 </h2>
-<p>mpactR is built on an R6 class-system, meaning it operates on
+<p>mpactr is built on an R6 class-system, meaning it operates on
 reference semantics in which data is updated <em>in-place</em>. Compared
 to a shallow copy, where only data pointers are copied, or a deep copy,
 where the entire data object is copied in memory, any changes to the
@@ -167,7 +167,7 @@ ions in the feature table:</p>
 <span><span class="co">#&gt; 1261:      999 640.3299 0.32993 5.4596667                      0</span></span></code></pre></div>
 <p>We recommend using the default <code>copy_object = FALSE</code> as
 this makes for an extremely fast and memory-efficient way to chain
-mpactR filters together (see the Filter article); however, if you would
+mpactr filters together (see the Filter article); however, if you would
 like to run the filters individually with traditional R style objects,
 you can set <code>copy_object</code> to <code>TRUE</code> as shown in
 the filter examples.</p>
@@ -200,7 +200,7 @@ reference due to this idea. So, you can think of functions as temporary
 environments in R. What makes these environments so powerful, is the
 fact that you can send an environment to a function, and it will not
 copy the environment. This allows you to send variables by reference to
-functions. R6 classes rely on this, and mpactR uses this for speedy
+functions. R6 classes rely on this, and mpactr uses this for speedy
 execution.</p>
 <p>Memory usage really shines when you use R6 classes vs. a traditional
 workflow, such as copy by value. In a traditional workflow, all of the
