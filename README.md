@@ -26,7 +26,7 @@ Filters in this package address the following issues:
 
 All filters are independent, meaning they can be used to create a
 project-specific workflow, or you can learn more in [the Filter
-vignette](articles/filter2.html).
+vignette](http://www.schlosslab.org/mpactR/articles/filter2.html).
 
 ## Installation
 
@@ -40,7 +40,9 @@ devtools::install_github("SchlossLab/mpactR")
 
 ## Get started
 
-See [the Filter vignette](articles/filter2.html) to get started.
+See [the Filter
+vignette](http://www.schlosslab.org/mpactR/articles/filter2.html) to get
+started.
 
 ## Getting help
 
