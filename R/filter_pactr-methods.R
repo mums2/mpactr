@@ -11,6 +11,7 @@ filter_pactr$set(
     cli::cli_alert_info("Checking {l} peaks for mispicked peaks.")
 
     ion_filter_list <- list()
+
     cut_ions <- c()
 
     cut_ions_dict <- new.env(hash = TRUE)
@@ -95,6 +96,7 @@ filter_pactr$set("private", "get_merged_ions", function(ringwin,
 
     kmd_diff <- mass_diff - floor(mass_diff)
     shift_diff <- abs(mass_diff) > max_iso_shift - 0.4
+
     rt_diff <- rt_peak_table[j + 1] - rt_peak_table[i]
 
     ring_band <- floor(abs(mass_diff) * (1 / ringwin)) %% (1 / ringwin)
