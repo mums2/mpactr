@@ -11,11 +11,11 @@ filter_pactr$set(
     cli::cli_alert_info("Checking {l} peaks for mispicked peaks.")
 
     ion_filter_list <- list()
-    cut_ions <- c() # list
+    cut_ions <- c()
 
     cut_ions_dict <- new.env(hash = TRUE)
 
-    merge_groups <- list() # dictonary
+    merge_groups <- list()
 
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
       order(self$mpactr_data$get_peak_table()$mz,
@@ -47,7 +47,7 @@ filter_pactr$set(
         merge_groups <- ions$merge_groups
       }
     }
-    # TODO Look into removing merge groups
+
     ion_filter_list[["cut_ions"]] <- cut_ions
     ion_filter_list[["merge_groups"]] <- merge_groups
     self$logger[["check_mismatched_peaks"]] <- ion_filter_list
@@ -87,9 +87,7 @@ filter_pactr$set("private", "get_merged_ions", function(ringwin,
   rt_peak_table <- peak_table$rt
   compound_peak_table <- peak_table$Compound
   for (j in i:(number_of_rows - 1)) {
-    # if (peak_table$Compound[j + 1] %in% cut_ions) {
-    #   next
-    # }
+
     if (!is.null(cut_ion_dict[[as.character(compound_peak_table[j + 1])]])) {
       next
     }
@@ -97,9 +95,6 @@ filter_pactr$set("private", "get_merged_ions", function(ringwin,
 
     kmd_diff <- mass_diff - floor(mass_diff)
     shift_diff <- abs(mass_diff) > max_iso_shift - 0.4
-    # if (abs(mass_diff) > max_iso_shift - 0.4) { # BL  - why 0.4??
-    #   break
-    # }
     rt_diff <- rt_peak_table[j + 1] - rt_peak_table[i]
 
     ring_band <- floor(abs(mass_diff) * (1 / ringwin)) %% (1 / ringwin)

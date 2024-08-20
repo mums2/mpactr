@@ -1,6 +1,6 @@
 filter_pactr <- R6Class("filter_pactr", public = list(
   mpactr_data = NA,
-  logger = NA, # Might have to add getter/setters
+  logger = NA,
   initialize = function(mpactr) {
     self$mpactr_data <- mpactr
     self$logger <- new.env(hash = TRUE)
@@ -95,7 +95,6 @@ filter_pactr <- R6Class("filter_pactr", public = list(
     return(group_stats)
   },
   get_cv = function() {
-    # if(self$logger$cv_values == NULL)
     if (!exists("cv_values", self$logger)) {
       cli::cli_abort("The cv filter has not yet been applied
                       to the data - run filter_cv() first.")
