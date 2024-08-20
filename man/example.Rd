@@ -9,8 +9,12 @@ example(file = NULL)
 \arguments{
 \item{file}{Name of a file. If \code{NULL}, all examples files will be listed.}
 }
+\value{
+A file path to example data stored in the \code{inst/extdata} directory
+of the package.
+}
 \description{
-mpactr contains a number of example files in the \verb{inst\\extdata} directory.
+mpactr contains a number of example files in the \code{inst/extdata} directory.
 This function makes them accessible in documentation that shows how file
 paths are used in function examples.
 }
