@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(mpactR)
+library(mpactr)
 
-test_check("mpactR")
+test_check("mpactr")

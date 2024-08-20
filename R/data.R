@@ -31,9 +31,9 @@
 example <- function(file = NULL) {
   path <- ""
   if (is.null(file)) {
-    path <- dir(system.file("extdata", package = "mpactR"))
+    path <- dir(system.file("extdata", package = "mpactr"))
   } else {
-    path <- system.file("extdata", file, package = "mpactR", mustWork = TRUE)
+    path <- system.file("extdata", file, package = "mpactr", mustWork = TRUE)
   }
   return(path)
 }

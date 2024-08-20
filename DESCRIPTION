@@ -1,4 +1,4 @@
-Package: mpactR
+Package: mpactr
 Title: Correction of Preprocessed MS Data
 Version: 0.0.0.9000
 Authors@R: c(
@@ -36,5 +36,5 @@ Config/Needs/website: rmarkdown,
     corrplot,
     ggdendro,
     ggtext
-URL: https://www.schlosslab.org/mpactR/, https://github.com/SchlossLab/mpactR
-BugReports: https://github.com/SchlossLab/mpactR/issues
+URL: https://www.schlosslab.org/mpactr/, https://github.com/SchlossLab/mpactr
+BugReports: https://github.com/SchlossLab/mpactr/issues

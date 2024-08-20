@@ -19,14 +19,14 @@
 #' preprocessing.
 #'
 #'
-#' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
+#' `copy_object`: mpactr is built on an R6 class-system, meaning it operates on
 #' reference semantics in which data is updated *in-place*. Compared to a
 #' shallow copy, where only data pointers are copied, or a deep copy, where
 #' the entire data object is copied in memory, any changes to the original
 #' data object, regardless if they are assigned to a new object, result in
 #' changes to the original data object. We recommend using the default
 #' `copy_object = FALSE` as this makes for an extremely fast and
-#' memory-efficient way to chain mpactR filters together; however, if you
+#' memory-efficient way to chain mpactr filters together; however, if you
 #' would like to run the filters individually with traditional R style objects,
 #' you can set `copy_object` to `TRUE` as shown in the filter examples.
 #'
@@ -118,14 +118,14 @@ filter_mispicked_ions <- function(mpactr_object,
 #' If you would like to remove features found in media blank
 #' samples, we recommend testing the `group_threshold` parameter.
 #'
-#' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
+#' `copy_object`: mpactr is built on an R6 class-system, meaning it operates on
 #' reference semantics in which data is updated *in-place*. Compared to a
 #' shallow copy, where only data pointers are copied, or a deep copy, where
 #' the entire data object is copied in memory, any changes to the original
 #' data object, regardless if they are assigned to a new object, result in
 #' changes to the original data object. We recommend using the default
 #' `copy_object = FALSE` as this makes for an extremely fast and
-#' memory-efficient way to chain mpactR filters together; however, if you
+#' memory-efficient way to chain mpactr filters together; however, if you
 #' would like to run the filters individually with traditional R style objects,
 #' you can set `copy_object` to `TRUE` as shown in the filter examples.
 #'
@@ -194,14 +194,14 @@ filter_group <- function(mpactr_object,
 #' such, this filter is expecting an input dataset with at least two replicate
 #' injections per sample.
 #'
-#' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
+#' `copy_object`: mpactr is built on an R6 class-system, meaning it operates on
 #' reference semantics in which data is updated *in-place*. Compared to a
 #' shallow copy, where only data pointers are copied, or a deep copy, where
 #' the entire data object is copied in memory, any changes to the original
 #' data object, regardless if they are assigned to a new object, result in
 #' changes to the original data object. We recommend using the default
 #' `copy_object = FALSE` as this makes for an extremely fast and
-#' memory-efficient way to chain mpactR filters together; however, if you
+#' memory-efficient way to chain mpactr filters together; however, if you
 #' would like to run the filters individually with traditional R style objects,
 #' you can set `copy_object` to `TRUE` as shown in the filter examples.
 #'
@@ -275,14 +275,14 @@ filter_cv <- function(mpactr_object,
 #' likely belonging to a single precursor ion and is associated insource ion.
 #' Highly correlated ions are identified and removed.
 #'
-#' `copy_object`: mpactR is built on an R6 class-system, meaning it operates on
+#' `copy_object`: mpactr is built on an R6 class-system, meaning it operates on
 #' reference semantics in which data is updated *in-place*. Compared to a
 #' shallow copy, where only data pointers are copied, or a deep copy, where
 #' the entire data object is copied in memory, any changes to the original
 #' data object, regardless if they are assigned to a new object, result in
 #' changes to the original data object. We recommend using the default
 #' `copy_object = FALSE` as this makes for an extremely fast and
-#' memory-efficient way to chain mpactR filters together; however, if you
+#' memory-efficient way to chain mpactr filters together; however, if you
 #' would like to run the filters individually with traditional R style objects,
 #' you can set `copy_object` to `TRUE` as shown in the filter examples.
 #'

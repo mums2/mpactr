@@ -5,10 +5,10 @@
 #' table and one for sample metadata. Both files should be .csv.
 #'
 #' @details
-#' mpactR requires a peak table and meta data as input. Files are expected to be
+#' mpactr requires a peak table and meta data as input. Files are expected to be
 #' comma separated files (*.csv*).
 #'
-#' 1. `peak_table`: a peak table where rows are expected to be compounds. mpactR
+#' 1. `peak_table`: a peak table where rows are expected to be compounds. mpactr
 #' supports import of feature table files from multiple tools through the
 #' `format` argument. Currently supported value for `format` are "Progenesis",
 #' "Metaboscape", or "None".
@@ -25,7 +25,7 @@
 #' Reformatting includes selecting "FEATURE_ID", "RT", "PEPMASS", and sample
 #' columns. Sample columns are determined from the "Injection" column in
 #' `meta_data` (see below). "PEPMASS" is converted to m/z using the "ADDUCT"
-#' column and compound metadata columns are renamed for mpactR.
+#' column and compound metadata columns are renamed for mpactr.
 #'
 #' `format` = "None" allows users to provide a feature table file in the
 #' expected format. This can be useful if you have a file from another tool and
@@ -44,7 +44,7 @@
 #' "Sample_Code" is the id for technical replicate groups. "Biological_Group"
 #' is the id for biological replicate groups. Other sample metadata can be
 #' added, and is encouraged for downstream analysis following filtering with
-#' mpactR.
+#' mpactr.
 #'
 #' @param peak_table The file path or valid `https` url to your feature table
 #' file.

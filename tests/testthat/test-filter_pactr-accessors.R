@@ -10,7 +10,7 @@ test_that("filter_summary returns an error when an incorrect fitler argument
 
             expect_error(filter_summary(data,
                                         filter = "cv"),
-                         "`filter` must be one of mpactR's")
+                         "`filter` must be one of mpactr's")
           })
 
 test_that("filter_summary returns an error when the fitler

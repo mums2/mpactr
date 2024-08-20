@@ -2,7 +2,7 @@
 % Please edit documentation in R/filter_pactr-accessors.R
 \name{filter_summary}
 \alias{filter_summary}
-\title{Return the summary for a single mpactR filter.}
+\title{Return the summary for a single mpactr filter.}
 \usage{
 filter_summary(mpactr_object, filter, group = NULL)
 }

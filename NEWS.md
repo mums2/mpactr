@@ -1,6 +1,6 @@
-# mpactR (development version)
+# mpactr (development version)
 
-# mpactR 0.1.0
+# mpactr 0.1.0
 
 * Initial CRAN submission.
 

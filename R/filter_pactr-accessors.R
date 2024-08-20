@@ -1,4 +1,4 @@
-#' Return the summary for a single mpactR filter.
+#' Return the summary for a single mpactr filter.
 #'
 #' @description
 #' `filter_summary()` is a wrapper function to return the summary

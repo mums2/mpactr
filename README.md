@@ -1,14 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mpactR
+# mpactr
 
 <!-- badges: start -->
 <!-- badges: end -->
 
 ## Overview
 
-mpactR is a collection of filters for the purpose of identifying high
+mpactr is a collection of filters for the purpose of identifying high
 quality MS1 features by correcting peak selection errors introduced
 during the pre-processing of tandem mass spectrometry data.
 
@@ -26,33 +26,32 @@ Filters in this package address the following issues:
 
 All filters are independent, meaning they can be used to create a
 project-specific workflow, or you can learn more in [the Filter
-vignette](https://www.schlosslab.org/mpactR/articles/filter2.html).
-
+vignette](https://www.schlosslab.org/mpactr/articles/filter2.html).
 
 ## Installation
 
-You can install the development version of mpactR from
-[GitHub](https://github.com/SchlossLab/mpactR) with:
+You can install the development version of mpactr from
+[GitHub](https://github.com/SchlossLab/mpactr) with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("SchlossLab/mpactR")
+devtools::install_github("SchlossLab/mpactr")
 ```
 
 ## Get started
 
-See [the Filter vignette](https://www.schlosslab.org/mpactR/articles/filter2.html) to
+See [the Filter
+vignette](https://www.schlosslab.org/mpactr/articles/filter2.html) to
 get started.
-
 
 ## Getting help
 
 If you encounter an issue, please file an issue on
-[GitHub](https://github.com/SchlossLab/mpactR/issues). Please include a
+[GitHub](https://github.com/SchlossLab/mpactr/issues). Please include a
 minimal reproducible example with your issue.
 
 ## Contributing
 
 Is there a feature you’d like to see included, please let us know! Pull
 requests are welcome on
-[GitHub](https://github.com/SchlossLab/mpactR/pulls).
+[GitHub](https://github.com/SchlossLab/mpactr/pulls).
