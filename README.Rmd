@@ -34,7 +34,7 @@ Filters in this package address the following issues:
 - `filter_insource_ions()`: removal of fragment ions created during the first ionization in the tandem MS/MS workflow.
 
 
-All filters are independent, meaning they can be used to create a project-specific workflow, or you can learn more in [the Filter vignette](https://www.schlosslab.org/mpactr/articles/filter2.html).
+All filters are independent, meaning they can be used to create a project-specific workflow, or you can learn more in [the Filter vignette](https://www.mums2.org/mpactr/articles/filter2.html).
 
 ## Installation
 
@@ -53,7 +53,7 @@ devtools::install_github("SchlossLab/mpactr")
 
 ## Get started
 
-See [the Filter vignette](https://www.schlosslab.org/mpactr/articles/filter2.html) to get started.
+See [the Filter vignette](https://www.mums2.org/mpactr/articles/filter2.html) to get started.
 
 
 

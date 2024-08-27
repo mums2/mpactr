@@ -36,5 +36,5 @@ Config/Needs/website: rmarkdown,
     corrplot,
     ggdendro,
     ggtext
-URL: https://www.schlosslab.org/mpactr/, https://github.com/SchlossLab/mpactr
+URL: https://www.mums2.org/mpactr/, https://github.com/SchlossLab/mpactr
 BugReports: https://github.com/SchlossLab/mpactr/issues
