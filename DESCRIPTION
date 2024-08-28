@@ -1,6 +1,6 @@
 Package: mpactr
 Title: Correction of Preprocessed MS Data
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
     person("Allison", "Mason", , "masonar@umich.edu", role = c("aut"),
             comment = c(ORCID = "0000-0003-1339-1592")),
