@@ -16,3 +16,4 @@
 ^\.lintr$
 ^cran-comments\.md$
 ^manuscript/*
+^CRAN-SUBMISSION$
