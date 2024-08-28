@@ -36,5 +36,5 @@ Config/Needs/website: rmarkdown,
     corrplot,
     ggdendro,
     ggtext
-URL: https://www.mums2.org/mpactr/, https://github.com/mums2/mpactr, https://mums2.github.io/mpactr/
+URL: https://mums2.github.io/mpactr/, https://github.com/mums2/mpactr
 BugReports: https://github.com/mums2/mpactr/issues
