@@ -12,8 +12,8 @@ A fast tool for the correction of pre-processed tandem MS/MS features. This is a
 Useful links:
 \itemize{
   \item \url{https://www.mums2.org/mpactr/}
-  \item \url{https://github.com/SchlossLab/mpactr}
-  \item Report bugs at \url{https://github.com/SchlossLab/mpactr/issues}
+  \item \url{https://github.com/mums2/mpactr}
+  \item Report bugs at \url{https://github.com/mums2/mpactr/issues}
 }
 
 }

@@ -5,10 +5,10 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/SchlossLab/mpactr/actions/workflows/r.yml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/r.yml)
-[![test-coverage](https://github.com/SchlossLab/mpactr/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/test-coverage.yml)
-[![lint](https://github.com/SchlossLab/mpactr/actions/workflows/lintr.yml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/lintr.yml)
-[![pkgdown](https://github.com/SchlossLab/mpactr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/SchlossLab/mpactr/actions/workflows/pkgdown.yaml)
+[![R-CMD-check](https://github.com/mums2/mpactr/actions/workflows/r.yml/badge.svg)](https://github.com/mums2/mpactr/actions/workflows/r.yml)
+[![test-coverage](https://github.com/mums2/mpactr/actions/workflows/test-coverage.yml/badge.svg)](https://github.com/mums2/mpactr/actions/workflows/test-coverage.yml)
+[![lint](https://github.com/mums2/mpactr/actions/workflows/lintr.yml/badge.svg)](https://github.com/mums2/mpactr/actions/workflows/lintr.yml)
+[![pkgdown](https://github.com/mums2/mpactr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/mums2/mpactr/actions/workflows/pkgdown.yaml)
 <!-- badges: end -->
 
 ## Overview
@@ -42,7 +42,7 @@ install.packages("mpactr")
 ```
 
 You can install the development version of mpactr from
-[GitHub](https://github.com/SchlossLab/mpactr) with:
+[GitHub](https://github.com/mums2/mpactr) with:
 
 ``` r
 # install.packages("devtools")
@@ -52,17 +52,16 @@ devtools::install_github("SchlossLab/mpactr")
 ## Get started
 
 See [the Filter
-vignette](https://www.mums2.org/mpactr/articles/filter2.html) to
-get started.
+vignette](https://www.mums2.org/mpactr/articles/filter2.html) to get
+started.
 
 ## Getting help
 
 If you encounter an issue, please file an issue on
-[GitHub](https://github.com/SchlossLab/mpactr/issues). Please include a
+[GitHub](https://github.com/mums2/mpactr/issues). Please include a
 minimal reproducible example with your issue.
 
 ## Contributing
 
 Is there a feature you’d like to see included, please let us know! Pull
-requests are welcome on
-[GitHub](https://github.com/SchlossLab/mpactr/pulls).
+requests are welcome on [GitHub](https://github.com/mums2/mpactr/pulls).
