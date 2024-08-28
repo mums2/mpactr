@@ -6,7 +6,7 @@ articles:
   articles/filter: filter.html
   articles/filter2: filter2.html
   articles/reference_semantics: reference_semantics.html
-last_built: 2024-08-27T16:37Z
+last_built: 2024-08-28T13:50Z
 urls:
-  reference: http://www.mums2.org/mpactr/reference
-  article: http://www.mums2.org/mpactr/articles
+  reference: https://mums2.github.io/mpactr/reference
+  article: https://mums2.github.io/mpactr/articles
