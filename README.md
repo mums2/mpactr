@@ -46,7 +46,7 @@ You can install the development version of mpactr from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("SchlossLab/mpactr")
+devtools::install_github("mums2/mpactr")
 ```
 
 ## Get started
