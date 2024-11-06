@@ -1,17 +1,13 @@
-url: http://www.schlosslab.org/mpactR/
+url: https://mums2.github.io/mpactr/
 template:
   bootstrap: 5
   bootswatch: sandstone
   font_scale: 0.8
-  
-
-    
 reference:
 - title: Import Data
   contents:
   - import_data
   - example
-  
 - title: Access Data
   contents:
   - get_peak_table
@@ -19,26 +15,20 @@ reference:
   - get_raw_data
   - get_group_averages
   - get_cv_data
-    
 - title: Filter Data
   contents:
   - filter_mispicked_ions
   - filter_group
   - filter_cv
   - filter_insource_ions
-  
 - title: Summarize Filtering
   contents:
   - get_similar_ions
   - filter_summary
   - qc_summary
   - plot_qc_tree
-  
 - title: Data
-  contents:
-  - cultures_data
-
-
+  contents: cultures_data
 navbar:
   type: default
   left:
@@ -54,6 +44,5 @@ navbar:
       href: articles/downstream_analyses.html
   right:
   - icon: fa-github fa-lg
-    href: https://github.com/SchlossLab/mpactR
-    
+    href: https://github.com/mums2/mpactr
 

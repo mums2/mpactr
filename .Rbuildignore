@@ -16,3 +16,8 @@
 ^\.lintr$
 ^cran-comments\.md$
 ^manuscript/*
+^CRAN-SUBMISSION$
+^logo$
+
+# ignore vscode configs
+^\.vscode$

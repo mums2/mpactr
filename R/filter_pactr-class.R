@@ -22,7 +22,7 @@ filter_pactr <- R6Class("filter_pactr", public = list(
   },
   get_log = function(filter, group = NULL) {
     if (!(filter %in% c("mispicked", "group", "replicability", "insource"))) {
-      cli::cli_abort("{.var filter} must be one of mpactR's supported filters:
+      cli::cli_abort("{.var filter} must be one of mpactr's supported filters:
                      mispicked, group, replicability, insource.")
     }
 

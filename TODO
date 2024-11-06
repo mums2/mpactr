@@ -1,13 +1,4 @@
-# TODO: allow for compound IDs that are alphanumeric (character) - need to check if we sort by
-# TODO: or use compound ids as an numeric (Greg)
+# TODO: logo
 
-# TODO: add capability to have different peak table formats: Metabpscape, Progenesis, and MZ-mine
-# TODO: add "format" argument to import_data to specify peak table format
-# TODO: make this a formatter class to fix global bindings CMD error - Greg (Done)
-
-# TODO: review all documentation - Allison
-# TODO: finalize example and tutorial dataset
-# TODO: logo???
-
-# Way future (post initial release)
+# post initial release - 
 # TODO: benchmark speed on peak_table sizes

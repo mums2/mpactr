@@ -79,7 +79,7 @@ metaboscape_formatter <- function(peak_table, sample_names) {
   ][
     utils::read.csv(system.file("extdata/ion_masses",
       "DefinedIons.csv",
-      package = "mpactR"
+      package = "mpactr"
     )),
     on = .(ion = IONS)
   ][

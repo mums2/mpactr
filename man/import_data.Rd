@@ -23,10 +23,10 @@ an \code{mpactr_object}.
 table and one for sample metadata. Both files should be .csv.
 }
 \details{
-mpactR requires a peak table and meta data as input. Files are expected to be
+mpactr requires a peak table and meta data as input. Files are expected to be
 comma separated files (\emph{.csv}).
 \enumerate{
-\item \code{peak_table}: a peak table where rows are expected to be compounds. mpactR
+\item \code{peak_table}: a peak table where rows are expected to be compounds. mpactr
 supports import of feature table files from multiple tools through the
 \code{format} argument. Currently supported value for \code{format} are "Progenesis",
 "Metaboscape", or "None".
@@ -44,7 +44,7 @@ table in the \code{mpactr_object} and store a formatted peak table for filtering
 Reformatting includes selecting "FEATURE_ID", "RT", "PEPMASS", and sample
 columns. Sample columns are determined from the "Injection" column in
 \code{meta_data} (see below). "PEPMASS" is converted to m/z using the "ADDUCT"
-column and compound metadata columns are renamed for mpactR.
+column and compound metadata columns are renamed for mpactr.
 
 \code{format} = "None" allows users to provide a feature table file in the
 expected format. This can be useful if you have a file from another tool and
@@ -62,7 +62,7 @@ name and is expected to match sample column names in the \code{peak_table}.
 "Sample_Code" is the id for technical replicate groups. "Biological_Group"
 is the id for biological replicate groups. Other sample metadata can be
 added, and is encouraged for downstream analysis following filtering with
-mpactR.
+mpactr.
 }
 \examples{
 data <- import_data(example("coculture_peak_table.csv"),

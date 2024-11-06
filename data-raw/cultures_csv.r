@@ -1,5 +1,5 @@
 # Code to generate metadata.csv
-# metadata.csv is a file of sample metadata in mpactR format,
+# metadata.csv is a file of sample metadata in mpactr format,
 # for the data provided in cultures_peak_table.csv.
 
 library(tidyverse)

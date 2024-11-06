@@ -51,14 +51,14 @@ samples.
 If you would like to remove features found in media blank
 samples, we recommend testing the \code{group_threshold} parameter.
 
-\code{copy_object}: mpactR is built on an R6 class-system, meaning it operates on
+\code{copy_object}: mpactr is built on an R6 class-system, meaning it operates on
 reference semantics in which data is updated \emph{in-place}. Compared to a
 shallow copy, where only data pointers are copied, or a deep copy, where
 the entire data object is copied in memory, any changes to the original
 data object, regardless if they are assigned to a new object, result in
 changes to the original data object. We recommend using the default
 \code{copy_object = FALSE} as this makes for an extremely fast and
-memory-efficient way to chain mpactR filters together; however, if you
+memory-efficient way to chain mpactr filters together; however, if you
 would like to run the filters individually with traditional R style objects,
 you can set \code{copy_object} to \code{TRUE} as shown in the filter examples.
 }

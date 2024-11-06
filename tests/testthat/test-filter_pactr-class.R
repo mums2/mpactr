@@ -43,7 +43,7 @@ when an incorrect fitler argument is provided", {
             filter_class <- filter_pactr$new(mpactr_class)
 
             expect_error(filter_class$get_log(filter = "cv"),
-                         "`filter` must be one of mpactR's")
+                         "`filter` must be one of mpactr's")
           })
 
 test_that("get_log returns an error when the 
@@ -358,7 +358,7 @@ an incorrect fitler argument is provided", {
             mpactr_class$setup()
             filter_class <- filter_pactr$new(mpactr_class)
             expect_error(filter_class$get_log(filter = "cv"),
-                         "`filter` must be one of mpactR's")
+                         "`filter` must be one of mpactr's")
           })
 
 test_that("get_log returns an error when the fitler
