@@ -104,7 +104,7 @@ Now we can create a scatter plot to show the input features (m/z ~ retention tim
 
 ```{r}
 get_raw_data(data_filtered) %>%
-  mutate(Compound = as.character(Compound)) %>% 
+  mutate(Compound = as.character(Compound)) %>%
   select(Compound, mz, rt) %>%
   left_join(qc_summary(data_filtered),
     by = join_by("Compound" == "compounds")

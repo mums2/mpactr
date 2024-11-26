@@ -14,8 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, message=FALSE}
+```r
 # library(mpactr)
+library(mpactr)
+library(tidyverse)
+```
+
+```{r setup, echo = FALSE, message=FALSE}
 library(mpactr)
 library(tidyverse)
 ```
@@ -48,7 +53,8 @@ metadata <- read_csv(example_path("PTY087I2_extractmetadata.csv"))
 Our sample list contains additional blank samples that are not in the feature table, and therefore should be removed prior to import.
 
 ```{r}
-samples <- colnames(read_csv(example_path("PTY087I2_dataset.csv"), skip = 2)) %>%
+samples <- read_csv(example_path("PTY087I2_dataset.csv"), skip = 2) %>%
+  colnames() %>%
   str_subset(., "200826")
 
 meta_data <- samplelist %>%
@@ -276,73 +282,6 @@ cv %>%
 ```
 
 Here we can see that roughly `r round(cv_thresh_percent, 0)`% of features were below the CV threshold meaning `r 100 - round(cv_thresh_percent, 0)`% were removed at a CV threshold of 0.2.
-
-```{r, include=FALSE, eval=FALSE}
-# additional statistics calculated in the original mpact
-# program that are not needed to plot cv. This will not run
-# as written, but included as notes
-# cv <- cv %>%
-#   mutate(
-#     data = map(data, mutate, dist = cv - lag(cv)),
-#     data = map(data, mutate, auc = dist * index_scale)
-#   )
-
-# # Replicability statistics
-# mean_n <- get_meta_data(data_rep) %>%
-#   summarise(count = n_distinct(Injection) / n_distinct(Sample_Code)) %>%
-#   pull()
-
-# stdev <- c(1, 0, 0 * (as.integer(mean_n) - 1))
-# mod_stdev <- sd(stdev) / mean(stdev)
-
-# mean_ord_med <- t$data[[2]] %>%
-#   left_join(select(t$data[[1]], Compound, cv), by = "Compound") %>%
-#   rename(
-#     cv_median = cv.x,
-#     cv = cv.y
-#   ) %>%
-#   arrange(cv_median) %>%
-#   mutate(param = "mead_ord_med") %>%
-#   select(param, cv, everything())
-
-# cv2 <- t %>%
-#   unnest(cols = data) %>%
-#   bind_rows(mean_ord_med) %>%
-#   nest(.by = param)
-
-# index_cv_mean <- function(x, df, sd) {
-#   mean(df$index_scale[which(abs(df$cv - x - sd / 200) < sd / 200)])
-# }
-
-# s <- data.frame(val = 1:(mod_stdev * 100)) %>%
-#   mutate(
-#     pos = val / 100,
-#     meanavg = map_dbl(pos, index_cv_mean, df = cv2$data[[1]], sd = mod_stdev),
-#     meanmed = map_dbl(pos, index_cv_mean, df = cv2$data[[3]], sd = mod_stdev),
-#     skew = abs(meanmed - meanavg),
-#     skew_sd = skew * mod_stdev / 100
-#   )
-
-# sumskew <- s %>%
-#   summarise(sum = sum(skew_sd, na.rm = TRUE)) %>%
-#   pull(sum)
-
-# auc_groups <- t %>%
-#   unnest(cols = data) %>%
-#   summarise(auc = sum(auc, na.rm = TRUE), .by = param)
-
-# filter(auc_groups, param == "median_cv") %>% pull(auc)
-
-# sumskew_n <- sumskew / ((filter(auc_groups, param == "median_cv") %>% pull(auc) + filter(auc_groups, param == "mean_cv") %>% pull(auc)) / 2)
-# rep <- ((filter(auc_groups, param == "median_cv") %>% pull(auc) + filter(auc_groups, param == "mean_cv") %>% pull(auc)) / 2) / (mod_stdev * 100)
-# qualscore <- (1 - sumskew_n) * rep * 100
-
-# paste0(
-#   "Reproducibility: ", round(100 * rep, 1), "% ",
-#   "Skewness: ", round(100 * sumskew_n, 1), "% ",
-#   "Overall: ", round(qualscore, 1), "%"
-#)
-```
 
 #### Remove insource fragment ions
 
