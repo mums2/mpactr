@@ -1,4 +1,4 @@
-url: https://mums2.github.io/mpactr/
+url: https://www.mums2.org/mpactr/
 template:
   bootstrap: 5
   bootswatch: sandstone
@@ -29,20 +29,3 @@ reference:
   - plot_qc_tree
 - title: Data
   contents: cultures_data
-navbar:
-  type: default
-  left:
-  - text: Reference
-    href: reference/index.html
-  - text: Articles
-    menu:
-    - text: Reference Semantics
-      href: articles/reference_semantics.html
-    - text: Filter
-      href: articles/filter2.html
-    - text: Additional Analyses
-      href: articles/downstream_analyses.html
-  right:
-  - icon: fa-github fa-lg
-    href: https://github.com/mums2/mpactr
-

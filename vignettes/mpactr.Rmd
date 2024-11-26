@@ -26,10 +26,16 @@ To import these data into R, use the mpactr function `import_data()`, which has 
 
 The original program has sample metadata split across two files: the sample list and metadata. mpactr accepts a single file, so we need to combine these in one prior to import with `import_data()`.
 
-Load the sample list and metadata files. 
+Loading the sample list... 
 
 ```{r}
 samplelist <- read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/samplelist.csv")
+```
+
+
+Loading the metadata list...
+
+```{r}
 metadata <- read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/extractmetadata.csv")
 ```
 
@@ -37,7 +43,8 @@ metadata <- read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/ra
 Our sample list contains additional blank samples that are not in the feature table, and therefore should be removed prior to import.
 
 ```{r}
-samples <- colnames(read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv", skip = 2)) %>% str_subset(., "200826")
+samples <- colnames(read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv", skip = 2)) %>%
+  str_subset(., "200826")
 
 meta_data <- samplelist %>%
   left_join(metadata, by = "Sample_Code") %>%
