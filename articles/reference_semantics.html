@@ -74,12 +74,7 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.mums2.org/mpactr/">mpactr</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: data.table</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'mpactr'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:utils':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     example</span></span></code></pre></div>
+<span><span class="co">#&gt; Loading required package: data.table</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="reference-semantics">Reference semantics<a class="anchor" aria-label="anchor" href="#reference-semantics"></a>
 </h2>
@@ -91,8 +86,9 @@ original data object, regardless if they are assigned to a new object,
 result in changes to the original data object. We can see this
 below.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span><span class="fu"><a href="../reference/example.html">example</a></span><span class="op">(</span><span class="st">"cultures_peak_table.csv"</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="../reference/example.html">example</a></span><span class="op">(</span><span class="st">"cultures_metadata.csv"</span><span class="op">)</span>,</span>
+<code class="sourceCode R"><span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"cultures_peak_table.csv"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"cultures_metadata.csv"</span><span class="op">)</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span>
 <span><span class="op">)</span></span>
 <span></span>

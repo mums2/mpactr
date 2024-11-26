@@ -111,7 +111,7 @@ combine these in one prior to import with
 <code><a href="../reference/import_data.html">import_data()</a></code>.</p>
 <p>Loading the sample list…</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">samplelist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/samplelist.csv"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">samplelist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_samplelist.csv"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">38</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">8</span></span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
@@ -124,7 +124,7 @@ combine these in one prior to import with
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span></code></pre></div>
 <p>Loading the metadata list…</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/extractmetadata.csv"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_extractmetadata.csv"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">10</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">4</span></span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
@@ -135,7 +135,7 @@ combine these in one prior to import with
 <p>Our sample list contains additional blank samples that are not in the
 feature table, and therefore should be removed prior to import.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv"</span>, skip <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>, skip <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_subset.html" class="external-link">str_subset</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">"200826"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">4956</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">33</span></span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
@@ -154,7 +154,7 @@ feature table, and therefore should be removed prior to import.</p>
 table was exported from Progenesis, so we will set the
 <code>format</code> argument to Progenesis.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv"</span>,</span>
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>,</span>
 <span>  meta_data <span class="op">=</span> <span class="va">meta_data</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -424,7 +424,7 @@ result in changes to the original data object. We can see this
 below.</p>
 <p>Where the raw data object has 4956 ions in the feature table:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv"</span>,</span>
+<code class="sourceCode R"><span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>,</span>
 <span>  meta_data <span class="op">=</span> <span class="va">meta_data</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span>
 <span><span class="op">)</span></span>
@@ -770,7 +770,7 @@ the removal of media blank components with the
 <code><a href="../reference/filter_group.html">filter_group()</a></code> function after identification of
 high-quality ions.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv"</span>,</span>
+<code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>,</span>
 <span>  meta_data <span class="op">=</span> <span class="va">meta_data</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span>
 <span><span class="op">)</span></span>
