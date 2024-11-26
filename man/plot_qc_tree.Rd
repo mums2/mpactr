@@ -18,8 +18,9 @@ status (see \code{\link[=qc_summary]{qc_summary()}}) is reported here as percent
 pre-filtered ions.
 }
 \examples{
-data <- import_data(example("coculture_peak_table.csv"),
-  example("metadata.csv"),
+data <- import_data(
+  example_path("coculture_peak_table.csv"),
+  example_path("metadata.csv"),
   format = "Progenesis"
 )
 

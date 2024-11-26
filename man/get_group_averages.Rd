@@ -20,8 +20,9 @@ each group.
 for the filtered peak table.
 }
 \examples{
-data <- import_data(example("coculture_peak_table.csv"),
-  example("metadata.csv"),
+data <- import_data(
+  example_path("coculture_peak_table.csv"),
+  example_path("metadata.csv"),
   format = "Progenesis"
 )
 

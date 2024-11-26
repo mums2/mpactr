@@ -12,3 +12,4 @@ vignettes/*_files
 docs
 
 .DS_Store
+inst/doc

@@ -50,8 +50,8 @@ devtools::install_github("mums2/mpactr")
 
 ## Get started
 
-See [the Filter
-vignette](https://www.mums2.org/mpactr/articles/mpactr.html) to get
+See the [Getting
+Started](https://www.mums2.org/mpactr/articles/mpactr.html) page to get
 started.
 
 ## Getting help

@@ -1,5 +1,10 @@
 ---
 title: "Filter with mpact original data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{phylotypr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -29,21 +34,21 @@ The original program has sample metadata split across two files: the sample list
 Loading the sample list... 
 
 ```{r}
-samplelist <- read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/samplelist.csv")
+samplelist <- read_csv(example_path("PTY087I2_samplelist.csv"))
 ```
 
 
 Loading the metadata list...
 
 ```{r}
-metadata <- read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/extractmetadata.csv")
+metadata <- read_csv(example_path("PTY087I2_extractmetadata.csv"))
 ```
 
 
 Our sample list contains additional blank samples that are not in the feature table, and therefore should be removed prior to import.
 
 ```{r}
-samples <- colnames(read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv", skip = 2)) %>%
+samples <- colnames(read_csv(example_path("PTY087I2_dataset.csv"), skip = 2)) %>%
   str_subset(., "200826")
 
 meta_data <- samplelist %>%
@@ -54,7 +59,7 @@ meta_data <- samplelist %>%
 Now we can import the data. We will provide the url for the `peak_table`, and our reformatted meta_data object. This peak table was exported from Progenesis, so we will set the `format` argument to Progenesis.
 
 ```{r}
-data <- import_data(peak_table = "https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv",
+data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
   meta_data = meta_data,
   format = "Progenesis"
 )
@@ -101,7 +106,7 @@ mpactr is built on an R6 class-system, meaning it operates on reference semantic
 Where the raw data object has `r nrow(get_peak_table(data))` ions in the feature table:
 
 ```{r}
-data2 <- import_data(peak_table = "https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv",
+data2 <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
   meta_data = meta_data,
   format = "Progenesis"
 )
@@ -357,7 +362,7 @@ data_insource <- filter_insource_ions(data,
 Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering non-repoducible or insource ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying non-reproducible and insource fragment ions. Here we also demonstrate the removal of media blank components with the `filter_group()` function after identification of high-quality ions.
 
 ```{r}
-data <- import_data(peak_table = "https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv",
+data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
   meta_data = meta_data,
   format = "Progenesis"
 )

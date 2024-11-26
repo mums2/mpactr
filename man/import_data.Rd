@@ -65,13 +65,14 @@ added, and is encouraged for downstream analysis following filtering with
 mpactr.
 }
 \examples{
-data <- import_data(example("coculture_peak_table.csv"),
-  example("metadata.csv"),
+data <- import_data(
+  example_path("coculture_peak_table.csv"),
+  example_path("metadata.csv"),
   format = "Progenesis"
 )
 
-meta_data <- read.csv(example("metadata.csv"))
-data <- import_data(example("coculture_peak_table.csv"),
+meta_data <- read.csv(example_path("metadata.csv"))
+data <- import_data(example_path("coculture_peak_table.csv"),
   meta_data,
   format = "Progenesis"
 )

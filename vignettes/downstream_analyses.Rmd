@@ -1,5 +1,10 @@
 ---
 title: "Downstream Analyses"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{downstream_analyses}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -42,8 +47,8 @@ library(ggtext)
 # Filter MS1 feature table with `mpactr`
 
 ```{r}
-data <- import_data(example("cultures_peak_table.csv"),
-  example("cultures_metadata.csv"),
+data <- import_data(example_path("cultures_peak_table.csv"),
+  example_path("cultures_metadata.csv"),
   format = "Progenesis"
 )
 ```

@@ -7,7 +7,7 @@ reference:
 - title: Import Data
   contents:
   - import_data
-  - example
+  - example_path
 - title: Access Data
   contents:
   - get_peak_table

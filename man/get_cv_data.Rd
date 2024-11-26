@@ -19,8 +19,9 @@ of variation for each input ion.
 variation) calculated with \code{\link[=filter_cv]{filter_cv()}}.
 }
 \examples{
-data <- import_data(example("coculture_peak_table.csv"),
-  example("metadata.csv"),
+data <- import_data(
+  example_path("coculture_peak_table.csv"),
+  example_path("metadata.csv"),
   format = "Progenesis"
 )
 

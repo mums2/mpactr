@@ -43,8 +43,9 @@ would like to run the filters individually with traditional R style objects,
 you can set \code{copy_object} to \code{TRUE} as shown in the filter examples.
 }
 \examples{
-data <- import_data(example("coculture_peak_table.csv"),
-  example("metadata.csv"),
+data <- import_data(
+  example_path("coculture_peak_table.csv"),
+  example_path("metadata.csv"),
   format = "Progenesis"
 )
 

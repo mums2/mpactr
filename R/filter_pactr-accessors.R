@@ -17,8 +17,8 @@
 #' @export
 #'
 #' @examples
-#' data <- import_data(example("coculture_peak_table.csv"),
-#'   example("metadata.csv"),
+#' data <- import_data(example_path("coculture_peak_table.csv"),
+#'   example_path("metadata.csv"),
 #'   format = "Progenesis"
 #' )
 #'
@@ -45,8 +45,9 @@ filter_summary <- function(mpactr_object, filter, group = NULL) {
 #' @export
 #'
 #' @examples
-#' data <- import_data(example("coculture_peak_table.csv"),
-#'   example("metadata.csv"),
+#' data <- import_data(
+#'   example_path("coculture_peak_table.csv"),
+#'   example_path("metadata.csv"),
 #'   format = "Progenesis"
 #' )
 #'
@@ -74,8 +75,9 @@ get_similar_ions <- function(mpactr_object) {
 #' @export
 #'
 #' @examples
-#' data <- import_data(example("coculture_peak_table.csv"),
-#'   example("metadata.csv"),
+#' data <- import_data(
+#'   example_path("coculture_peak_table.csv"),
+#'   example_path("metadata.csv"),
 #'   format = "Progenesis"
 #' )
 #'
@@ -102,8 +104,9 @@ get_group_averages <- function(mpactr_object) {
 #' @export
 #'
 #' @examples
-#' data <- import_data(example("coculture_peak_table.csv"),
-#'   example("metadata.csv"),
+#' data <- import_data(
+#'   example_path("coculture_peak_table.csv"),
+#'   example_path("metadata.csv"),
 #'   format = "Progenesis"
 #' )
 #'
