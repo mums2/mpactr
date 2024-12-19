@@ -25,10 +25,10 @@
 #' @return A file path to example data stored in the `inst/extdata` directory
 #' of the package.
 #' @examples
-#' example()
+#' example_path()
 #'
-#' example("metadata.csv")
-example <- function(file = NULL) {
+#' example_path("metadata.csv")
+example_path <- function(file = NULL) {
   path <- ""
   if (is.null(file)) {
     path <- dir(system.file("extdata", package = "mpactr"))

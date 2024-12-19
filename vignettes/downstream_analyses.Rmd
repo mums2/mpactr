@@ -1,5 +1,10 @@
 ---
 title: "Downstream Analyses"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{downstream_analyses}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -42,8 +47,8 @@ library(ggtext)
 # Filter MS1 feature table with `mpactr`
 
 ```{r}
-data <- import_data(example("cultures_peak_table.csv"),
-  example("cultures_metadata.csv"),
+data <- import_data(example_path("cultures_peak_table.csv"),
+  example_path("cultures_metadata.csv"),
   format = "Progenesis"
 )
 ```
@@ -99,7 +104,7 @@ Now we can create a scatter plot to show the input features (m/z ~ retention tim
 
 ```{r}
 get_raw_data(data_filtered) %>%
-  mutate(Compound = as.character(Compound)) %>% 
+  mutate(Compound = as.character(Compound)) %>%
   select(Compound, mz, rt) %>%
   left_join(qc_summary(data_filtered),
     by = join_by("Compound" == "compounds")

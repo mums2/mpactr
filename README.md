@@ -1,8 +1,7 @@
 
+# mpactr <a href="https://www.mums2.org/mpactr/"><img src="man/figures/logo.png" align="right" height="138" alt="mpactr website" /></a>
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# mpactr
-
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/mums2/mpactr/actions/workflows/r.yml/badge.svg)](https://github.com/mums2/mpactr/actions/workflows/r.yml)
@@ -30,8 +29,8 @@ Filters in this package address the following issues:
   first ionization in the tandem MS/MS workflow.
 
 All filters are independent, meaning they can be used to create a
-project-specific workflow, or you can learn more in [the Filter
-vignette](https://mums2.github.io/mpactr/articles/filter2.html).
+project-specific workflow, or you can learn more in [the Getting Started
+page](https://www.mums2.org/mpactr/articles/mpactr.html).
 
 ## Installation
 
@@ -51,8 +50,8 @@ devtools::install_github("mums2/mpactr")
 
 ## Get started
 
-See [the Filter
-vignette](https://mums2.github.io/mpactr/articles/filter2.html) to get
+See the [Getting
+Started](https://www.mums2.org/mpactr/articles/mpactr.html) page to get
 started.
 
 ## Getting help

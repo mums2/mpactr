@@ -1,5 +1,10 @@
 ---
 title: "Filter with mpact original data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{phylotypr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, include = FALSE}
@@ -9,8 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup, message=FALSE}
+```r
 # library(mpactr)
+library(mpactr)
+library(tidyverse)
+```
+
+```{r setup, echo = FALSE, message=FALSE}
 library(mpactr)
 library(tidyverse)
 ```
@@ -26,18 +36,26 @@ To import these data into R, use the mpactr function `import_data()`, which has 
 
 The original program has sample metadata split across two files: the sample list and metadata. mpactr accepts a single file, so we need to combine these in one prior to import with `import_data()`.
 
-Load the sample list and metadata files. 
+Loading the sample list... 
 
 ```{r}
-samplelist <- read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/samplelist.csv")
-metadata <- read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/extractmetadata.csv")
+samplelist <- read_csv(example_path("PTY087I2_samplelist.csv"))
+```
+
+
+Loading the metadata list...
+
+```{r}
+metadata <- read_csv(example_path("PTY087I2_extractmetadata.csv"))
 ```
 
 
 Our sample list contains additional blank samples that are not in the feature table, and therefore should be removed prior to import.
 
 ```{r}
-samples <- colnames(read_csv("https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv", skip = 2)) %>% str_subset(., "200826")
+samples <- read_csv(example_path("PTY087I2_dataset.csv"), skip = 2) %>%
+  colnames() %>%
+  str_subset(., "200826")
 
 meta_data <- samplelist %>%
   left_join(metadata, by = "Sample_Code") %>%
@@ -47,7 +65,7 @@ meta_data <- samplelist %>%
 Now we can import the data. We will provide the url for the `peak_table`, and our reformatted meta_data object. This peak table was exported from Progenesis, so we will set the `format` argument to Progenesis.
 
 ```{r}
-data <- import_data(peak_table = "https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv",
+data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
   meta_data = meta_data,
   format = "Progenesis"
 )
@@ -94,7 +112,7 @@ mpactr is built on an R6 class-system, meaning it operates on reference semantic
 Where the raw data object has `r nrow(get_peak_table(data))` ions in the feature table:
 
 ```{r}
-data2 <- import_data(peak_table = "https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv",
+data2 <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
   meta_data = meta_data,
   format = "Progenesis"
 )
@@ -265,73 +283,6 @@ cv %>%
 
 Here we can see that roughly `r round(cv_thresh_percent, 0)`% of features were below the CV threshold meaning `r 100 - round(cv_thresh_percent, 0)`% were removed at a CV threshold of 0.2.
 
-```{r, include=FALSE, eval=FALSE}
-# additional statistics calculated in the original mpact
-# program that are not needed to plot cv. This will not run
-# as written, but included as notes
-# cv <- cv %>%
-#   mutate(
-#     data = map(data, mutate, dist = cv - lag(cv)),
-#     data = map(data, mutate, auc = dist * index_scale)
-#   )
-
-# # Replicability statistics
-# mean_n <- get_meta_data(data_rep) %>%
-#   summarise(count = n_distinct(Injection) / n_distinct(Sample_Code)) %>%
-#   pull()
-
-# stdev <- c(1, 0, 0 * (as.integer(mean_n) - 1))
-# mod_stdev <- sd(stdev) / mean(stdev)
-
-# mean_ord_med <- t$data[[2]] %>%
-#   left_join(select(t$data[[1]], Compound, cv), by = "Compound") %>%
-#   rename(
-#     cv_median = cv.x,
-#     cv = cv.y
-#   ) %>%
-#   arrange(cv_median) %>%
-#   mutate(param = "mead_ord_med") %>%
-#   select(param, cv, everything())
-
-# cv2 <- t %>%
-#   unnest(cols = data) %>%
-#   bind_rows(mean_ord_med) %>%
-#   nest(.by = param)
-
-# index_cv_mean <- function(x, df, sd) {
-#   mean(df$index_scale[which(abs(df$cv - x - sd / 200) < sd / 200)])
-# }
-
-# s <- data.frame(val = 1:(mod_stdev * 100)) %>%
-#   mutate(
-#     pos = val / 100,
-#     meanavg = map_dbl(pos, index_cv_mean, df = cv2$data[[1]], sd = mod_stdev),
-#     meanmed = map_dbl(pos, index_cv_mean, df = cv2$data[[3]], sd = mod_stdev),
-#     skew = abs(meanmed - meanavg),
-#     skew_sd = skew * mod_stdev / 100
-#   )
-
-# sumskew <- s %>%
-#   summarise(sum = sum(skew_sd, na.rm = TRUE)) %>%
-#   pull(sum)
-
-# auc_groups <- t %>%
-#   unnest(cols = data) %>%
-#   summarise(auc = sum(auc, na.rm = TRUE), .by = param)
-
-# filter(auc_groups, param == "median_cv") %>% pull(auc)
-
-# sumskew_n <- sumskew / ((filter(auc_groups, param == "median_cv") %>% pull(auc) + filter(auc_groups, param == "mean_cv") %>% pull(auc)) / 2)
-# rep <- ((filter(auc_groups, param == "median_cv") %>% pull(auc) + filter(auc_groups, param == "mean_cv") %>% pull(auc)) / 2) / (mod_stdev * 100)
-# qualscore <- (1 - sumskew_n) * rep * 100
-
-# paste0(
-#   "Reproducibility: ", round(100 * rep, 1), "% ",
-#   "Skewness: ", round(100 * sumskew_n, 1), "% ",
-#   "Overall: ", round(qualscore, 1), "%"
-#)
-```
-
 #### Remove insource fragment ions
 
 Some mass species can be fragmented during ionization in tandem MS/MS, creating insource ions. This can result in ions from one compound being represented more than once in the feature table. If you would like to remove insource ions fragments, you can do so with mpactr's `filter_insource_ions()`. `filter_insource_ions()` conducts ion deconvolution via retention time correlation matrices within MS1 scans. Highly correlated ion groups are determined by the `cluster_threshold` parameter and filtered to remove the low mass features. The highest mass feature is identified as the likely precursor ion and retained in the feature table. 
@@ -350,7 +301,7 @@ data_insource <- filter_insource_ions(data,
 Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering non-repoducible or insource ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying non-reproducible and insource fragment ions. Here we also demonstrate the removal of media blank components with the `filter_group()` function after identification of high-quality ions.
 
 ```{r}
-data <- import_data(peak_table = "https://raw.githubusercontent.com/BalunasLab/mpact/main/rawdata/PTY087I2/200826_PTY087I2codingdataset.csv",
+data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
   meta_data = meta_data,
   format = "Progenesis"
 )
