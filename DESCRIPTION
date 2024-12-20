@@ -1,6 +1,6 @@
 Package: mpactr
 Title: Correction of Preprocessed MS Data
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Allison", "Mason", , "masonar@umich.edu", role = c("aut"),
             comment = c(ORCID = "0000-0003-1339-1592")),
@@ -25,10 +25,10 @@ Suggests:
     ggtext
 Config/testthat/edition: 3
 Depends: 
-    data.table,
     R (>= 4.1.0)
 Imports: 
     cli,
+    data.table,
     ggplot2,
     R6,
     readr,
