@@ -187,7 +187,7 @@ The `counts_cor` object is a list of data for the correlations. The correlation 
 counts_cor$r[, 1]
 ```
 
-Finally, we can plot the correlations map with `corrplot`. Style options can be customized to your liking (see [corrplot](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html)).
+Finally, we can plot the correlations map with `corrplot`. Style options can be customized to your liking (see [corrplot](https://CRAN.R-project.org/package=corrplot/vignettes/corrplot-intro.html)).
 
 ```{r, warning=FALSE}
 corrplot(counts_cor$r,
@@ -364,7 +364,7 @@ Extract plotting elements with `ggdendrogram::dendro_data()`
 den_data <- dendro_data(dendro, type = "rectangle")
 ```
 
-Use `ggplot` and `ggdendrogram` to plot the dendrogram. For more customizations, see [ggdendro documentation](https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html).
+Use `ggplot` and `ggdendrogram` to plot the dendrogram. For more customizations, see [ggdendro documentation](https://CRAN.R-project.org/package=ggdendro/vignettes/ggdendro.html).
 
 ```{r}
 ggplot(segment(den_data)) +
