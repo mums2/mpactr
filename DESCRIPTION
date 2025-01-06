@@ -25,7 +25,6 @@ Suggests:
     ggtext
 Config/testthat/edition: 3
 Depends: 
-    R (>= 4.2.0)
 Imports: 
     cli,
     data.table,
