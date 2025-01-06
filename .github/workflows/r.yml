@@ -37,7 +37,7 @@ jobs:
           - {os: ubuntu-latest,  r: 'release'}
           - {os: ubuntu-latest,  r: 'oldrel-1'}
           - {os: ubuntu-latest,  r: 'oldrel-2'}
-          - {os: ubuntu-latest,  r: 'oldrel-3'}
+          # - {os: ubuntu-latest,  r: 'oldrel-3'} Hmisc doesnt support R < 4.2.0
           # - {os: ubuntu-latest,  r: 'oldrel-4'} We are not support R: 4.05
 
     env:
