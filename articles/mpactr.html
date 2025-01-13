@@ -76,8 +76,6 @@
 <code class="sourceCode R"><span><span class="co"># library(mpactr)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.mums2.org/mpactr/">mpactr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span></code></pre>
 <div class="section level2">
 <h2 id="load-data-into-r">Load data into R<a class="anchor" aria-label="anchor" href="#load-data-into-r"></a>
 </h2>
@@ -112,7 +110,7 @@ sample list and metadata. mpactr accepts a single file, so we need to
 combine these in one prior to import with
 <code><a href="../reference/import_data.html">import_data()</a></code>.</p>
 <p>Loading the sample list…</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">samplelist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_samplelist.csv"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">38</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">8</span></span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
@@ -125,7 +123,7 @@ combine these in one prior to import with
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span></code></pre></div>
 <p>Loading the metadata list…</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_extractmetadata.csv"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">10</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">4</span></span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
@@ -136,7 +134,7 @@ combine these in one prior to import with
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span></code></pre></div>
 <p>Our sample list contains additional blank samples that are not in the
 feature table, and therefore should be removed prior to import.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>, skip <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_subset.html" class="external-link">str_subset</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">"200826"</span><span class="op">)</span></span>
@@ -156,7 +154,7 @@ feature table, and therefore should be removed prior to import.</p>
 <code>peak_table</code>, and our reformatted meta_data object. This peak
 table was exported from Progenesis, so we will set the
 <code>format</code> argument to Progenesis.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>,</span>
 <span>  meta_data <span class="op">=</span> <span class="va">meta_data</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span>
@@ -165,7 +163,7 @@ table was exported from Progenesis, so we will set the
 table and metadata.</p>
 <p>Calling the new mpactr object will print the current peak table in
 the terminal:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span></span>
 <span><span class="co">#&gt;               Compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
 <span><span class="co">#&gt;                 &lt;char&gt;    &lt;num&gt;     &lt;num&gt;            &lt;num&gt;            &lt;num&gt;</span></span>
@@ -350,7 +348,7 @@ the terminal:</p>
 <p>The raw peak table is the unfiltered peak table used as input to
 mpactr. To extract the raw input peak table, use the function
 <code><a href="../reference/get_raw_data.html">get_raw_data()</a></code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_raw_data.html">get_raw_data</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span></span>
 <span><span class="co">#&gt;            Compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;    &lt;num&gt;     &lt;num&gt;            &lt;num&gt;            &lt;num&gt;</span></span>
@@ -369,7 +367,7 @@ mpactr. To extract the raw input peak table, use the function
 <p>The raw peak table will not change as filters are applied to the
 data. If you want to extract the filtered peak table, with filters that
 have been applied, use <code><a href="../reference/get_peak_table.html">get_peak_table()</a></code>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span></span>
 <span><span class="co">#&gt;            Compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;    &lt;num&gt;     &lt;num&gt;            &lt;num&gt;            &lt;num&gt;</span></span>
@@ -390,7 +388,7 @@ have been applied, use <code><a href="../reference/get_peak_table.html">get_peak
 <h3 id="extract-metadata">Extract metadata<a class="anchor" aria-label="anchor" href="#extract-metadata"></a>
 </h3>
 <p>Metadata can be accessed with <code><a href="../reference/get_meta_data.html">get_meta_data()</a></code>:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_meta_data.html">get_meta_data</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt;           Injection File Text Sample_Notes                     MS method</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;    &lt;lgcl&gt;       &lt;lgcl&gt;                        &lt;char&gt;</span></span>
@@ -426,7 +424,7 @@ original data object, regardless if they are assigned to a new object,
 result in changes to the original data object. We can see this
 below.</p>
 <p>Where the raw data object has 4956 ions in the feature table:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>,</span>
 <span>  meta_data <span class="op">=</span> <span class="va">meta_data</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span>
@@ -449,7 +447,7 @@ below.</p>
 <p>We can run the <code>filter_mispicked_ions</code> filter, with
 default setting <code>copy_object = FALSE</code> (operates on reference
 semantics).</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data2_mispicked</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_mispicked_ions.html">filter_mispicked_ions</a></span><span class="op">(</span><span class="va">data2</span>,</span>
 <span>  ringwin <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  isowin <span class="op">=</span> <span class="fl">0.01</span>, trwin <span class="op">=</span> <span class="fl">0.005</span>,</span>
@@ -493,7 +491,7 @@ semantics).</p>
 we created an object called <code>data2_mispicked</code>, the original
 <code>data2</code> object was also updated and now has 4686 ions in the
 feature table:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data2</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
 <span><span class="co">#&gt; Key: &lt;Compound, mz, kmd, rt&gt;</span></span>
 <span><span class="co">#&gt;               Compound        mz        kmd         rt</span></span>
@@ -562,7 +560,7 @@ time and mass. Flagged ion groups are suggested to be the result of
 incorrect splitting of isotopic patterns during peak picking, detector
 saturation artifacts, or incorrect identification of multiply charged
 oligomers.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_mispicked</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_mispicked_ions.html">filter_mispicked_ions</a></span><span class="op">(</span><span class="va">data</span>,</span>
 <span>  ringwin <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  isowin <span class="op">=</span> <span class="fl">0.01</span>, trwin <span class="op">=</span> <span class="fl">0.005</span>,</span>
@@ -581,7 +579,7 @@ remain.</p>
 filter, you can use <code><a href="../reference/get_similar_ions.html">get_similar_ions()</a></code>. This function
 returns a <code>data.table</code> reporting the main ion (the ion
 retained post-merging) and the ions similar to it.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/get_similar_ions.html">get_similar_ions</a></span><span class="op">(</span><span class="va">data_mispicked</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;            main_ion                      similar_ions</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;                            &lt;list&gt;</span></span>
@@ -605,7 +603,7 @@ identifies ions above a relative abundance threshold
 <code>group_to_remove</code> to the <code>Biological_Group</code> in
 your metadata file which corresponds to your solvent blank samples, here
 “Blanks”.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_blank</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_group.html">filter_group</a></span><span class="op">(</span><span class="va">data</span>,</span>
 <span>  group_threshold <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  group_to_remove <span class="op">=</span> <span class="st">"Blanks"</span>, remove_ions <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -628,7 +626,7 @@ greater than 1% of the largest group in media blank samples by
 specifying <code>group_to_remove</code> = “Media”. We recommend removing
 media blank ions following all other filters so all high-quality ions
 are identified (see Chaining filters together below).</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_media_blank</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_group.html">filter_group</a></span><span class="op">(</span><span class="va">data</span>,</span>
 <span>  group_threshold <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>  group_to_remove <span class="op">=</span> <span class="st">"Media"</span>, remove_ions <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -648,7 +646,7 @@ ions are identified by mean or median coefficient of variation (CV)
 between technical replicates with <code><a href="../reference/filter_cv.html">filter_cv()</a></code>. Note - this
 filter cannot be applied to data that does not contain technical
 replicates.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_rep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cv.html">filter_cv</a></span><span class="op">(</span><span class="va">data</span>,</span>
 <span>  cv_threshold <span class="op">=</span> <span class="fl">0.2</span>, cv_param <span class="op">=</span> <span class="st">"median"</span>,</span>
 <span>  copy_object <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -663,7 +661,7 @@ dataset, you can extract the CV calculated during
 function, and calculate the percentage of features for plotting. You can
 look at both mean and median CV as shown in the example below, or you
 can filter the data by the parameter of choice.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_cv_data.html">get_cv_data</a></span><span class="op">(</span><span class="va">data_rep</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean_cv"</span>, <span class="st">"median_cv"</span><span class="op">)</span>,</span>
 <span>               names_to <span class="op">=</span> <span class="st">"param"</span>,</span>
@@ -695,7 +693,7 @@ index_scale:</p>
 <p>There is one tibble for each parameter (either mean or median). We
 also want to calculate the percentage of features represented by the CV
 threshold.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cv_thresh_percent</span> <span class="op">&lt;-</span> <span class="va">cv</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">param</span> <span class="op">==</span> <span class="st">"median_cv"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -706,7 +704,7 @@ threshold.</p>
 <span><span class="va">cv_thresh_percent</span></span>
 <span><span class="co">#&gt; [1] 56.03309</span></span></code></pre></div>
 <p>Then we can plot percentage of features by CV:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cv</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">param</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean_cv"</span>, <span class="st">"median_cv"</span><span class="op">)</span>,</span>
@@ -750,7 +748,7 @@ within MS1 scans. Highly correlated ion groups are determined by the
 <code>cluster_threshold</code> parameter and filtered to remove the low
 mass features. The highest mass feature is identified as the likely
 precursor ion and retained in the feature table.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_insource</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_insource_ions.html">filter_insource_ions</a></span><span class="op">(</span><span class="va">data</span>,</span>
 <span>  cluster_threshold <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  copy_object <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -772,7 +770,7 @@ non-reproducible and insource fragment ions. Here we also demonstrate
 the removal of media blank components with the
 <code><a href="../reference/filter_group.html">filter_group()</a></code> function after identification of
 high-quality ions.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>,</span>
 <span>  meta_data <span class="op">=</span> <span class="va">meta_data</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span>
@@ -806,10 +804,10 @@ high-quality ions.</p>
 single filter, use the <code><a href="../reference/filter_summary.html">filter_summary()</a></code> function. You must
 specify which filter you are intested in, either “mispicked”, “group”,
 “replicability”, or “insource”.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mispicked_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_summary.html">filter_summary</a></span><span class="op">(</span><span class="va">data_filtered</span>, filter <span class="op">=</span> <span class="st">"mispicked"</span><span class="op">)</span></span></code></pre></div>
 <p>Failed ions:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mispicked_summary</span><span class="op">$</span><span class="va">failed_ions</span>, <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   [1] "9.97_84.9592m/z"   "9.97_91.5049m/z"   "9.97_93.5039m/z"  </span></span>
 <span><span class="co">#&gt;   [4] "1.99_93.0679m/z"   "2.00_105.0674m/z"  "9.99_108.0234m/z" </span></span>
@@ -846,7 +844,7 @@ specify which filter you are intested in, either “mispicked”, “group”,
 <span><span class="co">#&gt;  [97] "0.83_291.1546m/z"  "0.64_292.4432m/z"  "10.09_294.0010m/z"</span></span>
 <span><span class="co">#&gt; [100] "1.21_294.5725m/z"</span></span></code></pre></div>
 <p>Passing ions:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mispicked_summary</span><span class="op">$</span><span class="va">passed_ions</span>, <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   [1] "0.03_102.1549m/z" "0.04_113.9641m/z" "0.06_182.9860m/z"</span></span>
 <span><span class="co">#&gt;   [4] "0.06_235.9635m/z" "0.09_68.9936m/z"  "0.10_102.1549m/z"</span></span>
@@ -884,7 +882,7 @@ specify which filter you are intested in, either “mispicked”, “group”,
 <span><span class="co">#&gt; [100] "0.64_270.9272m/z"</span></span></code></pre></div>
 <p>If you set <code>filter</code> to a filter name that you did not
 apply to your data, an error message will be returned.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_summary.html">filter_summary</a></span><span class="op">(</span><span class="va">data_filtered</span>, filter <span class="op">=</span> <span class="st">"insource"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00; font-weight: bold;">Error</span><span style="font-weight: bold;"> in `mpactr_object$get_log()`:</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> `filter` insource has not yet been applied to the data. Run the</span></span>
@@ -892,7 +890,7 @@ apply to your data, an error message will be returned.</p>
 <p>If you want to retrieve the filter summary for the group filter, you
 must also supply the group name with the <code>group</code>
 argument:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/filter_summary.html">filter_summary</a></span><span class="op">(</span><span class="va">data_filtered</span>, filter <span class="op">=</span> <span class="st">"group"</span>, group <span class="op">=</span> <span class="st">"Blanks"</span><span class="op">)</span></span></code></pre></div>
 <p><code>group</code> must always be supplied for this filter, even if
 only one group filter has been applied.</p>
@@ -905,7 +903,7 @@ only one group filter has been applied.</p>
 id (<code>compounds</code>) and if it failed or passed filtering. If the
 ion failed filtering, its status will report the name of the filter it
 failed.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/qc_summary.html">qc_summary</a></span><span class="op">(</span><span class="va">data_filtered</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">compounds</span><span class="op">)</span>, <span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt;           status        compounds</span></span>
 <span><span class="co">#&gt;           &lt;char&gt;           &lt;char&gt;</span></span>
@@ -929,7 +927,7 @@ code chunk below, where we have used <code>data.table</code> syntax as
 the <code><a href="../reference/qc_summary.html">qc_summary()</a></code> returns a <code>data.table</code> object.
 If you are not familiar with the package data.table, check out their
 resources on <a href="https://rdatatable.gitlab.io/data.table/" class="external-link">gitlab</a>.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkox.org/treemapify/" class="external-link">treemapify</a></span><span class="op">)</span></span>
 <span></span>
@@ -937,7 +935,7 @@ resources on <a href="https://rdatatable.gitlab.io/data.table/" class="external-
 <span>  , <span class="va">percent</span> <span class="op">:=</span> <span class="op">(</span><span class="va">count</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">count</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="op">]</span></span></code></pre></div>
 <p>Finally, we plot the treemap:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">ion_counts</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>area <span class="op">=</span> <span class="va">percent</span>, fill <span class="op">=</span> <span class="va">status</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://wilkox.org/treemapify/reference/geom_treemap.html" class="external-link">geom_treemap</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -951,7 +949,7 @@ resources on <a href="https://rdatatable.gitlab.io/data.table/" class="external-
 <p><img src="mpactr_files/figure-html/unnamed-chunk-31-1.png" width="700"></p>
 <p>This plot can be customized with ggplot2, for example we only want to
 display the percentage:</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">ion_counts</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>area <span class="op">=</span> <span class="va">percent</span>, fill <span class="op">=</span> <span class="va">status</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://wilkox.org/treemapify/reference/geom_treemap.html" class="external-link">geom_treemap</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -963,14 +961,14 @@ display the percentage:</p>
 <span><span class="va">tm</span></span></code></pre></div>
 <p><img src="mpactr_files/figure-html/unnamed-chunk-32-1.png" width="700"></p>
 <p>Or you no longer need the legend and maybe we want custom colors:</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tm</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_brewer.html" class="external-link">scale_fill_brewer</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Greens"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="mpactr_files/figure-html/unnamed-chunk-33-1.png" width="700"></p>
 <p>If you want a fast visualization of the treemap, you can pass the
 mpactr object to the function <code><a href="../reference/plot_qc_tree.html">plot_qc_tree()</a></code>.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_qc_tree.html">plot_qc_tree</a></span><span class="op">(</span><span class="va">data_filtered</span><span class="op">)</span></span></code></pre></div>
 <p><img src="mpactr_files/figure-html/unnamed-chunk-34-1.png" width="700"></p>
 </div>
