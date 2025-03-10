@@ -100,7 +100,10 @@ import_data <- function(peak_table, meta_data, format = "none") {
 unique_compounds <- function(peak_table_list) {
   peak_table <- peak_table_list$peak_table
   duplicates <- names(which(table(peak_table$Compound) > 1))
-
+  if(length(duplicates) > 0){
+    cli::cli_inform("Found duplicate compound values, will add a suffix to unique
+                   the value.")
+  }
   for(name in duplicates) {
     idx <- which(peak_table$Compound == name)
     for(i in seq(length(idx))){
