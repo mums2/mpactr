@@ -34,3 +34,19 @@ test_that("import_data aborts when expected
               format = "Progenesis"
             ))
           })
+
+
+test_that("unique_compounds annotate duplicates properly", { 
+  df <- data.frame(Compound = c(1,2,3,1:3,4:7))
+  ls <- list(peak_table = df, raw_table = df)
+  uniqued_list <- unique_compounds(ls)
+
+  expect_true(length(unique(uniqued_list$peak_table$Compound)) ==
+    length(uniqued_list$peak_table$Compound))
+  expect_true(length(unique(uniqued_list$raw_table$Compound)) ==
+   length(uniqued_list$raw_table$Compound))
+
+  expect_false(length(unique(df$Compound)) == length(df$Compound))
+})
+
+         
