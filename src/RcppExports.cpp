@@ -10,18 +10,60 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// Test
-void Test();
-RcppExport SEXP _mpactr_Test() {
+// FilterMispickedIons
+Rcpp::List FilterMispickedIons(const Rcpp::DataFrame& peakTable, const double ringWin, const double isoWin, const double trWin, const double maxIsoShift, const bool mergePeaks, const std::string& mergeMethod);
+RcppExport SEXP _mpactr_FilterMispickedIons(SEXP peakTableSEXP, SEXP ringWinSEXP, SEXP isoWinSEXP, SEXP trWinSEXP, SEXP maxIsoShiftSEXP, SEXP mergePeaksSEXP, SEXP mergeMethodSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Test();
-    return R_NilValue;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type peakTable(peakTableSEXP);
+    Rcpp::traits::input_parameter< const double >::type ringWin(ringWinSEXP);
+    Rcpp::traits::input_parameter< const double >::type isoWin(isoWinSEXP);
+    Rcpp::traits::input_parameter< const double >::type trWin(trWinSEXP);
+    Rcpp::traits::input_parameter< const double >::type maxIsoShift(maxIsoShiftSEXP);
+    Rcpp::traits::input_parameter< const bool >::type mergePeaks(mergePeaksSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type mergeMethod(mergeMethodSEXP);
+    rcpp_result_gen = Rcpp::wrap(FilterMispickedIons(peakTable, ringWin, isoWin, trWin, maxIsoShift, mergePeaks, mergeMethod));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Test
+Rcpp::List Test(Rcpp::List ls);
+RcppExport SEXP _mpactr_Test(SEXP lsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::List >::type ls(lsSEXP);
+    rcpp_result_gen = Rcpp::wrap(Test(ls));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Test1
+Rcpp::List Test1();
+RcppExport SEXP _mpactr_Test1() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(Test1());
+    return rcpp_result_gen;
+END_RCPP
+}
+// Test2
+Rcpp::List Test2();
+RcppExport SEXP _mpactr_Test2() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(Test2());
+    return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_mpactr_Test", (DL_FUNC) &_mpactr_Test, 0},
+    {"_mpactr_FilterMispickedIons", (DL_FUNC) &_mpactr_FilterMispickedIons, 7},
+    {"_mpactr_Test", (DL_FUNC) &_mpactr_Test, 1},
+    {"_mpactr_Test1", (DL_FUNC) &_mpactr_Test1, 0},
+    {"_mpactr_Test2", (DL_FUNC) &_mpactr_Test2, 0},
     {NULL, NULL, 0}
 };
 
