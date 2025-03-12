@@ -9,48 +9,17 @@ filter_pactr$set(
            merge_method = NULL) {
     l <- nrow(self$mpactr_data$get_peak_table())
     cli::cli_alert_info("Checking {l} peaks for mispicked peaks.")
-
-    ion_filter_list <- list()
-
-    cut_ions <- c()
-
-    cut_ions_dict <- new.env(hash = TRUE)
-
-    merge_groups <- list()
-
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
       order(self$mpactr_data$get_peak_table()$mz,
         decreasing = FALSE
       ),
     ])
+    ion_filter_list <- list()
+    results <- FilterMispickedIons(self$mpactr_data$get_peak_table(), ringwin,
+                                   isowin, trwin, max_iso_shift)
 
-    number_of_rows <- nrow(self$mpactr_data$get_peak_table())
-
-    for (i in seq_along(1:(number_of_rows - 1))) {
-      current_feature <- self$mpactr_data$get_peak_table()[
-        i, c("Compound", "mz", "rt")
-      ]
-      current_rt <- current_feature$rt
-      current_mass <- current_feature$mz
-      current_ion <- current_feature$Compound
-
-      if (!(current_ion %in% cut_ions)) {
-        ions <- private$get_merged_ions(ringwin,
-                                        isowin,
-                                        trwin,
-                                        max_iso_shift,
-                                        number_of_rows,
-                                        cut_ions,
-                                        merge_groups,
-                                        cut_ions_dict,
-                                        i)
-        cut_ions <- ions$cut_ions
-        merge_groups <- ions$merge_groups
-      }
-    }
-
-    ion_filter_list[["cut_ions"]] <- cut_ions
-    ion_filter_list[["merge_groups"]] <- merge_groups
+    ion_filter_list[["cut_ions"]] <- results$cut_ions
+    ion_filter_list[["merge_groups"]] <- results$merge_groups
     self$logger[["check_mismatched_peaks"]] <- ion_filter_list
 
     if (isTRUE(merge_peaks)) {
@@ -65,62 +34,13 @@ filter_pactr$set(
     }
 
     self$logger$list_of_summaries$mispicked <- summary$new(
-      filter = "mispicked", failed_ions = cut_ions,
+      filter = "mispicked", failed_ions = results$cut_ions,
       passed_ions = self$mpactr_data$get_peak_table()$Compound
     )
 
     self$logger$list_of_summaries$mispicked$summarize()
   }
 )
-
-filter_pactr$set("private", "get_merged_ions", function(ringwin,
-                                                        isowin,
-                                                        trwin,
-                                                        max_iso_shift,
-                                                        number_of_rows,
-                                                        cut_ions,
-                                                        merge_groups,
-                                                        cut_ion_dict,
-                                                        i) {
-
-  peak_table <- self$mpactr_data$get_peak_table()
-  mz_peak_table <- peak_table$mz
-  rt_peak_table <- peak_table$rt
-  compound_peak_table <- peak_table$Compound
-  for (j in i:(number_of_rows - 1)) {
-
-    if (!is.null(cut_ion_dict[[as.character(compound_peak_table[j + 1])]])) {
-      next
-    }
-    mass_diff <- mz_peak_table[j + 1] - mz_peak_table[i]
-
-    kmd_diff <- mass_diff - floor(mass_diff)
-    shift_diff <- abs(mass_diff) > max_iso_shift - 0.4
-
-    rt_diff <- rt_peak_table[j + 1] - rt_peak_table[i]
-
-    ring_band <- floor(abs(mass_diff) * (1 / ringwin)) %% (1 / ringwin)
-    double_band <- kmd_diff -
-      .5004 -
-      (floor(mass_diff) * .007) # BL - why 0.500 and 0.007?
-    between_ion_calculation <- abs(rt_diff) <= trwin &&
-      (mass_diff <= max_iso_shift - 0.4) &&
-      (ring_band == 0 || double_band < isowin)
-    if (!shift_diff && between_ion_calculation) {
-      cut_ions <- c(
-        cut_ions,
-        compound_peak_table[j + 1]
-      )
-      cut_ion_dict[[as.character(compound_peak_table[j + 1])]] <- 1
-      merge_groups[[as.character(compound_peak_table[i])]] <-
-        c(
-          merge_groups[[as.character(compound_peak_table[i])]],
-          compound_peak_table[j + 1]
-        )
-    }
-  }
-  return(list(cut_ions = cut_ions, merge_groups = merge_groups))
-})
 
 filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
   if (is.null(method)) {

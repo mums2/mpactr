@@ -1,10 +1,11 @@
 Package: mpactr
 Title: Correction of Preprocessed MS Data
-Version: 0.1.1
+Version: 0.2.0
 Authors@R: c(
     person("Allison", "Mason", , "masonar@umich.edu", role = c("aut"),
             comment = c(ORCID = "0000-0003-1339-1592")),
-    person("Gregory", "Johnson", , "grejoh@umich.edu", role = c("aut")),
+    person("Gregory", "Johnson", , "grejoh@umich.edu", role = c("aut"),
+            comment = c(ORCID = "0009-0008-3890-0297")),
     person("Patrick", "Schloss", , "pschloss@umich.edu", role = c("aut", "cre", "cph"),
             comment = c(ORCID = "0000-0002-6935-4275"))
     )
@@ -24,12 +25,12 @@ Suggests:
     ggdendro,
     ggtext
 Config/testthat/edition: 3
-Depends: 
 Imports: 
     cli,
     data.table,
     ggplot2,
     R6,
+    Rcpp,
     readr,
     stats,
     treemapify,
@@ -38,3 +39,5 @@ LazyData: true
 URL: https://www.mums2.org/mpactr/, https://github.com/mums2/mpactr
 BugReports: https://github.com/mums2/mpactr/issues
 VignetteBuilder: knitr
+LinkingTo: 
+    Rcpp
