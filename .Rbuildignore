@@ -4,6 +4,7 @@
 ^cmake-build-debug$
 ^cmake-build-release$
 ^CMakeLists\.txt$
+^\.lintr$
 ^LICENSE\.md$
 ^cran-comments\.md$
 ^.*\.Rproj$
