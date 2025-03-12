@@ -4,8 +4,7 @@
 
 // [[Rcpp::export]]
 Rcpp::List FilterMispickedIons(const Rcpp::DataFrame& peakTable, const double ringWin, const double isoWin,
-    const double trWin, const double maxIsoShift, const bool mergePeaks,
-    const std::string& mergeMethod) {
+    const double trWin, const double maxIsoShift) {
     const auto rows = static_cast<size_t>(peakTable.nrows());
     const Rcpp::NumericVector mzVector = peakTable["mz"];
     const Rcpp::NumericVector rtVector = peakTable["rt"];
@@ -60,32 +59,4 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame& peakTable, const double ri
 
     return Rcpp::List::create(Rcpp::Named("cut_ions") = cutIons,
         Rcpp::Named("merge_groups") = mergeGroups);
-}
-
-// [[Rcpp::export]]
-Rcpp::List Test(Rcpp::List ls) {
-    Rcpp::List la (1000);
-    return la;
-}
-
-// [[Rcpp::export]]
-Rcpp::List Test1() {
-    Rcpp::List la;
-    la.push_front(1, "m");
-    la.push_front(2, "1");
-    la.push_front(3, "2");
-    la.push_front(3, "3");
-    la.push_front(3, "4");
-    return la;
-}
-// [[Rcpp::export]]
-Rcpp::List Test2() {
-    Rcpp::List la (5);
-    std::vector<std::string> vec { "m", "1", "2", "3", "4"};
-    Rcpp::NumericVector nums {1,2,3,4,5};
-    for (int i = 0; i < 5; i++) {
-        la[i] = nums[i];
-    }
-    la.attr("names") = vec;
-    return la;
 }

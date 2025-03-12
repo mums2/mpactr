@@ -1,7 +1,0 @@
-cmake_minimum_required(VERSION 3.28)
-project(mpactr)
-set(CMAKE_CXX_STANDARD 11)
-include_directories("/Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/library/Rcpp/libs/")
-include_directories("/Library/Frameworks/R.framework/Versions/4.3-arm64/Resources/library/Rcpp/include/")
-include_directories("/Library/Frameworks/R.framework/Versions/4.3-arm64/Headers/")
-add_executable(mpactr main.cpp)

@@ -16,7 +16,7 @@ filter_pactr$set(
     ])
     ion_filter_list <- list()
     results <- FilterMispickedIons(self$mpactr_data$get_peak_table(), ringwin, 
-    isowin, trwin, max_iso_shift, merge_peaks, merge_method)
+    isowin, trwin, max_iso_shift)
   
     
     ion_filter_list[["cut_ions"]] <- results$cut_ions
