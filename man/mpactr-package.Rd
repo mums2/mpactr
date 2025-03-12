@@ -25,7 +25,7 @@ Useful links:
 Authors:
 \itemize{
   \item Allison Mason \email{masonar@umich.edu} (\href{https://orcid.org/0000-0003-1339-1592}{ORCID})
-  \item Gregory Johnson \email{grejoh@umich.edu}
+  \item Gregory Johnson \email{grejoh@umich.edu} (\href{https://orcid.org/0009-0008-3890-0297}{ORCID})
 }
 
 }
