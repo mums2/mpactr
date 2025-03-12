@@ -29,6 +29,9 @@ jobs:
         run: install.packages("lintr")
         shell: Rscript {0}
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        
       - name: Lint Package
         run: lintr::lint_package(linters = lintr::linters_with_defaults())
         shell: Rscript {0}
