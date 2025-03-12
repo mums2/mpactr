@@ -13,7 +13,7 @@ name: lint
 
 permissions: read-all
 
-jjobs:
+jobs:
   lint-project:
     runs-on: ubuntu-latest
     env:
