@@ -10,3 +10,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^README\.Rmd$
+^\.github$
+^src/\.idea$
+^\.idea$
+^CRAN-SUBMISSION$
+^pkgdown$
+^_pkgdown\.yml$
+^data-raw$
