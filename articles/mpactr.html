@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mpactr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -457,7 +457,7 @@ semantics).</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Checking 4956 peaks for mispicked peaks.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Argument merge_peaks is: TRUE. Merging mispicked peaks with method sum.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 270 ions failed the mispicked filter, 4686 ions remain.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 291 ions failed the mispicked filter, 4665 ions remain.</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data2_mispicked</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
 <span><span class="co">#&gt; Key: &lt;Compound, mz, kmd, rt&gt;</span></span>
@@ -469,11 +469,11 @@ semantics).</p>
 <span><span class="co">#&gt;    4: 0.06_235.9635m/z 235.96353 0.96353360 0.05573333</span></span>
 <span><span class="co">#&gt;    5:  0.09_68.9936m/z  68.99356 0.99355728 0.09145000</span></span>
 <span><span class="co">#&gt;   ---                                                 </span></span>
-<span><span class="co">#&gt; 4682: 9.99_463.1718m/z 463.17181 0.17180700 9.98643333</span></span>
-<span><span class="co">#&gt; 4683: 9.99_480.7214m/z 480.72136 0.72135840 9.98643333</span></span>
-<span><span class="co">#&gt; 4684:  9.99_87.5099m/z  87.50993 0.50992700 9.99358333</span></span>
-<span><span class="co">#&gt; 4685:  9.99_92.9671m/z  92.96709 0.96708947 9.98643333</span></span>
-<span><span class="co">#&gt; 4686:  9.99_95.0612m/z  95.06120 0.06119876 9.99358333</span></span>
+<span><span class="co">#&gt; 4661: 9.99_463.1718m/z 463.17181 0.17180700 9.98643333</span></span>
+<span><span class="co">#&gt; 4662: 9.99_480.7214m/z 480.72136 0.72135840 9.98643333</span></span>
+<span><span class="co">#&gt; 4663:  9.99_87.5099m/z  87.50993 0.50992700 9.99358333</span></span>
+<span><span class="co">#&gt; 4664:  9.99_92.9671m/z  92.96709 0.96708947 9.98643333</span></span>
+<span><span class="co">#&gt; 4665:  9.99_95.0612m/z  95.06120 0.06119876 9.99358333</span></span>
 <span><span class="co">#&gt;       200826_PTY087I2_0umce1_r1</span></span>
 <span><span class="co">#&gt;                           &lt;num&gt;</span></span>
 <span><span class="co">#&gt;    1:                   0.00000</span></span>
@@ -482,14 +482,14 @@ semantics).</p>
 <span><span class="co">#&gt;    4:                  17.36759</span></span>
 <span><span class="co">#&gt;    5:                  13.93727</span></span>
 <span><span class="co">#&gt;   ---                          </span></span>
-<span><span class="co">#&gt; 4682:                  85.71503</span></span>
-<span><span class="co">#&gt; 4683:                   0.00000</span></span>
-<span><span class="co">#&gt; 4684:                  26.94538</span></span>
-<span><span class="co">#&gt; 4685:                  46.99969</span></span>
-<span><span class="co">#&gt; 4686:                  31.83990</span></span></code></pre></div>
-<p>This results in 4686 ions in the feature table (above). Even though
+<span><span class="co">#&gt; 4661:                  85.71503</span></span>
+<span><span class="co">#&gt; 4662:                   0.00000</span></span>
+<span><span class="co">#&gt; 4663:                  26.94538</span></span>
+<span><span class="co">#&gt; 4664:                  46.99969</span></span>
+<span><span class="co">#&gt; 4665:                  31.83990</span></span></code></pre></div>
+<p>This results in 4665 ions in the feature table (above). Even though
 we created an object called <code>data2_mispicked</code>, the original
-<code>data2</code> object was also updated and now has 4686 ions in the
+<code>data2</code> object was also updated and now has 4665 ions in the
 feature table:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data2</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
@@ -502,11 +502,11 @@ feature table:</p>
 <span><span class="co">#&gt;    4: 0.06_235.9635m/z 235.96353 0.96353360 0.05573333</span></span>
 <span><span class="co">#&gt;    5:  0.09_68.9936m/z  68.99356 0.99355728 0.09145000</span></span>
 <span><span class="co">#&gt;   ---                                                 </span></span>
-<span><span class="co">#&gt; 4682: 9.99_463.1718m/z 463.17181 0.17180700 9.98643333</span></span>
-<span><span class="co">#&gt; 4683: 9.99_480.7214m/z 480.72136 0.72135840 9.98643333</span></span>
-<span><span class="co">#&gt; 4684:  9.99_87.5099m/z  87.50993 0.50992700 9.99358333</span></span>
-<span><span class="co">#&gt; 4685:  9.99_92.9671m/z  92.96709 0.96708947 9.98643333</span></span>
-<span><span class="co">#&gt; 4686:  9.99_95.0612m/z  95.06120 0.06119876 9.99358333</span></span>
+<span><span class="co">#&gt; 4661: 9.99_463.1718m/z 463.17181 0.17180700 9.98643333</span></span>
+<span><span class="co">#&gt; 4662: 9.99_480.7214m/z 480.72136 0.72135840 9.98643333</span></span>
+<span><span class="co">#&gt; 4663:  9.99_87.5099m/z  87.50993 0.50992700 9.99358333</span></span>
+<span><span class="co">#&gt; 4664:  9.99_92.9671m/z  92.96709 0.96708947 9.98643333</span></span>
+<span><span class="co">#&gt; 4665:  9.99_95.0612m/z  95.06120 0.06119876 9.99358333</span></span>
 <span><span class="co">#&gt;       200826_PTY087I2_0umce1_r1</span></span>
 <span><span class="co">#&gt;                           &lt;num&gt;</span></span>
 <span><span class="co">#&gt;    1:                   0.00000</span></span>
@@ -515,11 +515,11 @@ feature table:</p>
 <span><span class="co">#&gt;    4:                  17.36759</span></span>
 <span><span class="co">#&gt;    5:                  13.93727</span></span>
 <span><span class="co">#&gt;   ---                          </span></span>
-<span><span class="co">#&gt; 4682:                  85.71503</span></span>
-<span><span class="co">#&gt; 4683:                   0.00000</span></span>
-<span><span class="co">#&gt; 4684:                  26.94538</span></span>
-<span><span class="co">#&gt; 4685:                  46.99969</span></span>
-<span><span class="co">#&gt; 4686:                  31.83990</span></span></code></pre></div>
+<span><span class="co">#&gt; 4661:                  85.71503</span></span>
+<span><span class="co">#&gt; 4662:                   0.00000</span></span>
+<span><span class="co">#&gt; 4663:                  26.94538</span></span>
+<span><span class="co">#&gt; 4664:                  46.99969</span></span>
+<span><span class="co">#&gt; 4665:                  31.83990</span></span></code></pre></div>
 <p>We recommend using the default <code>copy_object = FALSE</code> as
 this makes for an extremely fast and memory-efficient way to chain
 mpactr filters together (see <strong>Chaining filters together</strong>
@@ -570,10 +570,10 @@ oligomers.</p>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Checking 4956 peaks for mispicked peaks.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Argument merge_peaks is: TRUE. Merging mispicked peaks with method sum.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 270 ions failed the mispicked filter, 4686 ions remain.</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 291 ions failed the mispicked filter, 4665 ions remain.</span></span></code></pre></div>
 <p>Each filter reports progress of filtering, here we can see that 4956
-ions were present prior to checking for mispicked ions. 270 ions were
-found to be similar to another ion and following merging, 4686 ions
+ions were present prior to checking for mispicked ions. 291 ions were
+found to be similar to another ion and following merging, 4665 ions
 remain.</p>
 <p>If you are interested in the groups of similar ions flagged in this
 filter, you can use <code><a href="../reference/get_similar_ions.html">get_similar_ions()</a></code>. This function
@@ -782,15 +782,15 @@ high-quality ions.</p>
 <span>  <span class="fu"><a href="../reference/filter_group.html">filter_group</a></span><span class="op">(</span>group_to_remove <span class="op">=</span> <span class="st">"Media"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Checking 4956 peaks for mispicked peaks.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Argument merge_peaks is: TRUE. Merging mispicked peaks with method sum.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 270 ions failed the mispicked filter, 4686 ions remain.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Parsing 4686 peaks based on the sample group: Blanks.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 291 ions failed the mispicked filter, 4665 ions remain.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Parsing 4665 peaks based on the sample group: Blanks.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Argument remove_ions is: TRUE.Removing peaks from Blanks.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1741 ions failed the Blanks filter, 2945 ions remain.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Parsing 2945 peaks for replicability across technical replicates.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1143 ions failed the cv_filter filter, 1802 ions remain.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Parsing 1802 peaks based on the sample group: Media.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1731 ions failed the Blanks filter, 2934 ions remain.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Parsing 2934 peaks for replicability across technical replicates.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1141 ions failed the cv_filter filter, 1793 ions remain.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Parsing 1793 peaks based on the sample group: Media.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Argument remove_ions is: TRUE.Removing peaks from Media.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1239 ions failed the Media filter, 563 ions remain.</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1233 ions failed the Media filter, 560 ions remain.</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -811,38 +811,38 @@ specify which filter you are intested in, either “mispicked”, “group”,
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mispicked_summary</span><span class="op">$</span><span class="va">failed_ions</span>, <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   [1] "9.97_84.9592m/z"   "9.97_91.5049m/z"   "9.97_93.5039m/z"  </span></span>
 <span><span class="co">#&gt;   [4] "1.99_93.0679m/z"   "2.00_105.0674m/z"  "9.99_108.0234m/z" </span></span>
-<span><span class="co">#&gt;   [7] "9.97_111.5219m/z"  "9.97_112.5194m/z"  "2.32_117.0586m/z" </span></span>
-<span><span class="co">#&gt;  [10] "2.00_120.0817m/z"  "2.00_120.1345m/z"  "2.00_120.1704m/z" </span></span>
-<span><span class="co">#&gt;  [13] "0.77_118.1157m/z"  "1.99_120.3792m/z"  "2.32_132.0815m/z" </span></span>
-<span><span class="co">#&gt;  [16] "0.67_131.5785m/z"  "1.46_132.1331m/z"  "1.21_133.0896n"   </span></span>
-<span><span class="co">#&gt;  [19] "0.84_139.0507m/z"  "2.32_143.0736m/z"  "2.32_144.0816m/z" </span></span>
-<span><span class="co">#&gt;  [22] "0.62_143.5978m/z"  "0.67_147.1134m/z"  "3.92_151.0634m/z" </span></span>
-<span><span class="co">#&gt;  [25] "4.62_165.0704m/z"  "2.00_166.4370m/z"  "1.99_166.1491m/z" </span></span>
-<span><span class="co">#&gt;  [28] "4.12_176.0628m/z"  "0.62_180.6223m/z"  "10.11_183.0220m/z"</span></span>
-<span><span class="co">#&gt;  [31] "0.94_186.5569m/z"  "1.21_189.1242m/z"  "0.94_190.0465m/z" </span></span>
-<span><span class="co">#&gt;  [34] "3.61_193.0423m/z"  "0.62_195.6240m/z"  "1.19_196.0381n"   </span></span>
-<span><span class="co">#&gt;  [37] "4.78_198.0854m/z"  "1.21_201.0726m/z"  "1.21_202.1205m/z" </span></span>
-<span><span class="co">#&gt;  [40] "2.07_202.1180m/z"  "3.63_207.0634m/z"  "0.81_210.1507m/z" </span></span>
-<span><span class="co">#&gt;  [43] "0.81_210.1997m/z"  "0.81_210.2631m/z"  "0.81_210.4740m/z" </span></span>
-<span><span class="co">#&gt;  [46] "2.94_212.1208m/z"  "0.65_213.0191m/z"  "2.07_217.1056m/z" </span></span>
-<span><span class="co">#&gt;  [49] "1.91_217.1553m/z"  "1.20_218.1109m/z"  "1.22_221.5316m/z" </span></span>
-<span><span class="co">#&gt;  [52] "1.21_223.0594m/z"  "1.96_227.6359m/z"  "1.21_227.1005m/z" </span></span>
-<span><span class="co">#&gt;  [55] "0.84_226.1553m/z"  "3.72_227.1760m/z"  "3.63_229.0865m/z" </span></span>
-<span><span class="co">#&gt;  [58] "1.21_231.1367m/z"  "1.92_234.1403m/z"  "1.22_237.1363m/z" </span></span>
-<span><span class="co">#&gt;  [61] "0.63_238.1461m/z"  "2.35_237.1243m/z"  "1.21_244.1664m/z" </span></span>
-<span><span class="co">#&gt;  [64] "0.66_244.1380m/z"  "1.21_247.1298m/z"  "0.67_123.5768n"   </span></span>
-<span><span class="co">#&gt;  [67] "2.22_247.1295m/z"  "4.12_250.5607m/z"  "0.62_250.1370m/z" </span></span>
-<span><span class="co">#&gt;  [70] "0.62_252.1540m/z"  "2.23_250.1917m/z"  "1.82_252.1519m/z" </span></span>
-<span><span class="co">#&gt;  [73] "0.83_253.1626n"    "0.75_258.1110m/z"  "3.14_258.5443m/z" </span></span>
-<span><span class="co">#&gt;  [76] "0.66_257.6233m/z"  "0.66_258.1473m/z"  "0.75_261.0120m/z" </span></span>
-<span><span class="co">#&gt;  [79] "1.24_260.1969m/z"  "3.96_263.5542m/z"  "1.17_265.0928m/z" </span></span>
-<span><span class="co">#&gt;  [82] "0.64_271.9292m/z"  "9.97_250.9284n"    "1.21_273.1650m/z" </span></span>
-<span><span class="co">#&gt;  [85] "1.21_274.0933m/z"  "2.35_275.6568m/z"  "1.17_275.6450m/z" </span></span>
-<span><span class="co">#&gt;  [88] "3.43_278.0424m/z"  "0.64_280.6631m/z"  "1.89_283.6481m/z" </span></span>
-<span><span class="co">#&gt;  [91] "3.99_286.0659m/z"  "0.64_288.1607m/z"  "1.21_287.5791m/z" </span></span>
-<span><span class="co">#&gt;  [94] "1.17_143.5989n"    "0.83_288.2030m/z"  "1.20_289.6186m/z" </span></span>
-<span><span class="co">#&gt;  [97] "0.83_291.1546m/z"  "0.64_292.4432m/z"  "10.09_294.0010m/z"</span></span>
-<span><span class="co">#&gt; [100] "1.21_294.5725m/z"</span></span></code></pre></div>
+<span><span class="co">#&gt;   [7] "9.97_111.5219m/z"  "9.97_112.5194m/z"  "9.97_113.0173m/z" </span></span>
+<span><span class="co">#&gt;  [10] "2.32_117.0586m/z"  "2.32_118.0660m/z"  "2.00_120.0817m/z" </span></span>
+<span><span class="co">#&gt;  [13] "2.00_120.1345m/z"  "2.00_120.1704m/z"  "0.77_118.1157m/z" </span></span>
+<span><span class="co">#&gt;  [16] "1.99_120.3792m/z"  "2.32_132.0815m/z"  "0.67_131.5785m/z" </span></span>
+<span><span class="co">#&gt;  [19] "1.46_132.1331m/z"  "1.21_133.0896n"    "0.84_139.0507m/z" </span></span>
+<span><span class="co">#&gt;  [22] "2.32_143.0736m/z"  "2.32_144.0816m/z"  "0.62_143.5978m/z" </span></span>
+<span><span class="co">#&gt;  [25] "0.67_147.1134m/z"  "3.92_151.0634m/z"  "4.62_165.0704m/z" </span></span>
+<span><span class="co">#&gt;  [28] "2.00_166.4370m/z"  "1.99_166.1491m/z"  "4.12_176.0628m/z" </span></span>
+<span><span class="co">#&gt;  [31] "4.12_178.0782m/z"  "0.62_180.6223m/z"  "10.11_183.0220m/z"</span></span>
+<span><span class="co">#&gt;  [34] "0.94_186.5569m/z"  "1.21_189.1242m/z"  "0.94_190.0465m/z" </span></span>
+<span><span class="co">#&gt;  [37] "3.61_193.0423m/z"  "0.62_195.6240m/z"  "1.19_196.0381n"   </span></span>
+<span><span class="co">#&gt;  [40] "4.78_198.0854m/z"  "1.21_201.0726m/z"  "1.21_202.1205m/z" </span></span>
+<span><span class="co">#&gt;  [43] "2.07_202.1180m/z"  "1.21_201.5936n"    "3.63_207.0634m/z" </span></span>
+<span><span class="co">#&gt;  [46] "0.81_210.1507m/z"  "0.81_210.1997m/z"  "0.81_210.2631m/z" </span></span>
+<span><span class="co">#&gt;  [49] "0.81_210.4740m/z"  "2.94_212.1208m/z"  "0.65_213.0191m/z" </span></span>
+<span><span class="co">#&gt;  [52] "2.07_217.1056m/z"  "1.91_217.1553m/z"  "1.20_218.1109m/z" </span></span>
+<span><span class="co">#&gt;  [55] "1.22_221.5316m/z"  "1.21_223.0594m/z"  "1.96_227.6359m/z" </span></span>
+<span><span class="co">#&gt;  [58] "1.21_227.1005m/z"  "0.84_226.1553m/z"  "3.72_227.1760m/z" </span></span>
+<span><span class="co">#&gt;  [61] "3.63_229.0865m/z"  "1.96_229.6538m/z"  "1.21_231.1367m/z" </span></span>
+<span><span class="co">#&gt;  [64] "1.92_234.1403m/z"  "1.22_237.1363m/z"  "0.63_238.1461m/z" </span></span>
+<span><span class="co">#&gt;  [67] "2.35_237.1243m/z"  "1.21_244.1664m/z"  "0.66_244.1380m/z" </span></span>
+<span><span class="co">#&gt;  [70] "1.21_245.6400m/z"  "1.21_247.1298m/z"  "0.67_123.5768n"   </span></span>
+<span><span class="co">#&gt;  [73] "2.22_247.1295m/z"  "4.12_250.5607m/z"  "0.62_250.1370m/z" </span></span>
+<span><span class="co">#&gt;  [76] "0.62_252.1540m/z"  "2.23_250.1917m/z"  "0.62_252.6512m/z" </span></span>
+<span><span class="co">#&gt;  [79] "4.12_253.0563m/z"  "1.82_252.1519m/z"  "0.83_253.1626n"   </span></span>
+<span><span class="co">#&gt;  [82] "0.75_258.1110m/z"  "3.14_258.5443m/z"  "0.66_257.6233m/z" </span></span>
+<span><span class="co">#&gt;  [85] "0.66_258.1473m/z"  "0.75_261.0120m/z"  "1.24_260.1969m/z" </span></span>
+<span><span class="co">#&gt;  [88] "3.96_263.5542m/z"  "1.17_265.0928m/z"  "0.64_271.9292m/z" </span></span>
+<span><span class="co">#&gt;  [91] "9.97_250.9284n"    "1.21_273.1650m/z"  "1.21_274.0933m/z" </span></span>
+<span><span class="co">#&gt;  [94] "2.35_275.6568m/z"  "1.17_275.6450m/z"  "3.43_278.0424m/z" </span></span>
+<span><span class="co">#&gt;  [97] "0.64_280.6631m/z"  "1.89_283.6481m/z"  "3.99_286.0659m/z" </span></span>
+<span><span class="co">#&gt; [100] "0.64_288.1607m/z"</span></span></code></pre></div>
 <p>Passing ions:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mispicked_summary</span><span class="op">$</span><span class="va">passed_ions</span>, <span class="fl">100</span><span class="op">)</span></span>
@@ -865,21 +865,21 @@ specify which filter you are intested in, either “mispicked”, “group”,
 <span><span class="co">#&gt;  [49] "0.62_207.1142m/z" "0.62_216.1416m/z" "0.62_216.6342m/z"</span></span>
 <span><span class="co">#&gt;  [52] "0.62_223.1375m/z" "0.62_224.1328m/z" "0.62_230.1451m/z"</span></span>
 <span><span class="co">#&gt;  [55] "0.62_237.6514m/z" "0.62_242.6282m/z" "0.62_247.8076m/z"</span></span>
-<span><span class="co">#&gt;  [58] "0.62_249.6332m/z" "0.62_252.6512m/z" "0.62_259.1503m/z"</span></span>
-<span><span class="co">#&gt;  [61] "0.62_267.1498m/z" "0.62_273.6578m/z" "0.62_281.1568m/z"</span></span>
-<span><span class="co">#&gt;  [64] "0.62_295.1650m/z" "0.62_312.1757m/z" "0.63_102.1551m/z"</span></span>
-<span><span class="co">#&gt;  [67] "0.63_119.4797m/z" "0.63_133.4769m/z" "0.63_153.9915m/z"</span></span>
-<span><span class="co">#&gt;  [70] "0.63_156.5933m/z" "0.63_166.1144m/z" "0.63_174.5051m/z"</span></span>
-<span><span class="co">#&gt;  [73] "0.63_192.1185m/z" "0.63_200.6172m/z" "0.63_214.9373m/z"</span></span>
-<span><span class="co">#&gt;  [76] "0.63_221.1212m/z" "0.63_228.6148m/z" "0.63_235.6279m/z"</span></span>
-<span><span class="co">#&gt;  [79] "0.63_245.1423m/z" "0.63_265.4417m/z" "0.63_268.1517m/z"</span></span>
-<span><span class="co">#&gt;  [82] "0.63_269.1494m/z" "0.63_270.1403n"   "0.63_280.1518m/z"</span></span>
-<span><span class="co">#&gt;  [85] "0.63_283.9593m/z" "0.63_311.9542m/z" "0.64_102.0344m/z"</span></span>
-<span><span class="co">#&gt;  [88] "0.64_110.9997n"   "0.64_151.0360m/z" "0.64_161.5051m/z"</span></span>
-<span><span class="co">#&gt;  [91] "0.64_177.7884m/z" "0.64_185.4569m/z" "0.64_190.4682m/z"</span></span>
-<span><span class="co">#&gt;  [94] "0.64_198.4570m/z" "0.64_200.1062m/z" "0.64_201.6398m/z"</span></span>
-<span><span class="co">#&gt;  [97] "0.64_209.6270m/z" "0.64_257.9271m/z" "0.64_259.6555m/z"</span></span>
-<span><span class="co">#&gt; [100] "0.64_270.9272m/z"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [58] "0.62_249.6332m/z" "0.62_259.1503m/z" "0.62_267.1498m/z"</span></span>
+<span><span class="co">#&gt;  [61] "0.62_273.6578m/z" "0.62_281.1568m/z" "0.62_295.1650m/z"</span></span>
+<span><span class="co">#&gt;  [64] "0.62_312.1757m/z" "0.63_102.1551m/z" "0.63_119.4797m/z"</span></span>
+<span><span class="co">#&gt;  [67] "0.63_133.4769m/z" "0.63_153.9915m/z" "0.63_156.5933m/z"</span></span>
+<span><span class="co">#&gt;  [70] "0.63_166.1144m/z" "0.63_174.5051m/z" "0.63_192.1185m/z"</span></span>
+<span><span class="co">#&gt;  [73] "0.63_200.6172m/z" "0.63_214.9373m/z" "0.63_221.1212m/z"</span></span>
+<span><span class="co">#&gt;  [76] "0.63_228.6148m/z" "0.63_235.6279m/z" "0.63_245.1423m/z"</span></span>
+<span><span class="co">#&gt;  [79] "0.63_265.4417m/z" "0.63_268.1517m/z" "0.63_269.1494m/z"</span></span>
+<span><span class="co">#&gt;  [82] "0.63_270.1403n"   "0.63_280.1518m/z" "0.63_283.9593m/z"</span></span>
+<span><span class="co">#&gt;  [85] "0.63_311.9542m/z" "0.64_102.0344m/z" "0.64_110.9997n"  </span></span>
+<span><span class="co">#&gt;  [88] "0.64_151.0360m/z" "0.64_161.5051m/z" "0.64_177.7884m/z"</span></span>
+<span><span class="co">#&gt;  [91] "0.64_185.4569m/z" "0.64_190.4682m/z" "0.64_198.4570m/z"</span></span>
+<span><span class="co">#&gt;  [94] "0.64_200.1062m/z" "0.64_201.6398m/z" "0.64_209.6270m/z"</span></span>
+<span><span class="co">#&gt;  [97] "0.64_257.9271m/z" "0.64_259.6555m/z" "0.64_270.9272m/z"</span></span>
+<span><span class="co">#&gt; [100] "0.64_278.4414m/z"</span></span></code></pre></div>
 <p>If you set <code>filter</code> to a filter name that you did not
 apply to your data, an error message will be returned.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
