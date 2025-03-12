@@ -88,10 +88,41 @@ import_data <- function(peak_table, meta_data, format = "none") {
   )
 
   mpactr_object <- mpactr$new(
-    peak_table = df,
+    peak_table = unique_compounds(df),
     meta_data = data.table(meta_data)
   )
   mpactr_object$setup()
   filter_object <- filter_pactr$new(mpactr_object)
   return(filter_object)
+}
+
+
+unique_compounds <- function(peak_table_list, show_message = TRUE) {
+  peak_table <- peak_table_list$peak_table
+  duplicates <- names(which(table(peak_table$Compound) > 1))
+  if (length(duplicates) > 0 && show_message) {
+    cli::cli_inform("Found duplicate compound values, will add a suffix to
+    unique the value.")
+  }
+  for (name in duplicates) {
+    idx <- which(peak_table$Compound == name)
+    for (i in seq_along(idx)){
+      peak_table$Compound[[idx[[i]]]] <- paste0(peak_table$Compound[[idx[[i]]]],
+                                                "_", i)
+    }
+  }
+
+  # Recursive call to ensure there are no duplicates after fix
+  duplicates <- names(which(table(peak_table$Compound) > 1))
+
+  if (length(duplicates) > 0) {
+    peak_table <- unique_compounds(list(
+      "peak_table" = peak_table,
+      "raw_table" = peak_table
+    ), FALSE)$peak_table
+  }
+  return(list(
+    "peak_table" = peak_table,
+    "raw_table" = peak_table
+  ))
 }

@@ -215,6 +215,8 @@ test_that("apply_group_filter removes the correct ions", {
   expect_false(is.null(filter_class$logger$list_of_summaries[["group-Blanks"]]))
   expect_equal(class(filter_class$logger$list_of_summaries[["group-Blanks"]]),
                c("summary", "R6"))
+  # Check for bad input
+  expect_error(filter_class$apply_group_filter("Empty", remove_ions = TRUE))
 })
 
 ####  filter 3: cv filter    ###
