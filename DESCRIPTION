@@ -40,4 +40,4 @@ BugReports: https://github.com/mums2/mpactr/issues
 VignetteBuilder: knitr
 LinkingTo: 
     Rcpp
-License: GPL (>= 3) + file LICENSE
+License: GPL (>= 3)
