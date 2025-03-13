@@ -23,3 +23,5 @@ src/CMakeLists.txt
 .vscode/launch.json
 .idea/
 CRAN-SUBMISSION
+/doc/
+/Meta/
