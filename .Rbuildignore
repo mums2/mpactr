@@ -19,3 +19,4 @@
 ^data-raw$
 ^doc$
 ^Meta$
+^\.vscode$
