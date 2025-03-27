@@ -140,7 +140,7 @@ This results in `r nrow(get_peak_table(data2_mispicked))` ions in the feature ta
 get_peak_table(data2)[, 1:5]
 ```
 
-We recommend using the default `copy_object = FALSE` as this makes for an extremely fast and memory-efficient way to chain mpactr filters together (see **Chaining filters together** section and [Reference Semantics](articles/reference_semantics.html)); however, if you would like to run the filters individually with traditional R style objects, you can set `copy_object` to `TRUE` as shown in the filter examples. 
+We recommend using the default `copy_object = FALSE` as this makes for an extremely fast and memory-efficient way to chain mpactr filters together (see **Chaining filters together** section and [Reference Semantics](reference_semantics.html)); however, if you would like to run the filters individually with traditional R style objects, you can set `copy_object` to `TRUE` as shown in the filter examples. 
 
 ## Filtering
 
