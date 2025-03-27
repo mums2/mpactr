@@ -22,3 +22,6 @@ src/cmake-build-debug/
 src/CMakeLists.txt
 .vscode/launch.json
 .idea/
+CRAN-SUBMISSION
+/doc/
+/Meta/
