@@ -66,7 +66,7 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ri
 
 
 // [[Rcpp::export]]
-Rcpp::StringVector RemoveDuplicates(Rcpp::StringVector &compoundNames) {
+Rcpp::StringVector UniqueDuplicates(Rcpp::StringVector &compoundNames) {
     const size_t size = compoundNames.size();
     std::unordered_set<Rcpp::String> duplicates;
     for (size_t i = 0; i < size; i++) {
