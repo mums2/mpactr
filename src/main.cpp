@@ -1,10 +1,11 @@
 #include <Rcpp.h>
 #include <iostream>
 #include <vector>
+#include <string>
 
 // [[Rcpp::export]]
-Rcpp::List FilterMispickedIons(const Rcpp::DataFrame& peakTable, const double ringWin, const double isoWin,
-    const double trWin, const double maxIsoShift) {
+Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ringWin, const double isoWin,
+                               const double trWin, const double maxIsoShift) {
     const auto rows = static_cast<size_t>(peakTable.nrows());
     const Rcpp::NumericVector mzVector = peakTable["mz"];
     const Rcpp::NumericVector rtVector = peakTable["rt"];
@@ -13,12 +14,12 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame& peakTable, const double ri
     cutIons.reserve(rows);
     std::vector<bool> cutIonsChecked(rows, false);
     std::unordered_map<std::string, size_t> cutIonDict;
-    std::vector<std::vector<std::string>> mergeGroupList(rows);
+    std::vector<std::vector<std::string> > mergeGroupList(rows);
     std::vector<std::string> nameVector;
     std::vector<size_t> indexSwap(rows);
     nameVector.reserve(rows);
     mergeGroupList.reserve(rows);
-    for(size_t i = 0; i < rows - 1; i++) {
+    for (size_t i = 0; i < rows - 1; i++) {
         const double mz = mzVector[i];
         const double rt = rtVector[i];
         const Rcpp::String compound = compoundVector[i];
@@ -32,10 +33,11 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame& peakTable, const double ri
             const double kmdDifference = massDifference - std::floor(massDifference);
             const bool shiftDifference = std::abs(massDifference) > maxIsoShift - 0.4;
             const double rtDifference = nextRt - rt;
-            const double ringBand = std::fmod(std::floor(std::abs(massDifference) * (1/ringWin)), (1/ringWin));
+            const double ringBand = std::fmod(std::floor(std::abs(massDifference) * (1 / ringWin)), (1 / ringWin));
             const double doubleBand = kmdDifference - 0.5004 - (std::floor(massDifference) * 0.007);
-            const bool betweenIonCalculation = std::abs(rtDifference) <= trWin && (massDifference <= maxIsoShift - 0.4) &&
-                (ringBand ==0 || doubleBand < isoWin);
+            const bool betweenIonCalculation = std::abs(rtDifference) <= trWin && (massDifference <= maxIsoShift - 0.4)
+                                               &&
+                                               (ringBand == 0 || doubleBand < isoWin);
 
             if (!shiftDifference && betweenIonCalculation) {
                 cutIons.emplace_back(nextCompound);
@@ -58,5 +60,32 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame& peakTable, const double ri
 
 
     return Rcpp::List::create(Rcpp::Named("cut_ions") = cutIons,
-        Rcpp::Named("merge_groups") = mergeGroups);
+                              Rcpp::Named("merge_groups") = mergeGroups);
+}
+
+
+
+// [[Rcpp::export]]
+Rcpp::StringVector UniqueDuplicates(Rcpp::StringVector &compoundNames) {
+    const size_t size = compoundNames.size();
+    std::unordered_set<Rcpp::String> duplicates;
+    for (size_t i = 0; i < size; i++) {
+        const Rcpp::String& compound = compoundNames[i];
+        if(duplicates.find(compound) == duplicates.end()) {
+            duplicates.insert(compound);
+            continue;
+        }
+        bool duplicate = true;
+        int count = 1;
+        while(duplicate) {
+            Rcpp::String newCompound = compound;
+            newCompound.push_back("_" + std::to_string(count++));
+            if(duplicates.find(newCompound) == duplicates.end()) {
+                duplicates.insert(newCompound);
+                compoundNames[i] = newCompound;
+                duplicate = false;
+            }
+        }
+    }
+    return compoundNames;
 }

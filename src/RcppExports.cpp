@@ -25,9 +25,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// UniqueDuplicates
+Rcpp::StringVector UniqueDuplicates(Rcpp::StringVector& compoundNames);
+RcppExport SEXP _mpactr_UniqueDuplicates(SEXP compoundNamesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::StringVector& >::type compoundNames(compoundNamesSEXP);
+    rcpp_result_gen = Rcpp::wrap(UniqueDuplicates(compoundNames));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mpactr_FilterMispickedIons", (DL_FUNC) &_mpactr_FilterMispickedIons, 5},
+    {"_mpactr_UniqueDuplicates", (DL_FUNC) &_mpactr_UniqueDuplicates, 1},
     {NULL, NULL, 0}
 };
 

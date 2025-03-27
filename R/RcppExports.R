@@ -5,3 +5,7 @@ FilterMispickedIons <- function(peakTable, ringWin, isoWin, trWin, maxIsoShift) 
     .Call(`_mpactr_FilterMispickedIons`, peakTable, ringWin, isoWin, trWin, maxIsoShift)
 }
 
+UniqueDuplicates <- function(compoundNames) {
+    .Call(`_mpactr_UniqueDuplicates`, compoundNames)
+}
+
