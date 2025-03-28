@@ -70,7 +70,9 @@ Rcpp::StringVector UniqueDuplicates(Rcpp::StringVector &compoundNames) {
     const size_t size = compoundNames.size();
     std::unordered_set<Rcpp::String> duplicates;
     for (size_t i = 0; i < size; i++) {
-        const Rcpp::String& compound = compoundNames[i];
+        const Rcpp::String compound = compoundNames[i];
+        const bool isNa = Rcpp::StringVector::is_na(compoundNames[i]);
+        if(isNa) continue; // We need to find a fix
         if(duplicates.find(compound) == duplicates.end()) {
             duplicates.insert(compound);
             continue;
@@ -84,6 +86,7 @@ Rcpp::StringVector UniqueDuplicates(Rcpp::StringVector &compoundNames) {
                 duplicates.insert(newCompound);
                 compoundNames[i] = newCompound;
                 duplicate = false;
+                break;
             }
         }
     }
