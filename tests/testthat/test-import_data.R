@@ -63,5 +63,4 @@ test_that("unique_compounds annotate duplicates properly", {
   df <- data.frame(Compound = c("1", "1", NA, "1_1_1"))
   ls <- list(peak_table = df, raw_table = df)
   expect_error(unique_compounds(ls))
-
 })
