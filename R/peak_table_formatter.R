@@ -81,7 +81,8 @@ metaboscape_formatter <- function(peak_table, sample_names) {
       "DefinedIons.csv",
       package = "mpactr"
     )),
-    on = .(ion = IONS)
+    on = .(ion = IONS),
+    nomatch = NULL
   ][
     , mz := (PEPMASS / charge) + MASS
   ])

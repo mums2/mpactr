@@ -86,8 +86,6 @@ import_data <- function(peak_table, meta_data, format = "none") {
     type_of_peak_table = format,
     sample_names = meta_data$Injection
   )
-  browser()
-  if(any(is.na(df$peak_table))) return()
 
   mpactr_object <- mpactr$new(
     peak_table = unique_compounds(df),
@@ -105,9 +103,8 @@ unique_compounds <- function(peak_table_list, show_message = TRUE) {
   if (length(duplicates) > 0 && show_message) {
     cli::cli_inform("Found duplicate compound values, will add a suffix to
     unique the value.")
+    peak_table$Compound <- UniqueDuplicates(as.character(peak_table$Compound))
   }
-  c <- class(peak_table$Compound)
-  # peak_table$Compound <- UniqueDuplicates(as.character(peak_table$Compound))
   return(list(
     "peak_table" = peak_table,
     "raw_table" = peak_table
