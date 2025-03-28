@@ -84,6 +84,7 @@ Rcpp::StringVector UniqueDuplicates(Rcpp::StringVector &compoundNames) {
                 duplicates.insert(newCompound);
                 compoundNames[i] = newCompound;
                 duplicate = false;
+                break;
             }
         }
     }
