@@ -70,7 +70,7 @@ Rcpp::StringVector UniqueDuplicates(Rcpp::StringVector &compoundNames) {
     const size_t size = compoundNames.size();
     std::unordered_set<Rcpp::String> duplicates;
     for (size_t i = 0; i < size; i++) {
-        const Rcpp::String compound = compoundNames[i];
+        const Rcpp::String& compound = compoundNames[i];
         if(duplicates.find(compound) == duplicates.end()) {
             duplicates.insert(compound);
             continue;
