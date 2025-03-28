@@ -2,6 +2,7 @@
 # mpactr <a href="https://www.mums2.org/mpactr/"><img src="man/figures/logo.png" align="right" height="138" alt="mpactr website" /></a>
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/mums2/mpactr/actions/workflows/r.yml/badge.svg)](https://github.com/mums2/mpactr/actions/workflows/r.yml)
