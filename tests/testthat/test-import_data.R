@@ -50,10 +50,13 @@ test_that("unique_compounds annotate duplicates properly", {
 
   df <- data.frame(Compound = c("1", "1", "1_1", "1_1_1"))
   ls <- list(peak_table = df, raw_table = df)
-  uniqued_list <- unique_compounds(ls)
+  uniqued_list <- unique_compounds(list(peak_table = df, raw_table = df))
 
-  expect_message(unique_compounds(ls))
   expect_true(uniqued_list$peak_table$Compound[[4]] == "1_1_1_1")
   expect_true(uniqued_list$peak_table$Compound[[3]] == "1_1_1")
-  expect_message(unique_compounds(uniqued_list))
+
+  
+  df <- data.frame(Compound = c("1", "1", "1_1", "1_1_1"))
+  ls <- list(peak_table = df, raw_table = df)
+  expect_message(unique_compounds(ls))
 })
