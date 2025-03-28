@@ -100,6 +100,10 @@ import_data <- function(peak_table, meta_data, format = "none") {
 unique_compounds <- function(peak_table_list, show_message = TRUE) {
   peak_table <- peak_table_list$peak_table
   duplicates <- names(which(table(peak_table$Compound) > 1))
+  if(any(is.na(peak_table$Compound))) {
+    stop("Found NA values inside your compounds names,
+    please remove them.")
+  }
   if (length(duplicates) > 0 && show_message) {
     cli::cli_inform("Found duplicate compound values, will add a suffix to
     unique the value.")
