@@ -242,18 +242,15 @@ filter_pactr$set(
       by = .(Compound, Biological_Group, Sample_Code)
     ][
       , .(
-        cv = cv,
-        has_passed_coefficent = ifelse(cv < cv_threshold, 1, 0)
+        has_passed_coefficent = cv < cv_threshold
       ),
       by = .(Compound, Biological_Group, Sample_Code)
    ][
       , .(
-        cv_result = sum(has_passed_coefficent)
+        cv_result = length(which(has_passed_coefficent == TRUE))
       ),
       by = .(Compound)
     ]
-
-    browser()
     self$logger[["cv_values"]] <- cv
     failed_ions <- cv[cv_result < (length(unique(self$mpactr_data$get_meta_data()$Sample_Code))/2), Compound]
     # } else {
@@ -349,12 +346,12 @@ filter_pactr$set("private", "cluster_max", function(mz) {
 })
 
 
-obj <- import_data(peak_table = "250524_fullmix.csv", 
-                               meta_data = "full_mix_meta_data.csv", 
-                               format = "Metaboscape") |> filter_mispicked_ions() |>
-  filter_cv(cv_thresh = 0.5, cv_param = "median")  |>
-  filter_group(group_to_remove = "Blanks", group_threshold = 0.05) |>
-  filter_insource_ions()
+# obj <- import_data(peak_table = "250524_fullmix.csv", 
+#                                meta_data = "full_mix_meta_data.csv", 
+#                                format = "Metaboscape") |> filter_mispicked_ions() |>
+#   filter_cv(cv_thresh = 0.5, cv_param = "median")  |>
+#   filter_group(group_to_remove = "Blanks", group_threshold = 0.05) |>
+#   filter_insource_ions()
 
 
 
