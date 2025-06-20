@@ -224,20 +224,25 @@ filter_pactr$set(
       , .(cv = rsd(intensity)),
       by = .(Compound, Biological_Group, Sample_Code)
     ]
-    column_idx <- lapply(cv$Sample_Code, function(x) which(x == self$mpactr_data$get_meta_data()$Sample_Code))
+    column_idx <- lapply(cv$Sample_Code, function(x) {
+      which(x == self$mpactr_data$get_meta_data()$Sample_Code)
+    })
 
     peak_table <- self$mpactr_data$get_peak_table()
-    for(i in seq_along(column_idx)){
-      if(is.na(cv$cv[[i]])){
+    for (i in seq_along(column_idx)) {
+      if (is.na(cv$cv[[i]])) {
         next
       }
-      if(cv$cv[[i]] < cv_threshold){
+      if (cv$cv[[i]] < cv_threshold) {
         next
       }
-      peak_table[Compound == cv$Compound[[i]], self$mpactr_data$get_meta_data()$Injection[column_idx[[i]]]:=0]
+      peak_table[Compound == cv$Compound[[i]],
+                 self$mpactr_data$get_meta_data()$Injection[column_idx[[i]]]
+                 := 0]
     }
-    failed_indexes <- which(rowSums(peak_table[, self$mpactr_data$get_meta_data()$Injection,
-       with = FALSE]) == 0)
+    failed_indexes <- which(rowSums(peak_table[, self$mpactr_data$
+                                               get_meta_data()$Injection,
+                                               with = FALSE]) == 0)
     self$logger[["cv_values"]] <- cv
     failed_ions <- cv[failed_indexes, Compound]
 
@@ -324,19 +329,3 @@ filter_pactr$set("private", "cluster_max", function(mz) {
   keep[which.max(mz)] <- TRUE
   return(keep)
 })
-
-
-# obj <- import_data(peak_table = "250524_fullmix.csv", 
-#                                meta_data = "full_mix_meta_data.csv", 
-#                                format = "Metaboscape") |> filter_mispicked_ions() |>
-#   filter_cv(cv_thresh = 0.2, cv_param = "median")  |>
-#   filter_group(group_to_remove = "Blanks", group_threshold = 0.05) |>
-#   filter_insource_ions()
-
-
-
-# cv <- readr::read_csv("cv_filter.csv")
-
-# pt <- get_peak_table(obj)
-# pt$Compound <- as.numeric(pt$Compound)
-# joined_table <- left_join(pt, cv, by = "Compound")
