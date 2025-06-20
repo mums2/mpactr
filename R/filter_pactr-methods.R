@@ -230,7 +230,6 @@ filter_pactr$set(
     #   ),
     #   by = .(Compound)
     # ]
-
      cv <- data.table::melt(self$mpactr_data$get_peak_table(),
       id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
         "sample", value.name = "intensity", variable.factor = FALSE
@@ -251,6 +250,7 @@ filter_pactr$set(
       ),
       by = .(Compound)
     ]
+
     self$logger[["cv_values"]] <- cv
     failed_ions <- cv[cv_result < (length(unique(self$mpactr_data$get_meta_data()$Sample_Code))/2), Compound]
     # } else {
@@ -277,6 +277,80 @@ filter_pactr$set(
   }
 )
 
+####  filter 3: cv filter    ###
+filter_pactr$set(
+  "public", "cv_filter_pat",
+  function(cv_threshold = NULL, cv_params) {
+    if (is.null(cv_threshold)) {
+      cli::cli_abort("{.var cv_threshold} must be supplied.")
+    }
+    ## abort if an incorrect cv_params argument is supplied.
+    if (!(cv_params %in% c("mean", "median"))) {
+      cli::cli_abort("{.var cv_params} must be one of mean or median.")
+    }
+
+    ## abort if there are no technical replicates.
+    if (isFALSE(self$mpactr_data$isMultipleTechReps())) {
+      cli_abort(c("There are no technical replicates in the dataset provided. ",
+                  "In order to run the replicability filter, technical ",
+                  "replicates are required."))
+    }
+
+    input_ions <- self$mpactr_data$get_peak_table()$Compound
+    cli <- cli::cli_alert_info
+    n <- length(input_ions)
+    cli("Parsing {n} peaks for replicability across technical replicates.")
+
+     cv <- data.table::melt(self$mpactr_data$get_peak_table(),
+      id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
+        "sample", value.name = "intensity", variable.factor = FALSE
+    )[
+      self$mpactr_data$get_meta_data(),
+      on = .(sample = Injection)
+    ][
+      , .(cv = rsd(intensity)),
+      by = .(Compound, Biological_Group, Sample_Code)
+    ]
+    column_idx <- lapply(cv$Sample_Code, function(x) which(x == self$mpactr_data$get_meta_data()$Sample_Code))
+    compounds <- cv$Compound[[1]]
+    # column_idx <- lapply(
+    peak_table <- self$mpactr_data$get_peak_table()
+    for(i in seq_along(column_idx)){
+      if(is.na(cv$cv[[i]])){
+        next
+      }
+      if(cv$cv[[i]] < cv_threshold){
+        next
+      }
+      peak_table[Compound == cv$Compound[[i]], self$mpactr_data$get_meta_data()$Injection[column_idx[[i]]]:=0]
+    }
+    failed_indexes <- which(rowSums(peak_table[, self$mpactr_data$get_meta_data()$Injection,
+       with = FALSE]) == 0)
+    self$logger[["cv_values"]] <- cv
+    failed_ions <- cv[failed_indexes, Compound]
+    # } else {
+    # if (cv_params == "mean") {
+    #   failed_ions <- cv[mean_cv > cv_threshold, Compound] 
+    # } else {
+    #   failed_ions <- cv[median_cv > cv_threshold, Compound]
+    # }
+
+    self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
+      Compound %in% setdiff(
+        input_ions,
+        failed_ions
+      ),
+    ])
+
+    self$logger$list_of_summaries$replicability <- summary$new(
+      filter = "cv_filter",
+      failed_ions = failed_ions,
+      passed_ions = self$mpactr_data$get_peak_table()$Compound
+    )
+
+    self$logger$list_of_summaries$replicability$summarize()
+  }
+)
 ####  filter 4: insource ions   ###
 
 filter_pactr$set(
@@ -349,7 +423,7 @@ filter_pactr$set("private", "cluster_max", function(mz) {
 # obj <- import_data(peak_table = "250524_fullmix.csv", 
 #                                meta_data = "full_mix_meta_data.csv", 
 #                                format = "Metaboscape") |> filter_mispicked_ions() |>
-#   filter_cv(cv_thresh = 0.5, cv_param = "median")  |>
+#   filter_cv(cv_thresh = 0.2, cv_param = "median")  |>
 #   filter_group(group_to_remove = "Blanks", group_threshold = 0.05) |>
 #   filter_insource_ions()
 
