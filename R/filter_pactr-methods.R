@@ -214,94 +214,7 @@ filter_pactr$set(
     n <- length(input_ions)
     cli("Parsing {n} peaks for replicability across technical replicates.")
 
-    # cv <- data.table::melt(self$mpactr_data$get_peak_table(),
-    #   id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
-    #     "sample", value.name = "intensity", variable.factor = FALSE
-    # )[
-    #   self$mpactr_data$get_meta_data(),
-    #   on = .(sample = Injection)
-    # ][
-    #   , .(cv = rsd(intensity)),
-    #   by = .(Compound, Biological_Group, Sample_Code)
-    # ][
-    #   , .(
-    #     mean_cv = mean(cv, na.rm = TRUE),
-    #     median_cv = median(cv, na.rm = TRUE)
-    #   ),
-    #   by = .(Compound)
-    # ]
-     cv <- data.table::melt(self$mpactr_data$get_peak_table(),
-      id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
-        "sample", value.name = "intensity", variable.factor = FALSE
-    )[
-      self$mpactr_data$get_meta_data(),
-      on = .(sample = Injection)
-    ][
-      , .(cv = rsd(intensity)),
-      by = .(Compound, Biological_Group, Sample_Code)
-    ][
-      , .(
-        has_passed_coefficent = cv < cv_threshold
-      ),
-      by = .(Compound, Biological_Group, Sample_Code)
-   ][
-      , .(
-        cv_result = length(which(has_passed_coefficent == TRUE))
-      ),
-      by = .(Compound)
-    ]
-
-    self$logger[["cv_values"]] <- cv
-    failed_ions <- cv[cv_result < (length(unique(self$mpactr_data$get_meta_data()$Sample_Code))/2), Compound]
-    # } else {
-    # if (cv_params == "mean") {
-    #   failed_ions <- cv[mean_cv > cv_threshold, Compound] 
-    # } else {
-    #   failed_ions <- cv[median_cv > cv_threshold, Compound]
-    # }
-
-    self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
-      Compound %in% setdiff(
-        input_ions,
-        failed_ions
-      ),
-    ])
-
-    self$logger$list_of_summaries$replicability <- summary$new(
-      filter = "cv_filter",
-      failed_ions = failed_ions,
-      passed_ions = self$mpactr_data$get_peak_table()$Compound
-    )
-
-    self$logger$list_of_summaries$replicability$summarize()
-  }
-)
-
-####  filter 3: cv filter    ###
-filter_pactr$set(
-  "public", "cv_filter_pat",
-  function(cv_threshold = NULL, cv_params) {
-    if (is.null(cv_threshold)) {
-      cli::cli_abort("{.var cv_threshold} must be supplied.")
-    }
-    ## abort if an incorrect cv_params argument is supplied.
-    if (!(cv_params %in% c("mean", "median"))) {
-      cli::cli_abort("{.var cv_params} must be one of mean or median.")
-    }
-
-    ## abort if there are no technical replicates.
-    if (isFALSE(self$mpactr_data$isMultipleTechReps())) {
-      cli_abort(c("There are no technical replicates in the dataset provided. ",
-                  "In order to run the replicability filter, technical ",
-                  "replicates are required."))
-    }
-
-    input_ions <- self$mpactr_data$get_peak_table()$Compound
-    cli <- cli::cli_alert_info
-    n <- length(input_ions)
-    cli("Parsing {n} peaks for replicability across technical replicates.")
-
-     cv <- data.table::melt(self$mpactr_data$get_peak_table(),
+    cv <- data.table::melt(self$mpactr_data$get_peak_table(),
       id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
         "sample", value.name = "intensity", variable.factor = FALSE
     )[
@@ -312,8 +225,7 @@ filter_pactr$set(
       by = .(Compound, Biological_Group, Sample_Code)
     ]
     column_idx <- lapply(cv$Sample_Code, function(x) which(x == self$mpactr_data$get_meta_data()$Sample_Code))
-    compounds <- cv$Compound[[1]]
-    # column_idx <- lapply(
+
     peak_table <- self$mpactr_data$get_peak_table()
     for(i in seq_along(column_idx)){
       if(is.na(cv$cv[[i]])){
@@ -328,12 +240,6 @@ filter_pactr$set(
        with = FALSE]) == 0)
     self$logger[["cv_values"]] <- cv
     failed_ions <- cv[failed_indexes, Compound]
-    # } else {
-    # if (cv_params == "mean") {
-    #   failed_ions <- cv[mean_cv > cv_threshold, Compound] 
-    # } else {
-    #   failed_ions <- cv[median_cv > cv_threshold, Compound]
-    # }
 
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
       Compound %in% setdiff(

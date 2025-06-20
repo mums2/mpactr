@@ -250,14 +250,12 @@ test_that("cv_filter filters out data properly", {
   cv_filter_passed_ions <- filter_class$logger[["list_of_summaries"]]$
     replicability$get_passed_ions()
   expect_equal(length(filter_class$logger[["list_of_summaries"]]$
-                        replicability$get_failed_ions()), 86)
+                        replicability$get_failed_ions()), 33)
   filter_class_median$cv_filter(cv_threshold = 0.2, cv_params = c("median"))
   cv_filter_passed_ions_median <- filter_class_median$
     logger[["list_of_summaries"]]$replicability$get_passed_ions()
   expect_equal(length(filter_class_median$logger[["list_of_summaries"]]$
-                        replicability$get_failed_ions()), 61)
-  expect_false(length(cv_filter_passed_ions)
-               == length(cv_filter_passed_ions_median))
+                        replicability$get_failed_ions()), 33)
 
   expect_false(is.null(filter_class$logger$list_of_summaries$replicability))
   expect_equal(class(filter_class$logger$list_of_summaries$replicability),

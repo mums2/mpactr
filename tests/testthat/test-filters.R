@@ -123,9 +123,9 @@ test_that("filter cv filter wrapper works as expected with cv_params mean", {
 
 
   expect_equal(length(data_mpactr$logger[["list_of_summaries"]]$
-                        replicability$get_failed_ions()), 86)
+                        replicability$get_failed_ions()), 33)
   expect_equal(length(data_mpactr_copy$logger[["list_of_summaries"]]$
-                        replicability$get_failed_ions()), 86)
+                        replicability$get_failed_ions()), 33)
 })
 
 test_that("filter cv filter wrapper works as expected with cv_params median", {
@@ -151,7 +151,7 @@ test_that("filter cv filter wrapper works as expected with cv_params median", {
   data_mpactr <- filter_cv(data_mpactr, 0.2, "median")
 
   expect_equal(length(data_mpactr$logger[["list_of_summaries"]]$
-                        replicability$get_failed_ions()), 61)
+                        replicability$get_failed_ions()), 33)
 
   expect_equal(
     length(data_mpactr$logger[["list_of_summaries"]]$
