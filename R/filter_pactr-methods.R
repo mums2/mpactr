@@ -224,24 +224,19 @@ filter_pactr$set(
       , .(cv = rsd(intensity)),
       by = .(Compound, Biological_Group, Sample_Code)
     ]
-    column_idx <- lapply(cv$Sample_Code, function(x) {
-      which(x == self$mpactr_data$get_meta_data()$Sample_Code)
-    })
 
     peak_table <- self$mpactr_data$get_peak_table()
-    for (i in seq_along(column_idx)) {
-      if (is.na(cv$cv[[i]])) {
-        next
-      }
-      if (cv$cv[[i]] < cv_threshold) {
-        next
-      }
-      peak_table[Compound == cv$Compound[[i]],
-                 self$mpactr_data$get_meta_data()$Injection[column_idx[[i]]]
-                 := 0]
+    meta_data <- self$mpactr_data$get_meta_data()
+
+    samples <- unique(meta_data$Sample_Code)
+    for (i in seq_along(samples)) {
+      peak_table[Compound %in% cv[Sample_Code == samples[[i]] &
+                                    (cv > cv_threshold | is.na(cv))]$Compound,
+                 meta_data$Injection[which(meta_data$Sample_Code
+                                           == samples[[i]])] := 0]
     }
-    failed_indexes <- which(rowSums(peak_table[, self$mpactr_data$
-                                               get_meta_data()$Injection,
+
+    failed_indexes <- which(rowSums(peak_table[, meta_data$Injection,
                                                with = FALSE]) == 0)
     self$logger[["cv_values"]] <- cv
     failed_ions <- cv[failed_indexes, Compound]
