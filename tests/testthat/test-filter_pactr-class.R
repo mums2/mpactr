@@ -280,7 +280,7 @@ test_that("get_cv returns the cv filter has been applied", {
 
   expect_error(filter_class$get_cv(), "The cv filter has not yet")
 
-  filter_class$cv_filter(cv_threshold = 0.2, cv_params = c("mean"))
+  filter_class$cv_filter(cv_threshold = 0.2)
 
   cv <- filter_class$get_cv()
   expect_equal(class(cv), c("data.table", "data.frame"))
@@ -534,7 +534,7 @@ test_that("get_cv returns the cv filter has been applied", {
 
   expect_error(filter_class$get_cv(), "The cv filter has not yet")
 
-  filter_class$cv_filter(cv_threshold = 0.2, cv_params = c("mean"))
+  filter_class$cv_filter(cv_threshold = 0.2)
 
   cv <- filter_class$get_cv()
   expect_equal(class(cv), c("data.table", "data.frame"))

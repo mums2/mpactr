@@ -112,7 +112,6 @@ get_group_averages <- function(mpactr_object) {
 #'
 #' data_filter <- filter_cv(data,
 #'   cv_threshold = 0.01,
-#'   cv_param = "median"
 #' )
 #'
 #' cv <- get_cv_data(data_filter)

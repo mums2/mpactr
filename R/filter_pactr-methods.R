@@ -193,13 +193,9 @@ filter_pactr$set(
 ####  filter 3: cv filter    ###
 filter_pactr$set(
   "public", "cv_filter",
-  function(cv_threshold = NULL, cv_params) {
+  function(cv_threshold = NULL) {
     if (is.null(cv_threshold)) {
       cli::cli_abort("{.var cv_threshold} must be supplied.")
-    }
-    ## abort if an incorrect cv_params argument is supplied.
-    if (!(cv_params %in% c("mean", "median"))) {
-      cli::cli_abort("{.var cv_params} must be one of mean or median.")
     }
 
     ## abort if there are no technical replicates.
@@ -223,21 +219,23 @@ filter_pactr$set(
     ][
       , .(cv = rsd(intensity)),
       by = .(Compound, Biological_Group, Sample_Code)
-    ][
-      , .(
-        mean_cv = mean(cv, na.rm = TRUE),
-        median_cv = median(cv, na.rm = TRUE)
-      ),
-      by = .(Compound)
     ]
 
-    self$logger[["cv_values"]] <- cv
+    peak_table <- self$mpactr_data$get_peak_table()
+    meta_data <- self$mpactr_data$get_meta_data()
 
-    if (cv_params == "mean") {
-      failed_ions <- cv[mean_cv > cv_threshold, Compound]
-    } else {
-      failed_ions <- cv[median_cv > cv_threshold, Compound]
+    samples <- unique(meta_data$Sample_Code)
+    for (i in seq_along(samples)) {
+      peak_table[Compound %in% cv[Sample_Code == samples[[i]] &
+                                    (cv > cv_threshold | is.na(cv))]$Compound,
+                 meta_data$Injection[which(meta_data$Sample_Code
+                                           == samples[[i]])] := 0]
     }
+
+    failed_indexes <- which(rowSums(peak_table[, meta_data$Injection,
+                                               with = FALSE]) == 0)
+    self$logger[["cv_values"]] <- cv
+    failed_ions <- cv[failed_indexes, Compound]
 
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
       Compound %in% setdiff(
@@ -255,7 +253,6 @@ filter_pactr$set(
     self$logger$list_of_summaries$replicability$summarize()
   }
 )
-
 ####  filter 4: insource ions   ###
 
 filter_pactr$set(
