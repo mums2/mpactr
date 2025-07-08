@@ -142,7 +142,7 @@ test_that("get_cv_data returns the cv table if fitler cv has been run", {
   expect_error(get_cv_data(data_mpactr), "The cv filter has not yet")
 
   data_mpactr |>
-    filter_cv(cv_threshold = 0.2, cv_param = "median")
+    filter_cv(cv_threshold = 0.2)
 
   cv <- get_cv_data(data_mpactr)
 

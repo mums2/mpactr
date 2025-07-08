@@ -4,7 +4,7 @@
 \alias{filter_cv}
 \title{Filter Non-reproducible ions}
 \usage{
-filter_cv(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE)
+filter_cv(mpactr_object, cv_threshold = NULL, copy_object = FALSE)
 }
 \arguments{
 \item{mpactr_object}{An \code{mpactr_object}. See \code{\link[=import_data]{import_data()}}.}
@@ -12,10 +12,6 @@ filter_cv(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE)
 \item{cv_threshold}{Coefficient of variation threshold.
 A lower cv_threshold will result in more stringent filtering and higher
 reproducibility. Recommended values between 0.2 - 0.5.}
-
-\item{cv_param}{Coefficient of variation (CV) statistic to use for filtering
-Options are "mean" or "median", corresponding to mean and median CV,
-respectively.}
 
 \item{copy_object}{A \code{boolean} parameter that allows users to return a copied
 object instead of modifying the object.}
@@ -51,13 +47,6 @@ data <- import_data(
 
 data_filter <- filter_cv(data,
   cv_threshold = 0.01,
-  cv_param = "mean",
-  copy_object = TRUE
-)
-
-data_filter <- filter_cv(data,
-  cv_threshold = 0.01,
-  cv_param = "median",
   copy_object = TRUE
 )
 
