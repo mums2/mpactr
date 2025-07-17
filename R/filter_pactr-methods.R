@@ -26,7 +26,6 @@ filter_pactr$set(
       cli::cli_alert_info(c("Argument merge_peaks is: {merge_peaks}. ",
                             "Merging mispicked peaks with method ",
                             "{merge_method}."))
-
       private$merge_ions(ion_filter_list, merge_method)
     } else {
       cli::cli_alert_warning(c("Argument merge_peaks is: {merge_peaks}. ",
@@ -48,6 +47,10 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
                      "{.var method} must be one of: sum"))
   }
 
+  if(length(ion_filter_list["cut_ions"]) <= 0)
+  {
+    return()  
+  }
   if (method == "sum") {
     dat <- melt(self$mpactr_data$get_peak_table(),
       id.vars = c("Compound", "mz", "rt", "kmd"),

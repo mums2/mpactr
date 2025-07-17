@@ -17,6 +17,29 @@ test_that("import_data creates a proper mpactr and filter-pactr object", {
   expect_true(nrow(data$mpactr_data$get_meta_data()) > 1)
 })
 
+test_that("We can use a data.frame as input our peak table in import_data", {
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+  meta_data_path <- test_path(directory,  meta_data_name)
+  data <- import_data(
+    peak_table = test_path(directory, peak_table_name),
+    meta_data = meta_data_path,
+    format = "Progenesis"
+  )
+  peak_table <- get_peak_table(data)
+
+  data_df <- import_data(get_peak_table(data), get_meta_data(data), "none")
+  peak_table_df <- get_peak_table(data_df)
+
+  expect_true(all(peak_table == peak_table_df))
+
+  data_df_meta_data_file <- import_data(get_peak_table(data),
+                                        meta_data_path, "none")
+  peak_table_meta_data_file <- get_peak_table(data_df_meta_data_file)
+  expect_true(all(peak_table == peak_table_meta_data_file))
+})
+
 
 test_that("import_data aborts when expected
  metadata columns are not provided", {
@@ -34,6 +57,47 @@ test_that("import_data aborts when expected
               format = "Progenesis"
             ))
           })
+
+
+
+
+
+test_that("import_data aborts when a data.frame is given as input without a proper metadata file", {
+  #Pre-filtered
+ directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+  meta_data_path <- test_path(directory,  meta_data_name)
+  data <- import_data(
+    peak_table = test_path(directory, peak_table_name),
+    meta_data = meta_data_path,
+    format = "Progenesis"
+  )
+  meta <- get_meta_data(data)[1:15, ]
+  expect_error(import_data(get_peak_table(data), meta, "none"), "These columns are not")
+
+  meta <- get_meta_data(data)
+  meta <- rbind(meta, data.frame(Injection = "UM143", Sample_Code = "143", Biological_Group = "Blanks"))
+  expect_error(import_data(get_peak_table(data), meta, "none"), "You have extra columns")
+
+  # Post-filtered
+  data <- import_data(
+    peak_table = test_path(directory, peak_table_name),
+    meta_data = meta_data_path,
+    format = "Progenesis"
+  )|> 
+    filter_mispicked_ions() |>
+    filter_cv(0.1) |>
+    filter_group(0.1, "Blanks") |>
+    filter_insource_ions()
+
+  meta <- get_meta_data(data)[1:15, ]
+  expect_error(import_data(get_peak_table(data), meta, "none"), "These columns are not")
+
+  meta <- get_meta_data(data)
+  meta <- rbind(meta, data.frame(Injection = "UM143", Sample_Code = "143", Biological_Group = "Blanks"))
+  expect_error(import_data(get_peak_table(data), meta, "none"), "You have extra columns")
+})
 
 
 test_that("unique_compounds annotate duplicates properly", {
