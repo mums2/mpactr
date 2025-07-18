@@ -85,7 +85,15 @@ import_data <- function(peak_table, meta_data, format = "none") {
     peak_table$kmd <- NULL
     peak_cols <- c("Compound", "mz", "rt", meta_data$Injection)
     columns <- colnames(peak_table)
-    
+    if(length(columns) <= 0) {
+      cli::cli_abort("Your data.frame is empty")
+    }
+
+    if(!all(c("Compound", "mz", "rt") %in% columns)) {
+      main_columns <- c("Compound", "mz", "rt")
+      col <- main_columns[which(!(main_columns %in% columns))]
+      cli::cli_abort("You are missing these columns: {.cls {col}}")
+    }
     cols <- peak_cols[which(!(peak_cols %in% columns))]
     cols <- cols[which(!(cols %in% c("kmd", "cor")))]
 

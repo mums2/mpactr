@@ -38,6 +38,26 @@ test_that("We can use a data.frame as input our peak table in import_data", {
                                         meta_data_path, "none")
   peak_table_meta_data_file <- get_peak_table(data_df_meta_data_file)
   expect_true(all(peak_table == peak_table_meta_data_file))
+
+  # Even when filtered
+  
+  data <- import_data(
+    peak_table = test_path(directory, peak_table_name),
+    meta_data = meta_data_path,
+    format = "Progenesis"
+  )|> 
+    filter_mispicked_ions() |>
+    filter_cv(0.1) |>
+    filter_group(0.1, "Blanks") |>
+    filter_insource_ions()
+
+  data_df <- import_data(get_peak_table(data), get_meta_data(data), "none")
+  peak_table_df <- get_peak_table(data_df)
+  df <- get_peak_table(data)
+  temp <- data.frame(Compound = peak_table_df$Compound,
+                     mz = peak_table_df$mz, kmd = peak_table_df$kmd, rt = peak_table_df$rt)
+  dat <- cbind(temp, peak_table_df[,4:22])
+  expect_true(all(dat == as.data.frame(df)))
 })
 
 
@@ -97,6 +117,29 @@ test_that("import_data aborts when a data.frame is given as input without a prop
   meta <- get_meta_data(data)
   meta <- rbind(meta, data.frame(Injection = "UM143", Sample_Code = "143", Biological_Group = "Blanks"))
   expect_error(import_data(get_peak_table(data), meta, "none"), "You have extra columns")
+})
+
+
+test_that("import_data aborts when a data.frame is given without expected columns", {
+  #Pre-filtered
+ directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+  meta_data_path <- test_path(directory,  meta_data_name)
+  data <- import_data(
+    peak_table = test_path(directory, peak_table_name),
+    meta_data = meta_data_path,
+    format = "Progenesis"
+  )
+  meta <- get_meta_data(data)
+  expect_error(import_data(data.frame(a = 1), meta, "none"), "You are missing")
+  expect_error(import_data(data.frame(rt = 1), meta, "none"), "You are missing")
+  expect_error(import_data(data.frame(Compound = 1), meta, "none"), "You are missing")
+  expect_error(import_data(data.frame(mz = 1), meta, "none"), "You are missing")
+  expect_error(import_data(data.frame(rt = 1, Compound = 1), meta, "none"), "You are missing")
+  expect_error(import_data(data.frame(rt = 1, mz = 1), meta, "none"), "You are missing")
+  expect_error(import_data(data.frame(Compound = 1, mz = 1), meta, "none"), "You are missing")
+  expect_error(import_data(data.frame(rt = 1, Compound = 1, mz = 1), meta, "none"), "You have extra")
 })
 
 
