@@ -1,3 +1,9 @@
+# mpactr 0.2.2
+
+* Major changes to `filter_cv()`. Old `filter_cv()` would calculate the coefficient of variance of the biological groups, calculate the average/median, and remove the feature if the average/mean was above the threshold. To account for some groups having high variation by default, the new `filter_cv()` will now zero out groups if they are above the threshold. If every group in the feature has been zeroed out, we will remove the feature.
+
+* You are also now able to import `data.frames` for peak table input in `import_data()`.
+
 # mpactr 0.2.1
 
 # mpactr 0.1.0
