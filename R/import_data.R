@@ -80,47 +80,13 @@ import_data <- function(peak_table, meta_data, format = "none") {
                     are not columns in the provided metadata. Please see
                      function documentation for more details.")
   }
-  df <- data.frame()
-  if (any(class(peak_table) %in% c("data.table", "data.frame"))) {
-    peak_table$kmd <- NULL
-    peak_cols <- c("Compound", "mz", "rt", meta_data$Injection)
-    columns <- colnames(peak_table)
-    if(length(columns) <= 0) {
-      cli::cli_abort("Your data.frame is empty")
-    }
 
-    if(!all(c("Compound", "mz", "rt") %in% columns)) {
-      main_columns <- c("Compound", "mz", "rt")
-      col <- main_columns[which(!(main_columns %in% columns))]
-      cli::cli_abort("You are missing these columns: {.cls {col}}")
-    }
-    cols <- peak_cols[which(!(peak_cols %in% columns))]
-    cols <- cols[which(!(cols %in% c("kmd", "cor")))]
+  df <- format_by_type(
+    peak_table_path = peak_table,
+    type_of_peak_table = format,
+    sample_names = meta_data$Injection
+  )
 
-    if(length(cols) > 0) {
-      cli::cli_abort("You have extra columns in your meta_data that are not present
-      in your peak_table {.cls {cols}}")
-    }
-
-    samples <- columns[which(!(columns %in% peak_cols))]
-    samples <- samples[which(!(samples %in% c("kmd", "cor")))]
-    if(length(samples) > 0) {
-      
-      cli::cli_abort("These columns are not in your metadata but 
-      present in your peak_table {.cls {samples}}")
-    }
-    
-    
-    df <- list(peak_table = peak_table, raw_table = peak_table)
-
-  }
-  else {
-      df <- format_by_type(
-      peak_table_path = peak_table,
-      type_of_peak_table = format,
-      sample_names = meta_data$Injection
-    )
-  }
   mpactr_object <- mpactr$new(
     peak_table = unique_compounds(df),
     meta_data = data.table(meta_data)
@@ -128,8 +94,7 @@ import_data <- function(peak_table, meta_data, format = "none") {
   mpactr_object$setup()
   filter_object <- filter_pactr$new(mpactr_object)
   return(filter_object)
-  }
-
+}
 
 unique_compounds <- function(peak_table_list, show_message = TRUE) {
   peak_table <- peak_table_list$peak_table
@@ -148,30 +113,3 @@ unique_compounds <- function(peak_table_list, show_message = TRUE) {
     "raw_table" = peak_table
   ))
 }
-
- 
-# import_data(get_peak_table(data), example_path("metadata.csv"), "none")
-# data <- import_all_data(peak_table = mums2::mums2_example("full_mix_peak_table.csv"), 
-#                              meta_data = mums2::mums2_example("full_mix_meta_data.csv"), 
-#                               format = "Metaboscape")
-
-#  filtered_data <- data |>
-#     filter_peak_table(filter_mispicked_ions_parameters()) |>
-#     filter_peak_table(filter_cv_parameters(cv_threshold = 0.2)) |>
-#     filter_peak_table(filter_group_parameters(group_threshold = 0.1, "Blanks")) |>
-#     filter_peak_table(filter_insource_ions_parameters())
-
-# #   change_rt_to_seconds_or_minutes(filtered_data, "minutes")
-# #  matched_data <- ms2_ms1_compare(mums2_example("full_mix_ms2.mgf"),
-# #   filtered_data, 2, 6)
-
-# import_data(get_peak_table(data), get_meta_data(data), "none") |>
-#   filter_mispicked_ions() |>
-#   filter_cv(0.2) |>
-#   filter_group(0.1, "Blanks") |>
-#   filter_insource_ions()
-
-
-# # import_data(peak_table = mums2::mums2_example("full_mix_peak_table.csv"), 
-# #                              meta_data = mums2::mums2_example("full_mix_meta_data.csv"), 
-# #                               format = "Metaboscape") |> filter_mispicked_ions()

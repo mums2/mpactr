@@ -122,7 +122,7 @@ test_that("get_group_averages calculates a group table", {
 })
 
 
-test_that("get_cv_data returns the cv table if fitler cv has been run", {
+test_that("get_cv_data returns the cv table if filter cv has been run", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
