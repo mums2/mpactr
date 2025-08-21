@@ -235,8 +235,14 @@ filter_pactr$set(
                                            == samples[[i]])] := 0]
     }
 
-    failed_indexes <- which(rowSums(peak_table[, meta_data$Injection,
-                                               with = FALSE]) == 0)
+
+    percentage <- vector("numeric", nrow(peak_table))
+    for(i in seq_len(nrow(peak_table))) {
+      percentage[[i]] <- 1 - (length(which(dt[i, meta_data$Injection, with = FALSE] == 0))/(length(meta_data$Injection)))
+    }
+    peak_table$percent_passed <- percentage
+    # failed_indexes <- which(rowSums(peak_table[, meta_data$Injection,
+    #                                            with = FALSE]) == 0)
     self$logger[["cv_values"]] <- cv
     failed_ions <- cv[failed_indexes, Compound]
 
