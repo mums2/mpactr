@@ -7,7 +7,7 @@
 #include "Math.h"
 
 PeakTable::PeakTable(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
-                     const size_t replicates, bool fixPeaks) {
+                     const double cvCutOff, const size_t replicates, bool fixPeaks) {
     const std::vector<std::string>& compounds = peakTable["Compound"];
     const std::vector<std::string>& sampleCodes = peakTable["Sample_Code"];
     const std::vector<std::string>& injections = peakTable["sample"];
@@ -32,18 +32,29 @@ PeakTable::PeakTable(const Rcpp::DataFrame& peakTable, const std::vector<std::st
         }
         int idx = 0;
         for (const auto& intensityList : features[featureIndex].metaData.intensityPerSample) {
+            bool hasPassedCv = false;
             compoundNamesToCV.emplace_back(currentCompound);
-            coefficientOfVariance[0].emplace_back(VectorMath::CoefficientOfVarianceCalculation(intensityList));
-            if (!fixPeaks) continue;
-            for (size_t j = 0; j < replicates; j++) {
-                std::vector<double> permutations(replicates - 1);
-                size_t count = 0;
-                for (size_t k = 0; k < replicates; k++) {
-                    if (j == k) continue;
-                    permutations[count++] = intensityList[k];
-                }
-                coefficientOfVariance[j+1].emplace_back(VectorMath::CoefficientOfVarianceCalculation(permutations));
+            sampleCodeList.emplace_back(uniqueSampleList[idx++]);
+            double cvScore = VectorMath::CoefficientOfVarianceCalculation(intensityList);
+            if (cvScore < cvCutOff && cvScore > 0) {
+                hasPassedCv = true;
             }
+            coefficientOfVariance[0].emplace_back(cvScore);
+            if (fixPeaks) {
+                for (size_t j = 0; j < replicates; j++) {
+                    std::vector<double> permutations(replicates - 1);
+                    size_t count = 0;
+                    for (size_t k = 0; k < replicates; k++) {
+                        if (j == k) continue;
+                        permutations[count++] = intensityList[k];
+                    }
+                    cvScore = VectorMath::CoefficientOfVarianceCalculation(permutations);
+                    if (cvScore < cvCutOff && cvScore > 0)
+                        hasPassedCv = true;
+                    coefficientOfVariance[j+1].emplace_back(cvScore);
+                }
+            }
+            passesCV.emplace_back(hasPassedCv);
         }
         featureIndex++;
         i--;
@@ -53,7 +64,9 @@ PeakTable::PeakTable(const Rcpp::DataFrame& peakTable, const std::vector<std::st
 
 Rcpp::DataFrame PeakTable::GetCVTable() const {
     Rcpp::DataFrame df = Rcpp::DataFrame::create(
-        Rcpp::Named("Compound") = compoundNamesToCV);
+        Rcpp::Named("Compound") = compoundNamesToCV,
+        Rcpp::Named("Sample_Code") = sampleCodeList,
+        Rcpp::Named("PassesCvFilter") = passesCV);
     int i = 1;
     for (const auto& cvScores : coefficientOfVariance) {
         if (cvScores.size() <= 0) continue;

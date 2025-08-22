@@ -67,9 +67,9 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ri
 }
 // [[Rcpp::export]]
 Rcpp::DataFrame FilterCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
-    const size_t replicates, const bool fixPeaks) {
+    const double cvCutOff, const size_t replicates, const bool fixPeaks) {
     // Map the peak table data to a class
-    const PeakTable table(peakTable, uniqueSampleList, replicates, fixPeaks);
+    const PeakTable table(peakTable, uniqueSampleList, cvCutOff, replicates, fixPeaks);
     return table.GetCVTable();
 }
 

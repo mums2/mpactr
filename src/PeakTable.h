@@ -12,10 +12,12 @@
 class PeakTable {
 public:
     PeakTable(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
-        size_t replicates, bool fixPeaks);
+        double cvCutOff, size_t replicates, bool fixPeaks);
     Rcpp::DataFrame GetCVTable() const;
 private:
     std::vector<FeatureData> features;
+    std::list<std::string> sampleCodeList;
+    std::list<bool> passesCV;
     std::vector<std::list<double>> coefficientOfVariance;
     std::list<std::string> compoundNamesToCV;
     std::unordered_map<std::string, int> sampleCodesToIndex;

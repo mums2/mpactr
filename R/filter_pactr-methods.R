@@ -235,6 +235,16 @@ filter_pactr$set(
                                            == samples[[i]])] := 0]
     }
 
+    cv <- data.table::melt(self$mpactr_data$get_peak_table(),
+      id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
+        "sample", value.name = "intensity", variable.factor = FALSE
+    )[
+      self$mpactr_data$get_meta_data(),
+      on = .(sample = Injection)
+    ][order(Compound)]
+  unique_samples <- unique(meta_data$Sample_Code)
+    cv_data <- FilterCv(cv, unique(meta_data$Sample_Code),
+             table(meta_data$Sample_Code)[[1]], T)
 
     # percentage <- vector("numeric", nrow(peak_table))
     # for (i in seq_len(nrow(peak_table))) {
