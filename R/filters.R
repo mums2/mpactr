@@ -246,6 +246,7 @@ filter_cv <- function(mpactr_object,
   if (copy_object) {
     mpactr_object <- clone(mpactr_object)
   }
+     browser()
   mpactr_object$cv_filter(
     cv_threshold = cv_threshold
   )

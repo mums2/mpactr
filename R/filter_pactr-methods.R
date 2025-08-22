@@ -236,39 +236,39 @@ filter_pactr$set(
     }
 
 
-    percentage <- vector("numeric", nrow(peak_table))
-    for (i in seq_len(nrow(peak_table))) {
-      percentage[[i]] <- 1 - (length(which(dt[i, meta_data$Injection, with = FALSE] == 0))/(length(meta_data$Injection)))
-    }
-    peak_table$percent_passed <- percentage
-    peak_table$passed <- peak_table$percent_passed > 0.15 # Add parameter soon
-    # failed_indexes <- which(rowSums(peak_table[, meta_data$Injection,
-    #                                            with = FALSE]) == 0)
-    replicates <- table(meta_data$Sample_Code)[[1]]
-    permutations <- permutations(1:replicates)
-    injection_list <- vector("list", length(unique(meta_data$Sample_Code)))
-    sample_code <- unique(meta_data$Sample_Code)
-    for (i in seq_along(sample_code)){
-      injection_list[[i]] <- meta_data$Injection[which(meta_data$Sample_Code == sample_code[[i]])]
-    }
-    for (i in seq_len(nrow(peak_table))) {
-      if(peak_table$passed) {
-        next
-      }
+    # percentage <- vector("numeric", nrow(peak_table))
+    # for (i in seq_len(nrow(peak_table))) {
+    #   percentage[[i]] <- 1 - (length(which(dt[i, meta_data$Injection, with = FALSE] == 0))/(length(meta_data$Injection)))
+    # }
+    # peak_table$percent_passed <- percentage
+    # peak_table$passed <- peak_table$percent_passed > 0.15 # Add parameter soon
+    failed_indexes <- which(rowSums(peak_table[, meta_data$Injection,
+                                               with = FALSE]) == 0)
+    # replicates <- table(meta_data$Sample_Code)[[1]]
+    # permutations <- permutations(1:replicates)
+    # injection_list <- vector("list", length(unique(meta_data$Sample_Code)))
+    # sample_code <- unique(meta_data$Sample_Code)
+    # for (i in seq_along(sample_code)){
+    #   injection_list[[i]] <- meta_data$Injection[which(meta_data$Sample_Code == sample_code[[i]])]
+    # }
+    # for (i in seq_len(nrow(peak_table))) {
+    #   if(peak_table$passed) {
+    #     next
+    #   }
 
-      for (j in seq_along(injection_list)){
+    #   for (j in seq_along(injection_list)){
         
-        for (k in permutations) {
-          res <- rsd(as.matrix(peak_table[i, injection_list[[j]][permutations[[k]]]],
-                                          with = FALSE)[1,])
-          if (res > cv_threshold) {
-            next
-          }
-          # This means that the sample has passed the secondary check, now we have to do some other computations
-          # To rewrite over the 0.
-        }
-      }
-    }
+    #     for (k in permutations) {
+    #       res <- rsd(as.matrix(peak_table[i, injection_list[[j]][permutations[[k]]]],
+    #                                       with = FALSE)[1,])
+    #       if (res > cv_threshold) {
+    #         next
+    #       }
+    #       # This means that the sample has passed the secondary check, now we have to do some other computations
+    #       # To rewrite over the 0.
+    #     }
+    #   }
+    # }
 
 
 

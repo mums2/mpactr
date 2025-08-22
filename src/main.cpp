@@ -3,6 +3,9 @@
 #include <vector>
 #include <string>
 
+#include "Math.h"
+#include "PeakTable.h"
+
 // [[Rcpp::export]]
 Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ringWin, const double isoWin,
                                const double trWin, const double maxIsoShift) {
@@ -62,8 +65,13 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ri
     return Rcpp::List::create(Rcpp::Named("cut_ions") = cutIons,
                               Rcpp::Named("merge_groups") = mergeGroups);
 }
-
-
+// [[Rcpp::export]]
+Rcpp::DataFrame FilterCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
+    const size_t replicates, const bool fixPeaks) {
+    // Map the peak table data to a class
+    const PeakTable table(peakTable, uniqueSampleList, replicates, fixPeaks);
+    return table.GetCVTable();
+}
 
 // [[Rcpp::export]]
 Rcpp::StringVector UniqueDuplicates(Rcpp::StringVector &compoundNames) {

@@ -120,3 +120,4 @@ get_group_averages <- function(mpactr_object) {
 get_cv_data <- function(mpactr_object) {
   return(mpactr_object$get_cv())
 }
+
