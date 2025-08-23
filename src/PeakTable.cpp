@@ -10,7 +10,7 @@ PeakTable::PeakTable(const Rcpp::DataFrame& peakTable, const std::vector<std::st
                      const double cvCutOff, const size_t replicates, bool fixPeaks) {
     const std::vector<std::string>& compounds = peakTable["Compound"];
     const std::vector<std::string>& sampleCodes = peakTable["Sample_Code"];
-    const std::vector<std::string>& injections = peakTable["sample"];
+    const std::vector<std::string>& biologicalGroups = peakTable["Biological_Group"];
     const std::vector<double> intensity = peakTable["intensity"];
     const size_t size = compounds.size();
     features = std::vector<FeatureData>(size);
@@ -19,11 +19,16 @@ PeakTable::PeakTable(const Rcpp::DataFrame& peakTable, const std::vector<std::st
     for (const auto& sample : uniqueSampleList) {
         sampleCodesToIndex[sample] = index++;
     }
-    for (size_t i = 0, featureIndex = 0; i < size; i++) {
+    for (size_t i = 0, featureIndex = 0, metadataIndex = 0; i < size; i++) {
         const std::string& currentCompound = compounds[i];
         features[featureIndex].compoundName = currentCompound;
         features[featureIndex].metaData.intensityPerSample = std::vector<std::vector<double>>(uniqueSampleList.size());
+        std::string previousSampleCode;
         while (compounds[i] == currentCompound) {
+            if (previousSampleCode != sampleCodes[i]) {
+                previousSampleCode = sampleCodes[i];
+                biologicalGroupsList.emplace_back(biologicalGroups[i]);
+            }
             // fill in meta data, all the data should be sorted and we should
             // Get all the data for one compound as we iterate
             const int sampleIndex = sampleCodesToIndex[sampleCodes[i]];
@@ -65,6 +70,7 @@ PeakTable::PeakTable(const Rcpp::DataFrame& peakTable, const std::vector<std::st
 Rcpp::DataFrame PeakTable::GetCVTable() const {
     Rcpp::DataFrame df = Rcpp::DataFrame::create(
         Rcpp::Named("Compound") = compoundNamesToCV,
+        Rcpp::Named("Biological_Group") = biologicalGroupsList,
         Rcpp::Named("Sample_Code") = sampleCodeList,
         Rcpp::Named("PassesCvFilter") = passesCV);
     int i = 1;

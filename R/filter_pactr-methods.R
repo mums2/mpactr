@@ -196,7 +196,7 @@ filter_pactr$set(
 ####  filter 3: cv filter    ###
 filter_pactr$set(
   "public", "cv_filter",
-  function(cv_threshold = NULL) {
+  function(cv_threshold = NULL, fix_peaks = FALSE) {
     if (is.null(cv_threshold)) {
       cli::cli_abort("{.var cv_threshold} must be supplied.")
     }
@@ -219,72 +219,31 @@ filter_pactr$set(
     )[
       self$mpactr_data$get_meta_data(),
       on = .(sample = Injection)
-    ][
-      , .(cv = rsd(intensity)),
-      by = .(Compound, Biological_Group, Sample_Code)
-    ]
+    ][order(Compound)]
 
     peak_table <- self$mpactr_data$get_peak_table()
     meta_data <- self$mpactr_data$get_meta_data()
 
+    cv <- as.data.table(FilterCV(cv, unique(meta_data$Sample_Code), cv_threshold, 
+             table(meta_data$Sample_Code)[[1]], fix_peaks))
+
+    
+
+
     samples <- unique(meta_data$Sample_Code)
     for (i in seq_along(samples)) {
       peak_table[Compound %in% cv[Sample_Code == samples[[i]] &
-                                    (cv > cv_threshold | is.na(cv))]$Compound,
+                                    !PassesCvFilter]$Compound,
                  meta_data$Injection[which(meta_data$Sample_Code
                                            == samples[[i]])] := 0]
     }
 
-    cv <- data.table::melt(self$mpactr_data$get_peak_table(),
-      id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
-        "sample", value.name = "intensity", variable.factor = FALSE
-    )[
-      self$mpactr_data$get_meta_data(),
-      on = .(sample = Injection)
-    ][order(Compound)]
-  unique_samples <- unique(meta_data$Sample_Code)
-    cv_data <- FilterCv(cv, unique(meta_data$Sample_Code),
-             table(meta_data$Sample_Code)[[1]], T)
-
-    # percentage <- vector("numeric", nrow(peak_table))
-    # for (i in seq_len(nrow(peak_table))) {
-    #   percentage[[i]] <- 1 - (length(which(dt[i, meta_data$Injection, with = FALSE] == 0))/(length(meta_data$Injection)))
-    # }
-    # peak_table$percent_passed <- percentage
-    # peak_table$passed <- peak_table$percent_passed > 0.15 # Add parameter soon
     failed_indexes <- which(rowSums(peak_table[, meta_data$Injection,
                                                with = FALSE]) == 0)
-    # replicates <- table(meta_data$Sample_Code)[[1]]
-    # permutations <- permutations(1:replicates)
-    # injection_list <- vector("list", length(unique(meta_data$Sample_Code)))
-    # sample_code <- unique(meta_data$Sample_Code)
-    # for (i in seq_along(sample_code)){
-    #   injection_list[[i]] <- meta_data$Injection[which(meta_data$Sample_Code == sample_code[[i]])]
-    # }
-    # for (i in seq_len(nrow(peak_table))) {
-    #   if(peak_table$passed) {
-    #     next
-    #   }
 
-    #   for (j in seq_along(injection_list)){
-        
-    #     for (k in permutations) {
-    #       res <- rsd(as.matrix(peak_table[i, injection_list[[j]][permutations[[k]]]],
-    #                                       with = FALSE)[1,])
-    #       if (res > cv_threshold) {
-    #         next
-    #       }
-    #       # This means that the sample has passed the secondary check, now we have to do some other computations
-    #       # To rewrite over the 0.
-    #     }
-    #   }
-    # }
-
-
-
+    cv$PassesCvFilter <- NULL
     self$logger[["cv_values"]] <- cv
-    failed_ions <- cv[failed_indexes, Compound]
-
+    failed_ions <- peak_table$Compound[failed_indexes]
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
       Compound %in% setdiff(
         input_ions,

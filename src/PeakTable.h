@@ -17,6 +17,7 @@ public:
 private:
     std::vector<FeatureData> features;
     std::list<std::string> sampleCodeList;
+    std::list<std::string> biologicalGroupsList;
     std::list<bool> passesCV;
     std::vector<std::list<double>> coefficientOfVariance;
     std::list<std::string> compoundNamesToCV;
