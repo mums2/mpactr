@@ -76,7 +76,7 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
 
 ####  filter 2: group filter    ###
 # Calculates statisics for each feature (rsd, n)
-# accross biological groups and technical replicates
+# across biological groups and technical replicates
 filter_pactr$set("public", "filter_blank", function() {
   b <- data.table::melt(self$mpactr_data$get_peak_table(),
     id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
