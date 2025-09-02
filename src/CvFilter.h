@@ -9,11 +9,12 @@
 #include "FeatureData.h"
 
 
-class PeakTable {
+class CvFilter {
 public:
-    PeakTable(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
+    CvFilter() = default;
+    void CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
         double cvCutOff, size_t replicates, bool fixPeaks);
-    Rcpp::DataFrame GetCVTable() const;
+    Rcpp::DataFrame GetCvTable() const;
 private:
     std::vector<FeatureData> features;
     std::list<std::string> sampleCodeList;

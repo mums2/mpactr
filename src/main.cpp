@@ -4,7 +4,7 @@
 #include <string>
 
 #include "Math.h"
-#include "PeakTable.h"
+#include "CvFilter.h"
 
 // [[Rcpp::export]]
 Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ringWin, const double isoWin,
@@ -69,8 +69,9 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ri
 Rcpp::DataFrame FilterCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
     const double cvCutOff, const size_t replicates, const bool fixPeaks) {
     // Map the peak table data to a class
-    const PeakTable table(peakTable, uniqueSampleList, cvCutOff, replicates, fixPeaks);
-    return table.GetCVTable();
+    CvFilter table;
+    table.CalculateCV(peakTable, uniqueSampleList, cvCutOff, replicates, fixPeaks);
+    return table.GetCvTable();
 }
 
 // [[Rcpp::export]]

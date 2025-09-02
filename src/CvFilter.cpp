@@ -2,11 +2,11 @@
 // Created by Gregory Johnson on 8/22/25.
 //
 
-#include "PeakTable.h"
+#include "CvFilter.h"
 
 #include "Math.h"
 
-PeakTable::PeakTable(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
+void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
                      const double cvCutOff, const size_t replicates, bool fixPeaks) {
     const std::vector<std::string>& compounds = peakTable["Compound"];
     const std::vector<std::string>& sampleCodes = peakTable["Sample_Code"];
@@ -67,7 +67,7 @@ PeakTable::PeakTable(const Rcpp::DataFrame& peakTable, const std::vector<std::st
 
 }
 
-Rcpp::DataFrame PeakTable::GetCVTable() const {
+Rcpp::DataFrame CvFilter::GetCvTable() const {
     Rcpp::DataFrame df = Rcpp::DataFrame::create(
         Rcpp::Named("Compound") = compoundNamesToCV,
         Rcpp::Named("Biological_Group") = biologicalGroupsList,

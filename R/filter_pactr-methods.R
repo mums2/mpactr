@@ -108,7 +108,6 @@ filter_pactr$set("public", "filter_blank", function() {
     , .(techRSD = mean(sd), techn = mean(n)),
     by = .(Compound, Biological_Group)
   ]
-
   group_stats <- b[t, on = .(Compound, Biological_Group)]
   setorder(group_stats, Compound, Biological_Group)
   self$logger[["group_filter-group_stats"]] <- group_stats
@@ -172,7 +171,6 @@ filter_pactr$set(
                                "Peaks from {group} will not be removed."))
       return()
     }
-
     cli::cli_alert_info(c("Argument remove_ions is: {remove_ions}.",
                           "Removing peaks from {group}."))
 
@@ -221,6 +219,7 @@ filter_pactr$set(
       on = .(sample = Injection)
     ][order(Compound)]
 
+
     peak_table <- self$mpactr_data$get_peak_table()
     meta_data <- self$mpactr_data$get_meta_data()
 
@@ -241,7 +240,7 @@ filter_pactr$set(
     failed_indexes <- which(rowSums(peak_table[, meta_data$Injection,
                                                with = FALSE]) == 0)
 
-    cv$PassesCvFilter <- NULL
+
     self$logger[["cv_values"]] <- cv
     failed_ions <- peak_table$Compound[failed_indexes]
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
