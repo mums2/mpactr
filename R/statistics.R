@@ -8,7 +8,7 @@ rsd <- function(values) {
 
 permutations <- function(x) {
   permutations <- vector("list", length(x))
-  for(i in seq_len(length(x))) {
+  for (i in seq_len(length(x))) {
     permutations[[i]] <- x[-i]
   }
   permutations

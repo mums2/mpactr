@@ -47,9 +47,8 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
                      "{.var method} must be one of: sum"))
   }
 
-  if (length(ion_filter_list["cut_ions"]) <= 0)
-  {
-    return()  
+  if (length(ion_filter_list["cut_ions"]) <= 0) {
+    return()
   }
   if (method == "sum") {
     dat <- melt(self$mpactr_data$get_peak_table(),
@@ -223,11 +222,9 @@ filter_pactr$set(
     peak_table <- self$mpactr_data$get_peak_table()
     meta_data <- self$mpactr_data$get_meta_data()
 
-    cv <- as.data.table(FilterCV(cv, unique(meta_data$Sample_Code), cv_threshold, 
-             table(meta_data$Sample_Code)[[1]]))
-
-    
-
+    cv <-
+      as.data.table(FilterCV(cv, unique(meta_data$Sample_Code), cv_threshold,
+                             table(meta_data$Sample_Code)[[1]]))
 
     samples <- unique(meta_data$Sample_Code)
     for (i in seq_along(samples)) {

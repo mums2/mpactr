@@ -113,10 +113,3 @@ unique_compounds <- function(peak_table_list, show_message = TRUE) {
     "raw_table" = peak_table
   ))
 }
-
-
-
-#  data <- import_data(peak_table = "/Users/grejoh/Downloads/pos_threshold1500_mpactR.csv", 
-#                              meta_data = "/Users/grejoh/Downloads/metadata.csv", 
-#                               format = "Progenesis")
-# data |> filter_cv(0.1, copy_object = T)
