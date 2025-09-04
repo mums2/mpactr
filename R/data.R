@@ -1,6 +1,6 @@
 #' LC-MS/MS sample data
 #'
-#' A `mpactr` R6 class object of contining a feature table and associated sample
+#' A `mpactr` R6 class object containing a feature table and associated sample
 #' metadata.
 #'
 #' @return An `mpactr` R6 class object.

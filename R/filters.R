@@ -1,5 +1,5 @@
 #######################
-### Mistatched peaks ##
+### Mismatched peaks ##
 #######################
 
 #' Mispicked ions filter
