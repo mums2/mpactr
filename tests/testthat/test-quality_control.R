@@ -41,5 +41,5 @@ test_that("qc plot returns a generates a plot", {
   data_mpactr <- filter_group(data, 0.01, "Blanks", TRUE)
   data_mpactr <- filter_insource_ions(data, cluster_threshold = 0.95)
   plot <- plot_qc_tree(data)
-  expect_equal(class(plot), c("gg", "ggplot"))
+  expect_true(inherits(plot, c("ggplot", "ggplot2::ggplot")))
 })
