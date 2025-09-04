@@ -20,7 +20,7 @@ format_by_type <- function(peak_table_path,
     return(metaboscape_formatter(peak_table_path, sample_names))
   } else if (type_of_peak_table == "None") {
     peak_table <- data.frame()
-    if(!(any(c("data.table", "data.frame") %in% class(peak_table_path)))) {
+    if (!(any(c("data.table", "data.frame") %in% class(peak_table_path)))) {
       peak_table <- data.table(readr::read_csv(peak_table_path))
     } else {
       peak_table <- peak_table_path
@@ -29,13 +29,13 @@ format_by_type <- function(peak_table_path,
       "peak_table" = peak_table,
       "raw_table" = peak_table
     ))
-    } else {
+  } else {
 
   } # default condition = NULL
 }
 
 progenesis_formatter <- function(peak_table) {
-  if(!(any(c("data.table", "data.frame") %in% class(peak_table)))) {
+  if (!(any(c("data.table", "data.frame") %in% class(peak_table)))) {
     peak_table <- data.table(readr::read_csv(peak_table,
       skip = 2,
       show_col_types = FALSE
@@ -52,11 +52,11 @@ progenesis_formatter <- function(peak_table) {
     "peak_table" = peak_table,
     "raw_table" = raw_peak_table
   ))
-  }
+}
 
 
 mz_mine_formatter <- function(peak_table) {
-   if(!(any(c("data.table", "data.frame") %in% class(peak_table)))) {
+  if (!(any(c("data.table", "data.frame") %in% class(peak_table)))) {
     peak_table <- data.table(readr::read_csv(peak_table,
       skip = 2,
       show_col_types = FALSE
@@ -71,8 +71,9 @@ mz_mine_formatter <- function(peak_table) {
 }
 
 metaboscape_formatter <- function(peak_table, sample_names) {
-  if(!(any(c("data.table", "data.frame") %in% class(peak_table)))) {
-    peak_table <- data.table(readr::read_csv(peak_table, show_col_types = FALSE))
+  if (!(any(c("data.table", "data.frame") %in% class(peak_table)))) {
+    peak_table <- data.table(readr::read_csv(peak_table,
+                                             show_col_types = FALSE))
   }
   peak_table_convert <- data.table::copy(peak_table)
   peak_table_convert <- with(peak_table_convert, peak_table_convert[
@@ -116,4 +117,4 @@ metaboscape_formatter <- function(peak_table, sample_names) {
     "peak_table" = peak_table_mpactr,
     "raw_table" = peak_table_convert
   ))
-   }
+}
