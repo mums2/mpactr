@@ -3,7 +3,7 @@
 //
 
 #include "CvFilter.h"
-
+#include <unordered_set>
 #include "Math.h"
 
 void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
@@ -22,10 +22,10 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
         const std::string& currentCompound = compounds[i];
         features[featureIndex].compoundName = currentCompound;
         features[featureIndex].metaData.intensityPerSample = std::vector<std::vector<double>>(uniqueSampleList.size());
-        std::string previousSampleCode;
+        std::unordered_set<std::string> previousSampleCodes;
         while (compounds[i] == currentCompound) {
-            if (previousSampleCode != sampleCodes[i]) {
-                previousSampleCode = sampleCodes[i];
+            if (previousSampleCodes.find(sampleCodes[i]) == previousSampleCodes.end()) {
+                previousSampleCodes.insert(sampleCodes[i]);
                 biologicalGroupsList.emplace_back(biologicalGroups[i]);
             }
             // fill in meta data, all the data should be sorted and we should
