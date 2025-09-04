@@ -33,7 +33,17 @@ test_that("filter mismatch ions wrapper works
                          expected_cut_ions)
 
             expect_equal(nrow(data_mpactr$mpactr_data$get_peak_table()), 1233)
-          })
+            
+            dat <- import_data(peak_table = get_peak_table(data_mpactr_copy),
+                        meta_data = get_meta_data(data_mpactr_copy),
+                        format = "None")
+            filtered_data <- dat |> 
+              filter_mispicked_ions(merge_peaks = TRUE,
+                                    merge_method = "sum",
+                                    copy_object = TRUE)
+            expect_equal(nrow(get_peak_table(dat)),
+                         nrow(get_peak_table(filtered_data)))
+ })
 
 test_that("filter mismatch ions wrapper works 
 as expected when merge_peaks is FALSE", {
@@ -126,6 +136,17 @@ test_that("filter cv filter wrapper works as expected", {
                         replicability$get_failed_ions()), 33)
   expect_equal(length(data_mpactr_copy$logger[["list_of_summaries"]]$
                         replicability$get_failed_ions()), 33)
+  
+
+  meta <- get_meta_data(data)[c(1,4), ]
+  df <- get_raw_data(data)
+  df <- cbind(df[, 1:3], df[, meta$Injection, with = FALSE])
+
+  data_no_replicates <- import_data(peak_table = df,
+                                    meta_data = meta,
+                                    format = "None")
+  expect_error(filter_cv(data_no_replicates, cv_threshold = 0.1),
+               "There are no technical replicates")
 })
 
 test_that("filter insource ions wrapper works as expected", {

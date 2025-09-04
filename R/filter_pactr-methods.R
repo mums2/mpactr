@@ -47,7 +47,7 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
                      "{.var method} must be one of: sum"))
   }
 
-  if (length(ion_filter_list["cut_ions"]) <= 0) {
+  if (length(ion_filter_list[["cut_ions"]]) <= 0) {
     return()
   }
   if (method == "sum") {

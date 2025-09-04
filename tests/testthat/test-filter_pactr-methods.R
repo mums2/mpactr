@@ -251,7 +251,7 @@ test_that("cv_filter filters out data properly", {
     replicability$get_passed_ions()
   expect_equal(length(filter_class$logger[["list_of_summaries"]]$
                         replicability$get_failed_ions()), 33)
-
+  expect_error(filter_class$cv_filter())
   expect_false(is.null(filter_class$logger$list_of_summaries$replicability))
   expect_equal(class(filter_class$logger$list_of_summaries$replicability),
                c("summary", "R6"))
