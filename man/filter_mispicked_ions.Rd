@@ -51,7 +51,7 @@ some instruments, such as Waters Synapse G2-Si-Q-ToF, to account for high
 concentration samples.
 
 Parameter \code{isowin} is the isotopic mass window, which accounts for isotopic
-peaks of the same precussor mass that were incorrectly assigned during
+peaks of the same precursor mass that were incorrectly assigned during
 preprocessing.
 
 \code{copy_object}: mpactr is built on an R6 class-system, meaning it operates on

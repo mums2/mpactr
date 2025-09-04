@@ -15,7 +15,7 @@
 #' concentration samples.
 #'
 #' Parameter `isowin` is the isotopic mass window, which accounts for isotopic
-#' peaks of the same precussor mass that were incorrectly assigned during
+#' peaks of the same precursor mass that were incorrectly assigned during
 #' preprocessing.
 #'
 #'
@@ -103,7 +103,7 @@ filter_mispicked_ions <- function(mpactr_object,
 #' `filter_group()` removes feature ions that are present in a user-defined
 #' group based on a relative abundance threshold. This could be particularly
 #' useful to filter out features found present in solvent blank samples.
-#' Further, this filter can be ultilized to remove features in media blank
+#' Further, this filter can be utilized to remove features in media blank
 #' sample for experiments on microbial cultures.
 
 #' The presence or absence of features in a group of samples is determined by

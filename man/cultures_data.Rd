@@ -21,7 +21,7 @@ cultures_data
 An \code{mpactr} R6 class object.
 }
 \description{
-A \code{mpactr} R6 class object of contining a feature table and associated sample
+A \code{mpactr} R6 class object containing a feature table and associated sample
 metadata.
 }
 \keyword{datasets}

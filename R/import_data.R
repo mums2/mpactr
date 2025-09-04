@@ -13,7 +13,7 @@
 #' `format` argument. Currently supported value for `format` are "Progenesis",
 #' "Metaboscape", or "None".
 #'
-#' `format` = "Progensis" allows users to provide a feature table exported by
+#' `format` = "Progenesis." allows users to provide a feature table exported by
 #' Progenesis. To export a compatible peak table in Progenesis, navigate to the
 #' *Review Compounds* tab then File -> Export Compound Measurements. Select
 #' the following properties: Compound, m/z, Retention time (min), and Raw

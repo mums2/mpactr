@@ -32,7 +32,7 @@ supports import of feature table files from multiple tools through the
 "Metaboscape", or "None".
 }
 
-\code{format} = "Progensis" allows users to provide a feature table exported by
+\code{format} = "Progenesis." allows users to provide a feature table exported by
 Progenesis. To export a compatible peak table in Progenesis, navigate to the
 \emph{Review Compounds} tab then File -> Export Compound Measurements. Select
 the following properties: Compound, m/z, Retention time (min), and Raw
