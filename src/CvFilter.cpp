@@ -58,5 +58,5 @@ Rcpp::DataFrame CvFilter::GetCvTable() const {
         Rcpp::Named("Biological_Group") = biologicalGroupsList,
         Rcpp::Named("Sample_Code") = sampleCodeList,
         Rcpp::Named("PassesCvFilter") = passesCV,
-        Rcpp::Named("CV") = coefficientOfVariance);
+        Rcpp::Named("cv") = coefficientOfVariance);
 }
