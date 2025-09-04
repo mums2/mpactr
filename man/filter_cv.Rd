@@ -4,12 +4,7 @@
 \alias{filter_cv}
 \title{Filter Non-reproducible ions}
 \usage{
-filter_cv(
-  mpactr_object,
-  cv_threshold = NULL,
-  fix_peaks = FALSE,
-  copy_object = FALSE
-)
+filter_cv(mpactr_object, cv_threshold = NULL, copy_object = FALSE)
 }
 \arguments{
 \item{mpactr_object}{An \code{mpactr_object}. See \code{\link[=import_data]{import_data()}}.}

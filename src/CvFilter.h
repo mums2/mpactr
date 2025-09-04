@@ -13,14 +13,14 @@ class CvFilter {
 public:
     CvFilter() = default;
     void CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
-        double cvCutOff, size_t replicates, bool fixPeaks);
+        double cvCutOff, size_t replicates);
     Rcpp::DataFrame GetCvTable() const;
 private:
     std::vector<FeatureData> features;
     std::list<std::string> sampleCodeList;
     std::list<std::string> biologicalGroupsList;
     std::list<bool> passesCV;
-    std::vector<std::list<double>> coefficientOfVariance;
+    std::list<double> coefficientOfVariance;
     std::list<std::string> compoundNamesToCV;
     std::unordered_map<std::string, int> sampleCodesToIndex;
 };

@@ -7,19 +7,18 @@
 #include "Math.h"
 
 void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
-                     const double cvCutOff, const size_t replicates, bool fixPeaks) {
+                     const double cvCutOff, const size_t replicates) {
     const std::vector<std::string>& compounds = peakTable["Compound"];
     const std::vector<std::string>& sampleCodes = peakTable["Sample_Code"];
     const std::vector<std::string>& biologicalGroups = peakTable["Biological_Group"];
     const std::vector<double> intensity = peakTable["intensity"];
     const size_t size = compounds.size();
     features = std::vector<FeatureData>(size);
-    coefficientOfVariance = std::vector<std::list<double>>(replicates + 1);
     int index = 0;
     for (const auto& sample : uniqueSampleList) {
         sampleCodesToIndex[sample] = index++;
     }
-    for (size_t i = 0, featureIndex = 0, metadataIndex = 0; i < size; i++) {
+    for (size_t i = 0, featureIndex = 0; i < size; i++) {
         const std::string& currentCompound = compounds[i];
         features[featureIndex].compoundName = currentCompound;
         features[featureIndex].metaData.intensityPerSample = std::vector<std::vector<double>>(uniqueSampleList.size());
@@ -44,21 +43,7 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
             if (cvScore < cvCutOff && cvScore > 0) {
                 hasPassedCv = true;
             }
-            coefficientOfVariance[0].emplace_back(cvScore);
-            if (fixPeaks) {
-                for (size_t j = 0; j < replicates; j++) {
-                    std::vector<double> permutations(replicates - 1);
-                    size_t count = 0;
-                    for (size_t k = 0; k < replicates; k++) {
-                        if (j == k) continue;
-                        permutations[count++] = intensityList[k];
-                    }
-                    cvScore = VectorMath::CoefficientOfVarianceCalculation(permutations);
-                    if (cvScore < cvCutOff && cvScore > 0)
-                        hasPassedCv = true;
-                    coefficientOfVariance[j+1].emplace_back(cvScore);
-                }
-            }
+            coefficientOfVariance.emplace_back(cvScore);
             passesCV.emplace_back(hasPassedCv);
         }
         featureIndex++;
@@ -68,15 +53,10 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
 }
 
 Rcpp::DataFrame CvFilter::GetCvTable() const {
-    Rcpp::DataFrame df = Rcpp::DataFrame::create(
+    return Rcpp::DataFrame::create(
         Rcpp::Named("Compound") = compoundNamesToCV,
         Rcpp::Named("Biological_Group") = biologicalGroupsList,
         Rcpp::Named("Sample_Code") = sampleCodeList,
-        Rcpp::Named("PassesCvFilter") = passesCV);
-    int i = 1;
-    for (const auto& cvScores : coefficientOfVariance) {
-        if (cvScores.size() <= 0) continue;
-        df.push_back(cvScores, "CVPermutation_" + std::to_string(i++));
-    }
-    return df;
+        Rcpp::Named("PassesCvFilter") = passesCV,
+        Rcpp::Named("CV") = coefficientOfVariance);
 }

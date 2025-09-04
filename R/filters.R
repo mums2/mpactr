@@ -232,7 +232,6 @@ filter_group <- function(mpactr_object,
 #'
 filter_cv <- function(mpactr_object,
                       cv_threshold = NULL,
-                      fix_peaks = FALSE,
                       copy_object = FALSE) {
 
   if (isTRUE(mpactr_object$is_filter_run(filter = "replicability"))) {
@@ -249,8 +248,7 @@ filter_cv <- function(mpactr_object,
   }
 
   mpactr_object$cv_filter(
-    cv_threshold = cv_threshold,
-    fix_peaks = fix_peaks
+    cv_threshold = cv_threshold
   )
   return(mpactr_object)
 }
