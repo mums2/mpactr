@@ -25,3 +25,4 @@ src/CMakeLists.txt
 CRAN-SUBMISSION
 /doc/
 /Meta/
+.vscode/

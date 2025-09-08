@@ -62,7 +62,7 @@ data_filtered <- data |>
   filter_mispicked_ions(merge_peaks = TRUE, merge_method = "sum") |>
   filter_group(group_to_remove = "Solvent_Blank") |>
   filter_group(group_to_remove = "Media") |>
-  filter_cv(cv_threshold = 0.2, cv_param = "median")
+  filter_cv(cv_threshold = 0.2)
 ```
 
 Overall, `r nrow(get_peak_table(data_filtered))` ions remain in the feature table. A summary of the filtering, as a tree map is below:
@@ -219,7 +219,7 @@ counts %>%
   head()
 ```
 
-Next, we will join with sample meta data so we can calcuate averages by `Sample_Code`.
+Next, we will join with sample meta data so we can calculate averages by `Sample_Code`.
 
 ```{r}
 counts %>%
@@ -398,7 +398,7 @@ get_group_averages(data_filtered) %>%
   head()
 ```
 
-Inherently, tandem MS/MS datasets can be filled with many zeros. In some instances a compound is found in the experimental group but not in the control group, or vice versa. In these cases, the fold change calculation yields an infinite number as there is a zero either in the numerator or denominator ($fold chage = experimental / control$). There is also the chance that the compound is not found in either group, yielding a fold change on NaN (0/0). 
+Inherently, tandem MS/MS datasets can be filled with many zeros. In some instances a compound is found in the experimental group but not in the control group, or vice versa. In these cases, the fold change calculation yields an infinite number as there is a zero either in the numerator or denominator ($fold change = experimental / control$). There is also the chance that the compound is not found in either group, yielding a fold change on NaN (0/0). 
 
 Compounds that are not in either group are of no interest in this comparison and can therefore be removed from the analysis. 
 
@@ -452,7 +452,7 @@ get_group_averages(data_filtered) %>%
 ```
 
 
-Now we can remove compounds with an intensity of 0 in both groups. This equates to a pseuo-count of 0.001:
+Now we can remove compounds with an intensity of 0 in both groups. This equates to a pseudo-count of 0.001:
 
 ```{r}
 get_group_averages(data_filtered) %>%

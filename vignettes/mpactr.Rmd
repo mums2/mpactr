@@ -27,9 +27,9 @@ library(tidyverse)
 
 ## Load data into R
 
-mpactr requires 2 files as imput: a feature table and metadata file. Both are expected to be comma separated files (*.csv*).
+mpactr requires 2 files as input: a feature table and metadata file. Both are expected to be comma separated files (*.csv*).
 
-1. peak_table: a peak table in Progenesis format is expected. To export a compatable peak table in Progenesis, navigate to the *Review Compounds* tab then File -> Export Compound Measurements. Select the following properties: Compound, m/z, Retention time (min), and Raw abundance and click ok. 
+1. peak_table: a peak table in Progenesis format is expected. To export a compatible peak table in Progenesis, navigate to the *Review Compounds* tab then File -> Export Compound Measurements. Select the following properties: Compound, m/z, Retention time (min), and Raw abundance and click ok. 
 2. metadata: a table with sample information. At minimum the following columns are expected: Injection, Sample_Code, Biological_Group. Injection is the sample name and is expected to match sample column names in the peak_table. Sample_Code is the id for technical replicate groups. Biological_Group is the id for biological replicate groups. Other sample metadata can be added, and is encouraged for downstream analysis following filtering with mpactr.
 
 To import these data into R, use the mpactr function `import_data()`, which has the arguments: `peak_table_file_path` and `meta_data_file_path`. This tutorial will show you examples with data from the original mpact program, found on [GitHub](https://github.com/BalunasLab/mpact/tree/main/rawdata/PTY087I2). This dataset contain 38 samples for biological groups solvent blanks, media blanks, Streptomyces sp. PTY08712 grown with (250um_Ce) and without (0um_Ce) rare earth element cerium. For more information about the experiments conducted see [Samples, Puckett, and Balunas 2023](https://pubs.acs.org/doi/abs/10.1021/acs.analchem.2c04632). 
@@ -202,11 +202,11 @@ data_media_blank <- filter_group(data,
 
 #### Remove non-reproducible ions
 
-Ions whose abundance are not consisent between technical replicates (*i.e.*, non-reproducible) may not be reliable for analysis and therefore should be removed from the feature table. Non-reproducible ions are identified by mean or median coefficient of variation (CV) between technical replicates with `filter_cv()`. Note - this filter cannot be applied to data that does not contain technical replicates. 
+Ions whose abundance are not consistent between technical replicates (*i.e.*, non-reproducible) may not be reliable for analysis and therefore should be removed from the feature table. Non-reproducible ions are identified by mean or median coefficient of variation (CV) between technical replicates with `filter_cv()`. Note - this filter cannot be applied to data that does not contain technical replicates. 
 
 ```{r}
 data_rep <- filter_cv(data,
-  cv_threshold = 0.2, cv_param = "median",
+  cv_threshold = 0.2,
   copy_object = TRUE
 )
 ```
@@ -217,7 +217,7 @@ If you would like to visualize how the CV threshold performed on your dataset, y
 
 ```{r}
 cv <- get_cv_data(data_rep) %>%
-  pivot_longer(cols = c("mean_cv", "median_cv"),
+  pivot_longer(cols = c("cv"),
                names_to = "param",
                values_to = "cv") %>%
   nest(.by = param) %>%
@@ -236,11 +236,11 @@ The nested data are tibbles with the columns `r colnames(cv$data[[1]])`:
 head(cv$data[[1]])
 ```
 
-There is one tibble for each parameter (either mean or median). We also want to calculate the percentage of features represented by the CV threshold.
+There is one tibble for each parameter. We also want to calculate the percentage of features represented by the CV threshold.
 
 ```{r}
 cv_thresh_percent <- cv %>%
-  filter(param == "median_cv") %>%
+  filter(param == "cv") %>%
   unnest(cols = data) %>%
   mutate(diff_cv_thresh = abs(cv - 0.2)) %>%
   slice_min(diff_cv_thresh, n = 1) %>%
@@ -255,8 +255,8 @@ Then we can plot percentage of features by CV:
 ```{r}
 cv %>%
   unnest(cols = data) %>%
-  mutate(param = factor(param, levels = c("mean_cv", "median_cv"),
-                        labels = c("mean", "median"))) %>%
+  mutate(param = factor(param, levels = c("cv"),
+                        labels = c("cv"))) %>%
   ggplot() +
   aes(x = cv, y = index_scale, group = param, color = param) +
   geom_line(linewidth = 2) +
@@ -298,7 +298,7 @@ data_insource <- filter_insource_ions(data,
 
 #### Chaining filters together
 
-Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering non-repoducible or insource ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying non-reproducible and insource fragment ions. Here we also demonstrate the removal of media blank components with the `filter_group()` function after identification of high-quality ions.
+Filters can be chained in a customizable workflow, shown below. While filters can be chained in any order, we recommend filtering mispicked ions, then solvent blanks, prior to filtering non-reproducible or insource ions. This will allow for incorrectly picked peaks to be merged and any contamination/carryover removed prior to identifying non-reproducible and insource fragment ions. Here we also demonstrate the removal of media blank components with the `filter_group()` function after identification of high-quality ions.
 
 ```{r}
 data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
@@ -308,17 +308,17 @@ data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
 
 data_filtered <- filter_mispicked_ions(data, merge_method = "sum") |>
   filter_group(group_to_remove = "Blanks") |>
-  filter_cv(cv_threshold = 0.2, cv_param = "median") |>
+  filter_cv(cv_threshold = 0.2) |>
   filter_group(group_to_remove = "Media")
 ```
 
 ## Summary
 
-mpactr offers mutliple ways to view a summary of data filtering. 
+mpactr offers multiple ways to view a summary of data filtering. 
 
 #### View passing and failed ions for a single filter
 
-If you are interested in viewing the passing and failing ions for a single filter, use the `filter_summary()` function.  You must specify which filter you are intested in, either "mispicked", "group", "replicability", or "insource".
+If you are interested in viewing the passing and failing ions for a single filter, use the `filter_summary()` function.  You must specify which filter you are interested in, either "mispicked", "group", "replicability", or "insource".
 
 ```{r}
 mispicked_summary <- filter_summary(data_filtered, filter = "mispicked")

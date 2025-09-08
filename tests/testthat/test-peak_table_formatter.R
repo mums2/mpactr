@@ -33,7 +33,7 @@ test_that("mz_mine formatter reads data correctly", {
 
 })
 
-test_that("format_by_type formats the data properly based on the paramters", {
+test_that("format_by_type formats the data properly based on the parameters", {
   samples <- c(
     "UM1850B_ANGDT_0.25_mL_36_1_4792",
     "UM1850B_ANGDT_0.25_mL_36_1_4802",

@@ -26,7 +26,6 @@ filter_pactr$set(
       cli::cli_alert_info(c("Argument merge_peaks is: {merge_peaks}. ",
                             "Merging mispicked peaks with method ",
                             "{merge_method}."))
-
       private$merge_ions(ion_filter_list, merge_method)
     } else {
       cli::cli_alert_warning(c("Argument merge_peaks is: {merge_peaks}. ",
@@ -48,6 +47,9 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
                      "{.var method} must be one of: sum"))
   }
 
+  if (length(ion_filter_list[["cut_ions"]]) <= 0) {
+    return()
+  }
   if (method == "sum") {
     dat <- melt(self$mpactr_data$get_peak_table(),
       id.vars = c("Compound", "mz", "rt", "kmd"),
@@ -73,7 +75,7 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
 
 ####  filter 2: group filter    ###
 # Calculates statisics for each feature (rsd, n)
-# accross biological groups and technical replicates
+# across biological groups and technical replicates
 filter_pactr$set("public", "filter_blank", function() {
   b <- data.table::melt(self$mpactr_data$get_peak_table(),
     id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
@@ -105,7 +107,6 @@ filter_pactr$set("public", "filter_blank", function() {
     , .(techRSD = mean(sd), techn = mean(n)),
     by = .(Compound, Biological_Group)
   ]
-
   group_stats <- b[t, on = .(Compound, Biological_Group)]
   setorder(group_stats, Compound, Biological_Group)
   self$logger[["group_filter-group_stats"]] <- group_stats
@@ -169,7 +170,6 @@ filter_pactr$set(
                                "Peaks from {group} will not be removed."))
       return()
     }
-
     cli::cli_alert_info(c("Argument remove_ions is: {remove_ions}.",
                           "Removing peaks from {group}."))
 
@@ -193,13 +193,9 @@ filter_pactr$set(
 ####  filter 3: cv filter    ###
 filter_pactr$set(
   "public", "cv_filter",
-  function(cv_threshold = NULL, cv_params) {
+  function(cv_threshold = NULL) {
     if (is.null(cv_threshold)) {
       cli::cli_abort("{.var cv_threshold} must be supplied.")
-    }
-    ## abort if an incorrect cv_params argument is supplied.
-    if (!(cv_params %in% c("mean", "median"))) {
-      cli::cli_abort("{.var cv_params} must be one of mean or median.")
     }
 
     ## abort if there are no technical replicates.
@@ -220,25 +216,30 @@ filter_pactr$set(
     )[
       self$mpactr_data$get_meta_data(),
       on = .(sample = Injection)
-    ][
-      , .(cv = rsd(intensity)),
-      by = .(Compound, Biological_Group, Sample_Code)
-    ][
-      , .(
-        mean_cv = mean(cv, na.rm = TRUE),
-        median_cv = median(cv, na.rm = TRUE)
-      ),
-      by = .(Compound)
-    ]
+    ][order(Compound)]
 
-    self$logger[["cv_values"]] <- cv
 
-    if (cv_params == "mean") {
-      failed_ions <- cv[mean_cv > cv_threshold, Compound]
-    } else {
-      failed_ions <- cv[median_cv > cv_threshold, Compound]
+    peak_table <- self$mpactr_data$get_peak_table()
+    meta_data <- self$mpactr_data$get_meta_data()
+
+    cv <-
+      as.data.table(FilterCV(cv, unique(meta_data$Sample_Code), cv_threshold,
+                             table(meta_data$Sample_Code)[[1]]))
+
+    samples <- unique(meta_data$Sample_Code)
+    for (i in seq_along(samples)) {
+      peak_table[Compound %in% cv[Sample_Code == samples[[i]] &
+                                    !PassesCvFilter]$Compound,
+                 meta_data$Injection[which(meta_data$Sample_Code
+                                           == samples[[i]])] := 0]
     }
 
+    failed_indexes <- which(rowSums(peak_table[, meta_data$Injection,
+                                               with = FALSE]) == 0)
+
+
+    self$logger[["cv_values"]] <- cv
+    failed_ions <- peak_table$Compound[failed_indexes]
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
       Compound %in% setdiff(
         input_ions,
@@ -255,7 +256,6 @@ filter_pactr$set(
     self$logger$list_of_summaries$replicability$summarize()
   }
 )
-
 ####  filter 4: insource ions   ###
 
 filter_pactr$set(

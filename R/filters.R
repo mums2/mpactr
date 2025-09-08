@@ -1,5 +1,5 @@
 #######################
-### Mistatched peaks ##
+### Mismatched peaks ##
 #######################
 
 #' Mispicked ions filter
@@ -15,7 +15,7 @@
 #' concentration samples.
 #'
 #' Parameter `isowin` is the isotopic mass window, which accounts for isotopic
-#' peaks of the same precussor mass that were incorrectly assigned during
+#' peaks of the same precursor mass that were incorrectly assigned during
 #' preprocessing.
 #'
 #'
@@ -103,7 +103,7 @@ filter_mispicked_ions <- function(mpactr_object,
 #' `filter_group()` removes feature ions that are present in a user-defined
 #' group based on a relative abundance threshold. This could be particularly
 #' useful to filter out features found present in solvent blank samples.
-#' Further, this filter can be ultilized to remove features in media blank
+#' Further, this filter can be utilized to remove features in media blank
 #' sample for experiments on microbial cultures.
 
 #' The presence or absence of features in a group of samples is determined by
@@ -192,7 +192,7 @@ filter_group <- function(mpactr_object,
 #' @description
 #' `filter_cv()` removes feature ions that are found to be non-reproducible
 #' between technical injection replicates. Reproducibility is assessed via mean
-#' or median coefficient of variation (CV) between technical replicates. As
+#' coefficient of variation (CV) between technical replicates. As
 #' such, this filter is expecting an input dataset with at least two replicate
 #' injections per sample.
 #'
@@ -211,9 +211,6 @@ filter_group <- function(mpactr_object,
 #' @param cv_threshold Coefficient of variation threshold.
 #' A lower cv_threshold will result in more stringent filtering and higher
 #' reproducibility. Recommended values between 0.2 - 0.5.
-#' @param cv_param Coefficient of variation (CV) statistic to use for filtering
-#' Options are "mean" or "median", corresponding to mean and median CV,
-#' respectively.
 #' @param copy_object A `boolean` parameter that allows users to return a copied
 #' object instead of modifying the object.
 #'
@@ -230,19 +227,11 @@ filter_group <- function(mpactr_object,
 #'
 #' data_filter <- filter_cv(data,
 #'   cv_threshold = 0.01,
-#'   cv_param = "mean",
-#'   copy_object = TRUE
-#' )
-#'
-#' data_filter <- filter_cv(data,
-#'   cv_threshold = 0.01,
-#'   cv_param = "median",
 #'   copy_object = TRUE
 #' )
 #'
 filter_cv <- function(mpactr_object,
                       cv_threshold = NULL,
-                      cv_param,
                       copy_object = FALSE) {
 
   if (isTRUE(mpactr_object$is_filter_run(filter = "replicability"))) {
@@ -257,9 +246,9 @@ filter_cv <- function(mpactr_object,
   if (copy_object) {
     mpactr_object <- clone(mpactr_object)
   }
+
   mpactr_object$cv_filter(
-    cv_threshold = cv_threshold,
-    cv_params = cv_param
+    cv_threshold = cv_threshold
   )
   return(mpactr_object)
 }

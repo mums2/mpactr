@@ -25,6 +25,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// FilterCV
+Rcpp::DataFrame FilterCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList, const double cvCutOff, const size_t replicates);
+RcppExport SEXP _mpactr_FilterCV(SEXP peakTableSEXP, SEXP uniqueSampleListSEXP, SEXP cvCutOffSEXP, SEXP replicatesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::DataFrame& >::type peakTable(peakTableSEXP);
+    Rcpp::traits::input_parameter< const std::vector<std::string>& >::type uniqueSampleList(uniqueSampleListSEXP);
+    Rcpp::traits::input_parameter< const double >::type cvCutOff(cvCutOffSEXP);
+    Rcpp::traits::input_parameter< const size_t >::type replicates(replicatesSEXP);
+    rcpp_result_gen = Rcpp::wrap(FilterCV(peakTable, uniqueSampleList, cvCutOff, replicates));
+    return rcpp_result_gen;
+END_RCPP
+}
 // UniqueDuplicates
 Rcpp::StringVector UniqueDuplicates(Rcpp::StringVector& compoundNames);
 RcppExport SEXP _mpactr_UniqueDuplicates(SEXP compoundNamesSEXP) {
@@ -39,6 +53,7 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_mpactr_FilterMispickedIons", (DL_FUNC) &_mpactr_FilterMispickedIons, 5},
+    {"_mpactr_FilterCV", (DL_FUNC) &_mpactr_FilterCV, 4},
     {"_mpactr_UniqueDuplicates", (DL_FUNC) &_mpactr_UniqueDuplicates, 1},
     {NULL, NULL, 0}
 };

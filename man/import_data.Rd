@@ -32,8 +32,8 @@ supports import of feature table files from multiple tools through the
 "Metaboscape", or "None".
 }
 
-\code{format} = "Progensis" allows users to provide a feature table exported by
-Progenesis. To export a compatable peak table in Progenesis, navigate to the
+\code{format} = "Progenesis." allows users to provide a feature table exported by
+Progenesis. To export a compatible peak table in Progenesis, navigate to the
 \emph{Review Compounds} tab then File -> Export Compound Measurements. Select
 the following properties: Compound, m/z, Retention time (min), and Raw
 abundance and click ok.
@@ -53,7 +53,7 @@ features, while columns are compound metadata and samples. The feature table
 must have the compound metadata columns "Compound", "mz", and "rt". Where
 "Compound" is the compound id, and can be \code{numeric} or \code{character}. "mz" is
 the compound m/z, and should be \code{numeric}. "rt" is the retention time, in
-mintues, and should be \code{numeric}. The remaining columns should be samples,
+minutes, and should be \code{numeric}. The remaining columns should be samples,
 and match the names in the "Injection" column of the \code{meta_data} file.
 2. \code{meta_data}: a table with sample information. Either a file path or
 \code{data.frame} can be supplied. At minimum the following columns are expected:

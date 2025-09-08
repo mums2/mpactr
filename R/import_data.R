@@ -13,8 +13,8 @@
 #' `format` argument. Currently supported value for `format` are "Progenesis",
 #' "Metaboscape", or "None".
 #'
-#' `format` = "Progensis" allows users to provide a feature table exported by
-#' Progenesis. To export a compatable peak table in Progenesis, navigate to the
+#' `format` = "Progenesis." allows users to provide a feature table exported by
+#' Progenesis. To export a compatible peak table in Progenesis, navigate to the
 #' *Review Compounds* tab then File -> Export Compound Measurements. Select
 #' the following properties: Compound, m/z, Retention time (min), and Raw
 #' abundance and click ok.
@@ -34,7 +34,7 @@
 #' must have the compound metadata columns "Compound", "mz", and "rt". Where
 #' "Compound" is the compound id, and can be `numeric` or `character`. "mz" is
 #' the compound m/z, and should be `numeric`. "rt" is the retention time, in
-#' mintues, and should be `numeric`. The remaining columns should be samples,
+#' minutes, and should be `numeric`. The remaining columns should be samples,
 #' and match the names in the "Injection" column of the `meta_data` file.
 
 #' 2. `meta_data`: a table with sample information. Either a file path or
@@ -95,7 +95,6 @@ import_data <- function(peak_table, meta_data, format = "none") {
   filter_object <- filter_pactr$new(mpactr_object)
   return(filter_object)
 }
-
 
 unique_compounds <- function(peak_table_list, show_message = TRUE) {
   peak_table <- peak_table_list$peak_table

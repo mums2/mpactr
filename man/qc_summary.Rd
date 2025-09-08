@@ -2,7 +2,7 @@
 % Please edit documentation in R/quality_control.R
 \name{qc_summary}
 \alias{qc_summary}
-\title{Summary of Fitering}
+\title{Summary of Filtering}
 \usage{
 qc_summary(mpactr_object)
 }
@@ -14,12 +14,12 @@ a \code{data.table} reporting the number of high quality ions
 ("Passed") or the filter in which they were removed.
 }
 \description{
-Parses an mpactr object and exracts a summary of all applied filters.
+Parses an mpactr object and extracts a summary of all applied filters.
 Specifically, the fate of each input ion is reported as ion status. Status
 options are: Passed, mispicked, group, replicability, and insouce. A status
 of Passed ions is returned for ions that passed all applied filters and
-therefore are expected to be high quaility ions. Ions tagged as group,
-mispicked, replicability, or ionsource were removed during the correspoding
+therefore are expected to be high quality ions. Ions tagged as group,
+mispicked, replicability, or ionsource were removed during the corresponding
 filter.
 }
 \examples{

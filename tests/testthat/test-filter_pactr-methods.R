@@ -246,19 +246,12 @@ test_that("cv_filter filters out data properly", {
   filter_class$parse_ions_by_group(group_threshold = 0.01)
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
   filter_class_median <- filter_class$clone(deep = TRUE)
-  filter_class$cv_filter(cv_threshold = 0.2, cv_params = c("mean"))
+  filter_class$cv_filter(cv_threshold = 0.2)
   cv_filter_passed_ions <- filter_class$logger[["list_of_summaries"]]$
     replicability$get_passed_ions()
   expect_equal(length(filter_class$logger[["list_of_summaries"]]$
-                        replicability$get_failed_ions()), 86)
-  filter_class_median$cv_filter(cv_threshold = 0.2, cv_params = c("median"))
-  cv_filter_passed_ions_median <- filter_class_median$
-    logger[["list_of_summaries"]]$replicability$get_passed_ions()
-  expect_equal(length(filter_class_median$logger[["list_of_summaries"]]$
-                        replicability$get_failed_ions()), 61)
-  expect_false(length(cv_filter_passed_ions)
-               == length(cv_filter_passed_ions_median))
-
+                        replicability$get_failed_ions()), 33)
+  expect_error(filter_class$cv_filter())
   expect_false(is.null(filter_class$logger$list_of_summaries$replicability))
   expect_equal(class(filter_class$logger$list_of_summaries$replicability),
                c("summary", "R6"))

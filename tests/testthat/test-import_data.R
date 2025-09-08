@@ -17,6 +17,90 @@ test_that("import_data creates a proper mpactr and filter-pactr object", {
   expect_true(nrow(data$mpactr_data$get_meta_data()) > 1)
 })
 
+test_that("We can use a data.frame as input our peak table in import_data", {
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+  meta_data_path <- test_path(directory,  meta_data_name)
+  data <- import_data(
+    peak_table = test_path(directory, peak_table_name),
+    meta_data = meta_data_path,
+    format = "Progenesis"
+  )
+  peak_table <- get_peak_table(data)
+
+  data_df <- import_data(get_peak_table(data), get_meta_data(data), "None")
+  peak_table_df <- get_peak_table(data_df)
+
+  expect_true(all(peak_table == peak_table_df))
+
+  data_df_meta_data_file <- import_data(get_peak_table(data),
+                                        meta_data_path, "None")
+  peak_table_meta_data_file <- get_peak_table(data_df_meta_data_file)
+  expect_true(all(peak_table == peak_table_meta_data_file))
+
+  # Even when filtered
+
+  data <- import_data(
+    peak_table = test_path(directory, peak_table_name),
+    meta_data = meta_data_path,
+    format = "Progenesis"
+  ) |>
+    filter_mispicked_ions() |>
+    filter_cv(0.1) |>
+    filter_group(0.1, "Blanks") |>
+    filter_insource_ions()
+
+  data_df <- import_data(get_peak_table(data), get_meta_data(data), "None")
+  peak_table_df <- get_peak_table(data_df)
+  df <- get_peak_table(data)
+  temp <- data.frame(Compound = peak_table_df$Compound,
+                     mz = peak_table_df$mz, kmd = peak_table_df$kmd,
+                     rt = peak_table_df$rt)
+  dat <- cbind(temp, peak_table_df[, 5:22])
+  expect_true(all(dat == as.data.frame(df)[, 1:22]))
+})
+
+test_that("We can use a data.frame as input our peak table in import_data
+          for all formats", {
+            directory <- "exttestdata"
+            peak_table_name <- "102623_peaktable_coculture_simple.csv"
+            meta_data_name <- "102623_metadata_correct.csv"
+            meta_data_path <- test_path(directory,  meta_data_name)
+            peak_table <- data.table(readr::read_csv(test_path(directory,
+                                                               peak_table_name),
+              skip = 2,
+              show_col_types = FALSE
+            ))
+            data <- import_data(
+              peak_table = peak_table,
+              meta_data = meta_data_path,
+              format = "Progenesis"
+            )
+            formatted_peak_table <- get_raw_data(data)
+            expect_true(ncol(formatted_peak_table) == ncol(peak_table))
+            expect_true(nrow(formatted_peak_table) == nrow(peak_table))
+            metabscape_peak_table <- "MJB_MonoVSCoculture_metaboscape_ft.csv"
+            peak_table <-
+              data.table(readr::read_csv(test_path(directory,
+                                                   metabscape_peak_table),
+                                         show_col_types = FALSE))
+            samples <- colnames(peak_table)[27:72]
+            meta_data <-
+              data.frame(Injection = samples,
+                         Biological_Group = rep("Blank",
+                                                times = length(samples)),
+                         Sample_Code = rep("Blank", times = length(samples)))
+
+            data <- import_data(
+              peak_table = peak_table,
+              meta_data = meta_data,
+              format = "Metaboscape"
+            )
+            formatted_peak_table <- get_raw_data(data)
+            expect_true(nrow(formatted_peak_table) == nrow(peak_table))
+          })
+
 
 test_that("import_data aborts when expected
  metadata columns are not provided", {
@@ -34,6 +118,7 @@ test_that("import_data aborts when expected
               format = "Progenesis"
             ))
           })
+
 
 
 test_that("unique_compounds annotate duplicates properly", {
