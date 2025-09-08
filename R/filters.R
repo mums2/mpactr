@@ -192,7 +192,7 @@ filter_group <- function(mpactr_object,
 #' @description
 #' `filter_cv()` removes feature ions that are found to be non-reproducible
 #' between technical injection replicates. Reproducibility is assessed via mean
-#' or median coefficient of variation (CV) between technical replicates. As
+#' coefficient of variation (CV) between technical replicates. As
 #' such, this filter is expecting an input dataset with at least two replicate
 #' injections per sample.
 #'
