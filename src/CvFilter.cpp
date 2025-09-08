@@ -15,15 +15,17 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
     const size_t size = compounds.size();
     features = std::vector<FeatureData>(size);
     int index = 0;
+    const size_t uniqueSampleSize = uniqueSampleList.size();
     for (const auto& sample : uniqueSampleList) {
         sampleCodesToIndex[sample] = index++;
     }
     for (size_t i = 0, featureIndex = 0; i < size; i++) {
         const std::string& currentCompound = compounds[i];
         features[featureIndex].compoundName = currentCompound;
-        features[featureIndex].metaData.intensityPerSample = std::vector<std::vector<double>>(uniqueSampleList.size());
+        features[featureIndex].metaData.intensityPerSample = std::vector<std::vector<double>>(uniqueSampleSize);
         std::unordered_set<std::string> previousSampleCodes;
-        while (compounds[i] == currentCompound) {
+
+        for (size_t j = 0; j < replicates * uniqueSampleSize; j++) {
             if (previousSampleCodes.find(sampleCodes[i]) == previousSampleCodes.end()) {
                 previousSampleCodes.insert(sampleCodes[i]);
                 biologicalGroupsList.emplace_back(biologicalGroups[i]);
