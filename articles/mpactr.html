@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mpactr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,11 +78,11 @@
 <div class="section level2">
 <h2 id="load-data-into-r">Load data into R<a class="anchor" aria-label="anchor" href="#load-data-into-r"></a>
 </h2>
-<p>mpactr requires 2 files as imput: a feature table and metadata file.
+<p>mpactr requires 2 files as input: a feature table and metadata file.
 Both are expected to be comma separated files (<em>.csv</em>).</p>
 <ol style="list-style-type: decimal">
 <li>peak_table: a peak table in Progenesis format is expected. To export
-a compatable peak table in Progenesis, navigate to the <em>Review
+a compatible peak table in Progenesis, navigate to the <em>Review
 Compounds</em> tab then File -&gt; Export Compound Measurements. Select
 the following properties: Compound, m/z, Retention time (min), and Raw
 abundance and click ok.</li>
@@ -637,7 +637,7 @@ are identified (see Chaining filters together below).</p>
 <div class="section level4">
 <h4 id="remove-non-reproducible-ions">Remove non-reproducible ions<a class="anchor" aria-label="anchor" href="#remove-non-reproducible-ions"></a>
 </h4>
-<p>Ions whose abundance are not consisent between technical replicates
+<p>Ions whose abundance are not consistent between technical replicates
 (<em>i.e.</em>, non-reproducible) may not be reliable for analysis and
 therefore should be removed from the feature table. Non-reproducible
 ions are identified by mean or median coefficient of variation (CV)
@@ -646,13 +646,13 @@ filter cannot be applied to data that does not contain technical
 replicates.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_rep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cv.html">filter_cv</a></span><span class="op">(</span><span class="va">data</span>,</span>
-<span>  cv_threshold <span class="op">=</span> <span class="fl">0.2</span>, cv_param <span class="op">=</span> <span class="st">"median"</span>,</span>
+<span>  cv_threshold <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>  copy_object <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Parsing 4956 peaks for replicability across technical replicates.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 2179 ions failed the cv_filter filter, 2777 ions remain.</span></span></code></pre></div>
-<p>In our example dataset, 2179 ions were flagged as non-reproducible.
-These ions were removed, leaving 2777 ions in the feature table.</p>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 797 ions failed the cv_filter filter, 4159 ions remain.</span></span></code></pre></div>
+<p>In our example dataset, 797 ions were flagged as non-reproducible.
+These ions were removed, leaving 4159 ions in the feature table.</p>
 <p>If you would like to visualize how the CV threshold performed on your
 dataset, you can extract the CV calculated during
 <code>filer_cv()</code> using mpactr’s <code><a href="../reference/get_cv_data.html">get_cv_data()</a></code>
@@ -661,7 +661,7 @@ look at both mean and median CV as shown in the example below, or you
 can filter the data by the parameter of choice.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_cv_data.html">get_cv_data</a></span><span class="op">(</span><span class="va">data_rep</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean_cv"</span>, <span class="st">"median_cv"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="external-link">pivot_longer</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cv"</span><span class="op">)</span>,</span>
 <span>               names_to <span class="op">=</span> <span class="st">"param"</span>,</span>
 <span>               values_to <span class="op">=</span> <span class="st">"cv"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/nest.html" class="external-link">nest</a></span><span class="op">(</span>.by <span class="op">=</span> <span class="va">param</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -672,41 +672,40 @@ can filter the data by the parameter of choice.</p>
 <span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cv</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
-<span><span class="co">#&gt;   param     data                </span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>              </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> mean_cv   <span style="color: #949494;">&lt;tibble [4,956 × 4]&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> median_cv <span style="color: #949494;">&lt;tibble [4,956 × 4]&gt;</span></span></span></code></pre></div>
-<p>The nested data are tibbles with the columns Compound, cv, index,
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 2</span></span></span>
+<span><span class="co">#&gt;   param data                 </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> cv    <span style="color: #949494;">&lt;tibble [49,560 × 7]&gt;</span></span></span></code></pre></div>
+<p>The nested data are tibbles with the columns Compound,
+Biological_Group, Sample_Code, PassesCvFilter, cv, index,
 index_scale:</p>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 4</span></span></span>
-<span><span class="co">#&gt;   Compound               cv index index_scale</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 0.81_210.0803m/z  0.006<span style="text-decoration: underline;">36</span>     0      0     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 10.02_89.5072m/z  0.006<span style="text-decoration: underline;">86</span>     1      0.020<span style="text-decoration: underline;">2</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 10.02_110.0204m/z 0.008<span style="text-decoration: underline;">31</span>     2      0.040<span style="text-decoration: underline;">4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 0.72_203.9632n    0.009<span style="text-decoration: underline;">28</span>     3      0.060<span style="text-decoration: underline;">5</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 0.80_418.1451n    0.010<span style="text-decoration: underline;">0</span>      4      0.080<span style="text-decoration: underline;">7</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 1.96_293.6773m/z  0.010<span style="text-decoration: underline;">4</span>      5      0.101</span></span></code></pre>
-<p>There is one tibble for each parameter (either mean or median). We
-also want to calculate the percentage of features represented by the CV
-threshold.</p>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
+<span><span class="co">#&gt;   Compound   Biological_Group Sample_Code PassesCvFilter    cv index index_scale</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 0.03_102.… Media            MB1109      FALSE             -<span style="color: #BB0000;">1</span>     0     0      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 0.03_102.… Media            MB1110      FALSE             -<span style="color: #BB0000;">1</span>     1     0.002<span style="text-decoration: underline;">02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 0.03_102.… Media            MB1111      FALSE             -<span style="color: #BB0000;">1</span>     2     0.004<span style="text-decoration: underline;">04</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 0.03_102.… 0um_Ce           MB1112      FALSE             -<span style="color: #BB0000;">1</span>     3     0.006<span style="text-decoration: underline;">05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 0.03_102.… 0um_Ce           MB1113      FALSE             -<span style="color: #BB0000;">1</span>     4     0.008<span style="text-decoration: underline;">07</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 0.03_102.… 0um_Ce           MB1114      FALSE             -<span style="color: #BB0000;">1</span>     5     0.010<span style="text-decoration: underline;">1</span></span></span></code></pre>
+<p>There is one tibble for each parameter. We also want to calculate the
+percentage of features represented by the CV threshold.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cv_thresh_percent</span> <span class="op">&lt;-</span> <span class="va">cv</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">param</span> <span class="op">==</span> <span class="st">"median_cv"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">param</span> <span class="op">==</span> <span class="st">"cv"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>diff_cv_thresh <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">cv</span> <span class="op">-</span> <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_min</a></span><span class="op">(</span><span class="va">diff_cv_thresh</span>, n <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">index_scale</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cv_thresh_percent</span></span>
-<span><span class="co">#&gt; [1] 56.03309</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 67.53027</span></span></code></pre></div>
 <p>Then we can plot percentage of features by CV:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cv</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span>cols <span class="op">=</span> <span class="va">data</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">param</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean_cv"</span>, <span class="st">"median_cv"</span><span class="op">)</span>,</span>
-<span>                        labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="st">"median"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>param <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">param</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cv"</span><span class="op">)</span>,</span>
+<span>                        labels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cv"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">cv</span>, y <span class="op">=</span> <span class="va">index_scale</span>, group <span class="op">=</span> <span class="va">param</span>, color <span class="op">=</span> <span class="va">param</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>linewidth <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
@@ -730,8 +729,8 @@ threshold.</p>
 <span>    legend.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p><img src="mpactr_files/figure-html/unnamed-chunk-21-1.png" width="700"></p>
-<p>Here we can see that roughly 56% of features were below the CV
-threshold meaning 44% were removed at a CV threshold of 0.2.</p>
+<p>Here we can see that roughly 68% of features were below the CV
+threshold meaning 32% were removed at a CV threshold of 0.2.</p>
 </div>
 <div class="section level4">
 <h4 id="remove-insource-fragment-ions">Remove insource fragment ions<a class="anchor" aria-label="anchor" href="#remove-insource-fragment-ions"></a>
@@ -761,7 +760,7 @@ dataset, leaving 4356 ions in the feature table.</p>
 </h4>
 <p>Filters can be chained in a customizable workflow, shown below. While
 filters can be chained in any order, we recommend filtering mispicked
-ions, then solvent blanks, prior to filtering non-repoducible or
+ions, then solvent blanks, prior to filtering non-reproducible or
 insource ions. This will allow for incorrectly picked peaks to be merged
 and any contamination/carryover removed prior to identifying
 non-reproducible and insource fragment ions. Here we also demonstrate
@@ -776,7 +775,7 @@ high-quality ions.</p>
 <span></span>
 <span><span class="va">data_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_mispicked_ions.html">filter_mispicked_ions</a></span><span class="op">(</span><span class="va">data</span>, merge_method <span class="op">=</span> <span class="st">"sum"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/filter_group.html">filter_group</a></span><span class="op">(</span>group_to_remove <span class="op">=</span> <span class="st">"Blanks"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/filter_cv.html">filter_cv</a></span><span class="op">(</span>cv_threshold <span class="op">=</span> <span class="fl">0.2</span>, cv_param <span class="op">=</span> <span class="st">"median"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/filter_cv.html">filter_cv</a></span><span class="op">(</span>cv_threshold <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/filter_group.html">filter_group</a></span><span class="op">(</span>group_to_remove <span class="op">=</span> <span class="st">"Media"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Checking 4956 peaks for mispicked peaks.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Argument merge_peaks is: TRUE. Merging mispicked peaks with method sum.</span></span>
@@ -785,22 +784,22 @@ high-quality ions.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Argument remove_ions is: TRUE.Removing peaks from Blanks.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1731 ions failed the Blanks filter, 2934 ions remain.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Parsing 2934 peaks for replicability across technical replicates.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1141 ions failed the cv_filter filter, 1793 ions remain.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Parsing 1793 peaks based on the sample group: Media.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 276 ions failed the cv_filter filter, 2658 ions remain.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Parsing 2658 peaks based on the sample group: Media.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Argument remove_ions is: TRUE.Removing peaks from Media.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1233 ions failed the Media filter, 560 ions remain.</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 1679 ions failed the Media filter, 979 ions remain.</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
-<p>mpactr offers mutliple ways to view a summary of data filtering.</p>
+<p>mpactr offers multiple ways to view a summary of data filtering.</p>
 <div class="section level4">
 <h4 id="view-passing-and-failed-ions-for-a-single-filter">View passing and failed ions for a single filter<a class="anchor" aria-label="anchor" href="#view-passing-and-failed-ions-for-a-single-filter"></a>
 </h4>
 <p>If you are interested in viewing the passing and failing ions for a
 single filter, use the <code><a href="../reference/filter_summary.html">filter_summary()</a></code> function. You must
-specify which filter you are intested in, either “mispicked”, “group”,
+specify which filter you are interested in, either “mispicked”, “group”,
 “replicability”, or “insource”.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mispicked_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_summary.html">filter_summary</a></span><span class="op">(</span><span class="va">data_filtered</span>, filter <span class="op">=</span> <span class="st">"mispicked"</span><span class="op">)</span></span></code></pre></div>
@@ -903,14 +902,14 @@ ion failed filtering, its status will report the name of the filter it
 failed.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/qc_summary.html">qc_summary</a></span><span class="op">(</span><span class="va">data_filtered</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">compounds</span><span class="op">)</span>, <span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;           status        compounds</span></span>
-<span><span class="co">#&gt;           &lt;char&gt;           &lt;char&gt;</span></span>
-<span><span class="co">#&gt; 1:  group-Blanks 0.03_102.1549m/z</span></span>
-<span><span class="co">#&gt; 2:  group-Blanks 0.04_113.9641m/z</span></span>
-<span><span class="co">#&gt; 3:  group-Blanks 0.06_182.9860m/z</span></span>
-<span><span class="co">#&gt; 4:  group-Blanks 0.06_235.9635m/z</span></span>
-<span><span class="co">#&gt; 5: replicability  0.09_68.9936m/z</span></span>
-<span><span class="co">#&gt; 6:  group-Blanks 0.10_102.1549m/z</span></span></code></pre></div>
+<span><span class="co">#&gt;          status        compounds</span></span>
+<span><span class="co">#&gt;          &lt;char&gt;           &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: group-Blanks 0.03_102.1549m/z</span></span>
+<span><span class="co">#&gt; 2: group-Blanks 0.04_113.9641m/z</span></span>
+<span><span class="co">#&gt; 3: group-Blanks 0.06_182.9860m/z</span></span>
+<span><span class="co">#&gt; 4: group-Blanks 0.06_235.9635m/z</span></span>
+<span><span class="co">#&gt; 5:  group-Media  0.09_68.9936m/z</span></span>
+<span><span class="co">#&gt; 6: group-Blanks 0.10_102.1549m/z</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="visualize-filtering-qc-with-tree-map-plot">Visualize filtering QC with tree map plot<a class="anchor" aria-label="anchor" href="#visualize-filtering-qc-with-tree-map-plot"></a>

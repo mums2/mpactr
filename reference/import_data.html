@@ -9,7 +9,7 @@ table and one for sample metadata. Both files should be .csv."><meta property="o
 
     <a class="navbar-brand me-2" href="../index.html">mpactr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,8 +79,8 @@ comma separated files (<em>.csv</em>).</p><ol><li><p><code>peak_table</code>: a 
 supports import of feature table files from multiple tools through the
 <code>format</code> argument. Currently supported value for <code>format</code> are "Progenesis",
 "Metaboscape", or "None".</p></li>
-</ol><p><code>format</code> = "Progensis" allows users to provide a feature table exported by
-Progenesis. To export a compatable peak table in Progenesis, navigate to the
+</ol><p><code>format</code> = "Progenesis." allows users to provide a feature table exported by
+Progenesis. To export a compatible peak table in Progenesis, navigate to the
 <em>Review Compounds</em> tab then File -&gt; Export Compound Measurements. Select
 the following properties: Compound, m/z, Retention time (min), and Raw
 abundance and click ok.</p>
@@ -98,7 +98,7 @@ features, while columns are compound metadata and samples. The feature table
 must have the compound metadata columns "Compound", "mz", and "rt". Where
 "Compound" is the compound id, and can be <code>numeric</code> or <code>character</code>. "mz" is
 the compound m/z, and should be <code>numeric</code>. "rt" is the retention time, in
-mintues, and should be <code>numeric</code>. The remaining columns should be samples,
+minutes, and should be <code>numeric</code>. The remaining columns should be samples,
 and match the names in the "Injection" column of the <code>meta_data</code> file.
 2. <code>meta_data</code>: a table with sample information. Either a file path or
 <code>data.frame</code> can be supplied. At minimum the following columns are expected:
