@@ -1,5 +1,5 @@
 ####  filter 1: mismatched peaks    ###
-test_that("test that check_mistmatched_peaks works 
+test_that("test that check_mismatched_peaks works 
 properly with filter_pactr-class data", {
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
