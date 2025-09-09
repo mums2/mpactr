@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mpactr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -640,10 +640,9 @@ are identified (see Chaining filters together below).</p>
 <p>Ions whose abundance are not consistent between technical replicates
 (<em>i.e.</em>, non-reproducible) may not be reliable for analysis and
 therefore should be removed from the feature table. Non-reproducible
-ions are identified by mean or median coefficient of variation (CV)
-between technical replicates with <code><a href="../reference/filter_cv.html">filter_cv()</a></code>. Note - this
-filter cannot be applied to data that does not contain technical
-replicates.</p>
+ions are identified by coefficient of variation (CV) between technical
+replicates with <code><a href="../reference/filter_cv.html">filter_cv()</a></code>. Note - this filter cannot be
+applied to data that does not contain technical replicates.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_rep</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter_cv.html">filter_cv</a></span><span class="op">(</span><span class="va">data</span>,</span>
 <span>  cv_threshold <span class="op">=</span> <span class="fl">0.2</span>,</span>
