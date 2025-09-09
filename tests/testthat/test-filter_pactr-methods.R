@@ -48,7 +48,7 @@ properly with filter_pactr-class data", {
                          c("summary", "R6"))
           })
 
-test_that("test that check_mistmatched_peaks returns 
+test_that("test that check_mismatched_peaks returns 
 an error when no merge method is supplied", {
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
@@ -285,7 +285,7 @@ test_that("cv_filter errors without threshold", {
   expect_error(filter_class$cv_filter(cv_params = c("mean")))
 })
 
-test_that("cv_filter errors with incorrect paramter", {
+test_that("cv_filter errors with incorrect parameter", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
