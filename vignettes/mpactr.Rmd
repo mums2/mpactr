@@ -202,7 +202,7 @@ data_media_blank <- filter_group(data,
 
 #### Remove non-reproducible ions
 
-Ions whose abundance are not consistent between technical replicates (*i.e.*, non-reproducible) may not be reliable for analysis and therefore should be removed from the feature table. Non-reproducible ions are identified by mean or median coefficient of variation (CV) between technical replicates with `filter_cv()`. Note - this filter cannot be applied to data that does not contain technical replicates. 
+Ions whose abundance are not consistent between technical replicates (*i.e.*, non-reproducible) may not be reliable for analysis and therefore should be removed from the feature table. Non-reproducible ions are identified by coefficient of variation (CV) between technical replicates with `filter_cv()`. Note - this filter cannot be applied to data that does not contain technical replicates. 
 
 ```{r}
 data_rep <- filter_cv(data,
