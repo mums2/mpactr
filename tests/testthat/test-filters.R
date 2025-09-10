@@ -1,5 +1,6 @@
 test_that("filter mismatch ions wrapper works
  as expected when merge_peaks is TRUE", {
+            limit_cores()
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
@@ -47,6 +48,7 @@ test_that("filter mismatch ions wrapper works
 
 test_that("filter mismatch ions wrapper works 
 as expected when merge_peaks is FALSE", {
+            limit_cores()
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
@@ -72,6 +74,7 @@ as expected when merge_peaks is FALSE", {
           })
 
 test_that("group filter wrapper works as expected", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -111,6 +114,7 @@ test_that("group filter wrapper works as expected", {
 })
 
 test_that("filter cv filter wrapper works as expected", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -149,6 +153,7 @@ test_that("filter cv filter wrapper works as expected", {
 })
 
 test_that("filter insource ions wrapper works as expected", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -191,6 +196,7 @@ test_that("filter insource ions wrapper works as expected", {
 })
 
 test_that("filters abort if the filter has already been run", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"

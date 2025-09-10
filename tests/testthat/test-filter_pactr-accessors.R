@@ -1,5 +1,6 @@
-test_that("filter_summary returns an error when an incorrect fitler argument
+test_that("filter_summary returns an error when an incorrect filter argument
  is provided", {
+            limit_cores()
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
             data <- import_data(test_path("exttestdata",
@@ -13,8 +14,9 @@ test_that("filter_summary returns an error when an incorrect fitler argument
                          "`filter` must be one of mpactr's")
           })
 
-test_that("filter_summary returns an error when the fitler
+test_that("filter_summary returns an error when the filter
  argument provided has not yet been run (e.g., not in the log)", {
+            limit_cores()
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
@@ -36,7 +38,8 @@ test_that("filter_summary returns an error when the fitler
                          er)
           })
 
-test_that(" returns the correct fitler summary list", {
+test_that(" returns the correct filter summary list", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -62,6 +65,7 @@ test_that(" returns the correct fitler summary list", {
 
 test_that("get_similar_ions returns error if 
 check_mismatched_peaks has not been called", {
+            limit_cores()
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
@@ -76,6 +80,7 @@ check_mismatched_peaks has not been called", {
 
 test_that("get_similar_ions correctly returns the
  check_mismatched_peaks list", {
+            limit_cores()
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
@@ -99,7 +104,7 @@ test_that("get_similar_ions correctly returns the
           })
 
 test_that("get_group_averages calculates a group table", {
-
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -123,6 +128,7 @@ test_that("get_group_averages calculates a group table", {
 
 
 test_that("get_cv_data returns the cv table if filter cv has been run", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"

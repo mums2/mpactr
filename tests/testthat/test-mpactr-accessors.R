@@ -1,5 +1,5 @@
 test_that("get_peak_table correctly returns the table", {
-
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -14,6 +14,7 @@ test_that("get_peak_table correctly returns the table", {
 })
 
 test_that("get_meta_data correctly returns the table", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -28,6 +29,7 @@ test_that("get_meta_data correctly returns the table", {
 })
 
 test_that("get_raw_data correctly returns the table", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"

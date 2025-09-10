@@ -16,6 +16,9 @@
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),

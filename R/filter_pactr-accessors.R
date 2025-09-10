@@ -17,6 +17,9 @@
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),
 #'   format = "Progenesis"
@@ -45,6 +48,9 @@ filter_summary <- function(mpactr_object, filter, group = NULL) {
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),
@@ -75,6 +81,9 @@ get_similar_ions <- function(mpactr_object) {
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),
@@ -104,6 +113,9 @@ get_group_averages <- function(mpactr_object) {
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),

@@ -20,6 +20,9 @@ each group.
 for the filtered peak table.
 }
 \examples{
+ \dontshow{
+limit_cores()
+}
 data <- import_data(
   example_path("coculture_peak_table.csv"),
   example_path("metadata.csv"),
