@@ -101,7 +101,7 @@ test_that("get_similar_ions correctly returns the
             expect_equal(class(mispicked_groups), c("data.table", "data.frame"))
             expect_equal(length(mispicked_groups), 2)
             expect_equal(names(mispicked_groups), c("main_ion", "similar_ions"))
- })
+          })
 
 test_that("get_group_averages calculates a group table", {
   limit_cores()

@@ -72,7 +72,7 @@ test_that("format_by_type formats the data properly based on the parameters", {
 
 test_that("Formatter errors when giving a type that
 does not exist", {
-  limit_cores()
+            limit_cores()
             samples <- c(
               "UM1850B_ANGDT_0.25_mL_36_1_4792",
               "UM1850B_ANGDT_0.25_mL_36_1_4802",

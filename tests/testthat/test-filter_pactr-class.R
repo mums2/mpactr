@@ -130,7 +130,7 @@ test_that("get_log returns the correct filter
                                                   group = "Blanks")
 
             expect_type(group_summary, "list")
- })
+          })
 
 
 test_that("get_mispicked_ions returns error if 
@@ -187,7 +187,7 @@ test_that("get_mispicked_ions correctly returns
             expect_equal(class(mispicked_groups), c("data.table", "data.frame"))
             expect_equal(length(mispicked_groups), 2)
             expect_equal(names(mispicked_groups), c("main_ion", "similar_ions"))
- })
+          })
 
 
 test_that("get_group_averages calculates a group table", {
@@ -388,7 +388,7 @@ test_that("get_log returns an error when the filter
             filter_class <- filter_pactr$new(mpactr_class)
             err_msg <- "`filter` mispicked has not yet been applied to the data"
             expect_error(filter_class$get_log(filter = "mispicked"), err_msg)
- })
+          })
 
 test_that("get_log returns the correct filter summary list", {
   limit_cores()

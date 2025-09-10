@@ -44,7 +44,7 @@ test_that("filter mismatch ions wrapper works
                                     copy_object = TRUE)
             expect_equal(nrow(get_peak_table(dat)),
                          nrow(get_peak_table(filtered_data)))
- })
+          })
 
 test_that("filter mismatch ions wrapper works 
 as expected when merge_peaks is FALSE", {
