@@ -1,4 +1,5 @@
 test_that("summary class constructor works correctly", {
+  limit_cores()
   summary_one <- summary$new("filter1", c(1, 2, 3), c(4, 5, 6))
 
   expect_equal(summary_one$get_filter(), "filter1")

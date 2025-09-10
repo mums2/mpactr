@@ -1,5 +1,5 @@
 test_that("mpactr class initialize works correctly", {
-
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -21,6 +21,7 @@ test_that("mpactr class initialize works correctly", {
 
 test_that("mpactr isMultipleTechReps correctly
   determines if there are technical replicates", {
+            limit_cores()
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"

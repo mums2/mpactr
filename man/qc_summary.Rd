@@ -23,6 +23,9 @@ mispicked, replicability, or ionsource were removed during the corresponding
 filter.
 }
 \examples{
+ \dontshow{
+limit_cores()
+}
 data <- import_data(
   example_path("coculture_peak_table.csv"),
   example_path("metadata.csv"),

@@ -1,5 +1,5 @@
 test_that("import_data creates a proper mpactr and filter-pactr object", {
-
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -18,6 +18,7 @@ test_that("import_data creates a proper mpactr and filter-pactr object", {
 })
 
 test_that("We can use a data.frame as input our peak table in import_data", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -63,6 +64,7 @@ test_that("We can use a data.frame as input our peak table in import_data", {
 
 test_that("We can use a data.frame as input our peak table in import_data
           for all formats", {
+            limit_cores()
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
@@ -104,6 +106,7 @@ test_that("We can use a data.frame as input our peak table in import_data
 
 test_that("import_data aborts when expected
  metadata columns are not provided", {
+            limit_cores()
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
@@ -117,11 +120,12 @@ test_that("import_data aborts when expected
               meta_data = meta_data_abort,
               format = "Progenesis"
             ))
-          })
+ })
 
 
 
 test_that("unique_compounds annotate duplicates properly", {
+  limit_cores()
   df <- data.frame(Compound = c(1, 2, 3, 1:3, 4:7))
   ls <- list(peak_table = df, raw_table = df)
   uniqued_list <- unique_compounds(ls)

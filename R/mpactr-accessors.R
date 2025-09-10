@@ -11,6 +11,9 @@
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),
@@ -36,6 +39,9 @@ get_peak_table <- function(mpactr_object) {
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),
@@ -61,6 +67,9 @@ get_meta_data <- function(mpactr_object) {
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),

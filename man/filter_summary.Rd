@@ -25,6 +25,9 @@ the filter and 2) compound ids for compounds which passed the filter.
 from a single filter within the given mpactr object.
 }
 \examples{
+ \dontshow{
+limit_cores()
+}
 data <- import_data(example_path("coculture_peak_table.csv"),
   example_path("metadata.csv"),
   format = "Progenesis"

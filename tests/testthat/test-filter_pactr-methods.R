@@ -1,6 +1,7 @@
 ####  filter 1: mismatched peaks    ###
 test_that("test that check_mismatched_peaks works 
 properly with filter_pactr-class data", {
+            limit_cores()
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
@@ -50,6 +51,7 @@ properly with filter_pactr-class data", {
 
 test_that("test that check_mismatched_peaks returns 
 an error when no merge method is supplied", {
+            limit_cores()
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
@@ -77,6 +79,7 @@ an error when no merge method is supplied", {
 
 ####  filter 2: group filter    ###
 test_that("blank filter works correctly", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -120,6 +123,7 @@ test_that("blank filter works correctly", {
 })
 
 test_that("parse_ions_by_group flags the correct ions", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -179,6 +183,7 @@ test_that("parse_ions_by_group flags the correct ions", {
 })
 
 test_that("apply_group_filter removes the correct ions", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -221,6 +226,7 @@ test_that("apply_group_filter removes the correct ions", {
 
 ####  filter 3: cv filter    ###
 test_that("cv_filter filters out data properly", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -257,6 +263,7 @@ test_that("cv_filter filters out data properly", {
                c("summary", "R6"))
 })
 test_that("cv_filter errors without threshold", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -286,6 +293,7 @@ test_that("cv_filter errors without threshold", {
 })
 
 test_that("cv_filter errors with incorrect parameter", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -315,6 +323,7 @@ test_that("cv_filter errors with incorrect parameter", {
 })
 
 test_that("cv_filter errors when there are no technical replicates", { # hmm
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
@@ -357,6 +366,7 @@ test_that("cv_filter errors when there are no technical replicates", { # hmm
 
 ####  filter 4: insource ions    ###
 test_that("filter_inscource_ions filters out data properly", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"

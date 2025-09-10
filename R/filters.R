@@ -47,6 +47,9 @@
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),
@@ -144,6 +147,9 @@ filter_mispicked_ions <- function(mpactr_object,
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),
@@ -218,7 +224,9 @@ filter_group <- function(mpactr_object,
 #' @export
 #'
 #' @examples
-#'
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),
@@ -288,6 +296,9 @@ filter_cv <- function(mpactr_object,
 #' @export
 #'
 #' @examples
+#'  \dontshow{
+#' limit_cores()
+#' }
 #' data <- import_data(
 #'   example_path("coculture_peak_table.csv"),
 #'   example_path("metadata.csv"),

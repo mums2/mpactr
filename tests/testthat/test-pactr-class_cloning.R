@@ -1,4 +1,5 @@
 test_that("The clone function properly deep clones the mpactr object", {
+  limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"

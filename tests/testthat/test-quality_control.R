@@ -1,4 +1,5 @@
 test_that("qc_summary returns a summary data.table", {
+  limit_cores()
   data <- import_data(test_path("exttestdata",
                                 "102623_peaktable_coculture_simple.csv"),
     test_path("exttestdata", "102623_metadata_correct.csv"),
@@ -25,6 +26,7 @@ test_that("qc_summary returns a summary data.table", {
 })
 
 test_that("qc plot returns a generates a plot", {
+  limit_cores()
   data <- import_data(test_path("exttestdata",
                                 "102623_peaktable_coculture_simple.csv"),
     test_path("exttestdata", "102623_metadata_correct.csv"),

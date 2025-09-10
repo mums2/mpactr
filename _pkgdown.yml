@@ -29,3 +29,6 @@ reference:
   - plot_qc_tree
 - title: Data
   contents: cultures_data
+- title: Utility
+  contents:
+  - limit_cores
