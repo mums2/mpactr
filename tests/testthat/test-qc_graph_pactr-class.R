@@ -28,6 +28,6 @@ test_that("plot_QC_Tree generates the correct plot", {
   graph_qc_pactr_class <- graph_qc_pactr$new(filter_class)
   graph_qc_pactr_class$generate_QC_Summary()
   plot <- graph_qc_pactr_class$plot_QC_Tree()
-
-  expect_equal(class(plot), c("gg", "ggplot"))
+  
+  expect_true(ggplot2::is_ggplot(plot))
 })

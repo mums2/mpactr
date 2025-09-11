@@ -15,6 +15,7 @@
 #' @importFrom data.table setorder
 #' @importFrom ggplot2 aes
 #' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 is_ggplot
 #' @importFrom ggplot2 theme
 #' @importFrom R6 R6Class
 #' @importFrom Rcpp sourceCpp
