@@ -11,6 +11,7 @@
 #' @importFrom data.table data.table
 #' @importFrom data.table dcast
 #' @importFrom data.table melt
+#' @importFrom data.table setDTthreads
 #' @importFrom data.table setnames
 #' @importFrom data.table setorder
 #' @importFrom ggplot2 aes
