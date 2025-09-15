@@ -18,6 +18,11 @@ knitr::opts_chunk$set(
 library(mpactr)
 ```
 
+```{r, include = FALSE}
+limit_cores()
+```
+
+
 ## Reference semantics
 
 mpactr is built on an R6 class-system, meaning it operates on reference semantics in which data is updated *in-place*. Compared to a shallow copy, where only data pointers are copied, or a deep copy, where the entire data object is copied in memory, any changes to the original data object, regardless if they are assigned to a new object, result in changes to the original data object. We can see this below.

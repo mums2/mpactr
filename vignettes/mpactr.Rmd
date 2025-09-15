@@ -25,6 +25,10 @@ library(mpactr)
 library(tidyverse)
 ```
 
+```{r, include = FALSE}
+limit_cores()
+```
+
 ## Load data into R
 
 mpactr requires 2 files as input: a feature table and metadata file. Both are expected to be comma separated files (*.csv*).

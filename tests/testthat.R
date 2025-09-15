@@ -9,4 +9,5 @@
 library(testthat)
 library(mpactr)
 
+limit_cores()
 test_check("mpactr")
