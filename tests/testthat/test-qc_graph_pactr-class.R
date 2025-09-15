@@ -20,7 +20,7 @@ test_that("plot_QC_Tree generates the correct plot", {
     merge_peaks = TRUE,
     merge_method = "sum"
   )
-  filter_class$filter_blank()
+  filter_class$filter_b lank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
   filter_class$filter_insource_ions(cluster_threshold = 0.95)
@@ -28,5 +28,5 @@ test_that("plot_QC_Tree generates the correct plot", {
   graph_qc_pactr_class <- graph_qc_pactr$new(filter_class)
   graph_qc_pactr_class$generate_QC_Summary()
   plot <- graph_qc_pactr_class$plot_QC_Tree()
-  expect_true(ggplot2::is_ggplot(plot))
+  expect_true(is_ggplot(plot))
 })
