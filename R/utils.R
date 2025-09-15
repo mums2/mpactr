@@ -10,5 +10,5 @@
 #'
 limit_cores <- function() {
   Sys.setenv("OMP_THREAD_LIMIT" = 2)
-  setDTthreads(2)
+  setDTthreads(threads = 2)
 }
