@@ -11,7 +11,7 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
     const std::vector<std::string>& compounds = peakTable["Compound"];
     const std::vector<std::string>& sampleCodes = peakTable["Sample_Code"];
     const std::vector<std::string>& biologicalGroups = peakTable["Biological_Group"];
-    const std::vector<double> intensity = peakTable["intensity"];
+    const std::vector<double>& intensity = peakTable["intensity"];
     const size_t size = compounds.size();
     features = std::vector<FeatureData>(size);
     int index = 0;
