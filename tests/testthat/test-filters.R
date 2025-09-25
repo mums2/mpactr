@@ -20,8 +20,8 @@ test_that("filter mismatch ions wrapper works
             )
 
             expected_cut_ions <- fread(test_path(directory,
-                                                    "cut_ions.csv"),
-                                          col.names = c("V1", "V2"))
+                                                 "cut_ions.csv"),
+                                       col.names = c("V1", "V2"))
             expected_cut_ions <- as.character(expected_cut_ions$V1)
 
             expect_equal(nrow(data_mpactr$mpactr_data$get_peak_table()),

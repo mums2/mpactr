@@ -70,7 +70,7 @@ test_that("We can use a data.frame as input our peak table in import_data
             meta_data_name <- "102623_metadata_correct.csv"
             meta_data_path <- test_path(directory,  meta_data_name)
             peak_table <- fread(test_path(directory,
-                                peak_table_name), skip = 2)
+                                          peak_table_name), skip = 2)
             data <- import_data(
               peak_table = peak_table,
               meta_data = meta_data_path,

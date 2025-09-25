@@ -22,8 +22,7 @@ format_by_type <- function(peak_table_path,
     peak_table <- data.frame()
     if (!(any(c("data.table", "data.frame") %in% class(peak_table_path)))) {
       peak_table <- fread(peak_table_path,
-      sep = ",",
-    )
+                          sep = ",")
     } else {
       peak_table <- peak_table_path
     }
@@ -38,7 +37,7 @@ format_by_type <- function(peak_table_path,
 
 progenesis_formatter <- function(peak_table) {
   if (!(any(c("data.table", "data.frame") %in% class(peak_table)))) {
-      peak_table <- fread(peak_table,
+    peak_table <- fread(peak_table,
       sep = ",",
       skip = 2,
     )

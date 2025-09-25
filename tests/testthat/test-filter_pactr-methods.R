@@ -25,8 +25,8 @@ properly with filter_pactr-class data", {
             )
 
             expected_cut_ions <- fread(test_path(directory,
-                                                    "cut_ions.csv"),
-                                          col.names = c("V1", "V2"))
+                                                 "cut_ions.csv"),
+                                       col.names = c("V1", "V2"))
             expected_cut_ions <- as.character(expected_cut_ions$V1)
             logger_index_name <- "check_mismatched_peaks"
             expect_equal(filter_class$logger[[logger_index_name]][["cut_ions"]],
@@ -147,13 +147,13 @@ test_that("parse_ions_by_group flags the correct ions", {
     col.names = c("V1"),
   )
   blanks <- fread(test_path(directory, "output_Blanks"),
-                     col.names = c("V1"))
-  coculture <- fread(test_path(directory, "output_Coculture"),
-                        col.names = c("V1"))
-  jc1 <- fread(test_path(directory, "output_JC1_monoculture"),
                   col.names = c("V1"))
+  coculture <- fread(test_path(directory, "output_Coculture"),
+                     col.names = c("V1"))
+  jc1 <- fread(test_path(directory, "output_JC1_monoculture"),
+               col.names = c("V1"))
   jc28 <- fread(test_path(directory, "output_JC28_monoculture"),
-                   col.names = c("V1"))
+                col.names = c("V1"))
   group_filter_list <- filter_class$logger[["group_filter-failing_list"]]
 
   expect_false(all(sapply(group_filter_list, is.null)))

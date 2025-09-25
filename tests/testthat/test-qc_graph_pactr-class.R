@@ -2,7 +2,7 @@ test_that("plot_QC_Tree generates the correct plot", {
   limit_cores()
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta <- fread(test_path("exttestdata",
-                                        "102623_metadata_correct.csv"))
+                          "102623_metadata_correct.csv"))
   pt_list <- progenesis_formatter(test_path("exttestdata", peak_table_name))
 
   mpactr_class <- mpactr$new(
