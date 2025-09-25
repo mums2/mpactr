@@ -30,7 +30,6 @@ Imports:
     ggplot2,
     R6,
     Rcpp,
-    readr,
     stats,
     treemapify,
     viridis

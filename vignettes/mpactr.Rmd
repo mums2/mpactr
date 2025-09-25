@@ -23,6 +23,7 @@ library(tidyverse)
 ```{r setup, echo = FALSE, message=FALSE}
 library(mpactr)
 library(tidyverse)
+library(data.table)
 ```
 
 ```{r, include = FALSE}
@@ -43,21 +44,21 @@ The original program has sample metadata split across two files: the sample list
 Loading the sample list... 
 
 ```{r}
-samplelist <- read_csv(example_path("PTY087I2_samplelist.csv"))
+samplelist <- fread(example_path("PTY087I2_samplelist.csv"))
 ```
 
 
 Loading the metadata list...
 
 ```{r}
-metadata <- read_csv(example_path("PTY087I2_extractmetadata.csv"))
+metadata <- fread(example_path("PTY087I2_extractmetadata.csv"))
 ```
 
 
 Our sample list contains additional blank samples that are not in the feature table, and therefore should be removed prior to import.
 
 ```{r}
-samples <- read_csv(example_path("PTY087I2_dataset.csv"), skip = 2) %>%
+samples <- fread(example_path("PTY087I2_dataset.csv"), skip = 2) %>%
   colnames() %>%
   str_subset(., "200826")
 

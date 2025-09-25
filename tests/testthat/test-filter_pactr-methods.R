@@ -5,9 +5,7 @@ properly with filter_pactr-class data", {
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
 
@@ -26,10 +24,9 @@ properly with filter_pactr-class data", {
               merge_method = "sum"
             )
 
-            expected_cut_ions <- read_csv(test_path(directory,
+            expected_cut_ions <- fread(test_path(directory,
                                                     "cut_ions.csv"),
-                                          col_names = c("V1"),
-                                          show_col_types = FALSE)
+                                          col.names = c("V1", "V2"))
             expected_cut_ions <- as.character(expected_cut_ions$V1)
             logger_index_name <- "check_mismatched_peaks"
             expect_equal(filter_class$logger[[logger_index_name]][["cut_ions"]],
@@ -55,9 +52,7 @@ an error when no merge method is supplied", {
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
 
@@ -83,9 +78,7 @@ test_that("blank filter works correctly", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory,
                                             peak_table_name))
 
@@ -108,10 +101,10 @@ test_that("blank filter works correctly", {
 
   grp_avg <- "102623_peaktable_coculture_simple_groupaverages.csv"
   test_path(directory, grp_avg)
-  error_prop <- as.data.table(read_csv(test_path(directory, grp_avg),
-    show_col_types = FALSE, skip = 1,
-    col_names = c("Compound", "mz", "rt", "biologicalGroup", "average")
-  ))[, Compound := as.character(Compound)]
+  error_prop <- fread(test_path(directory, grp_avg),
+    skip = 1,
+    col.names = c("Compound", "mz", "rt", "biologicalGroup", "average")
+  )[, Compound := as.character(Compound)]
   setorder(error_prop, Compound)
   logger_index_name <- "group_filter-group_stats"
   expect_true(all(filter_class$logger[[logger_index_name]]$Biological_Group %in%
@@ -127,9 +120,7 @@ test_that("parse_ions_by_group flags the correct ions", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
 
   mpactr_class <- mpactr$new(
@@ -149,22 +140,20 @@ test_that("parse_ions_by_group flags the correct ions", {
   filter_class$filter_blank()
   filter_class$parse_ions_by_group(group_threshold = 0.01)
 
-  ang_18 <- read_csv(test_path(directory, "output_ANG18_monoculture.csv"),
-    col_names = c("V1"),
-    show_col_types = FALSE
+  ang_18 <- fread(test_path(directory, "output_ANG18_monoculture.csv"),
+    col.names = c("V1"),
   )
-  angdt <- read_csv(test_path(directory, "output_ANGDT_monoculture"),
-    col_names = c("V1"),
-    show_col_types = FALSE
+  angdt <- fread(test_path(directory, "output_ANGDT_monoculture"),
+    col.names = c("V1"),
   )
-  blanks <- read_csv(test_path(directory, "output_Blanks"),
-                     col_names = c("V1"), show_col_types = FALSE)
-  coculture <- read_csv(test_path(directory, "output_Coculture"),
-                        col_names = c("V1"), show_col_types = FALSE)
-  jc1 <- read_csv(test_path(directory, "output_JC1_monoculture"),
-                  col_names = c("V1"), show_col_types = FALSE)
-  jc28 <- read_csv(test_path(directory, "output_JC28_monoculture"),
-                   col_names = c("V1"), show_col_types = FALSE)
+  blanks <- fread(test_path(directory, "output_Blanks"),
+                     col.names = c("V1"))
+  coculture <- fread(test_path(directory, "output_Coculture"),
+                        col.names = c("V1"))
+  jc1 <- fread(test_path(directory, "output_JC1_monoculture"),
+                  col.names = c("V1"))
+  jc28 <- fread(test_path(directory, "output_JC28_monoculture"),
+                   col.names = c("V1"))
   group_filter_list <- filter_class$logger[["group_filter-failing_list"]]
 
   expect_false(all(sapply(group_filter_list, is.null)))
@@ -187,9 +176,7 @@ test_that("apply_group_filter removes the correct ions", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
 
   mpactr_class <- mpactr$new(
@@ -230,9 +217,7 @@ test_that("cv_filter filters out data properly", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
   mpactr_class <- mpactr$new(
     pt_list,
@@ -267,9 +252,7 @@ test_that("cv_filter errors without threshold", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
   mpactr_class <- mpactr$new(
     pt_list,
@@ -297,9 +280,7 @@ test_that("cv_filter errors with incorrect parameter", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
   mpactr_class <- mpactr$new(
     pt_list,
@@ -327,9 +308,7 @@ test_that("cv_filter errors when there are no technical replicates", { # hmm
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   meta_sub <- meta[, head(.SD, 1), by = Sample_Code]
 
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
@@ -370,9 +349,7 @@ test_that("filter_inscource_ions filters out data properly", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
   mpactr_class <- mpactr$new(
     pt_list,

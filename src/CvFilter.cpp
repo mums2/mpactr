@@ -56,9 +56,9 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
 
 Rcpp::DataFrame CvFilter::GetCvTable() const {
     return Rcpp::DataFrame::create(
-        Rcpp::Named("Compound") = compoundNamesToCV,
-        Rcpp::Named("Biological_Group") = biologicalGroupsList,
-        Rcpp::Named("Sample_Code") = sampleCodeList,
-        Rcpp::Named("PassesCvFilter") = passesCV,
-        Rcpp::Named("cv") = coefficientOfVariance);
+        Rcpp::Named("Compound") = Rcpp::wrap(compoundNamesToCV),
+        Rcpp::Named("Biological_Group") = Rcpp::wrap(biologicalGroupsList),
+        Rcpp::Named("Sample_Code") = Rcpp::wrap(sampleCodeList),
+        Rcpp::Named("PassesCvFilter") = Rcpp::wrap(passesCV),
+        Rcpp::Named("cv") = Rcpp::wrap(coefficientOfVariance));
 }
