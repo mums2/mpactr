@@ -110,41 +110,16 @@ combine these in one prior to import with
 <code><a href="../reference/import_data.html">import_data()</a></code>.</p>
 <p>Loading the sample list…</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">samplelist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_samplelist.csv"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">38</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">8</span></span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (4): Injection, MS method, LC method, Sample_Code</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span>  (1): Injection volume</span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">lgl</span>  (2): File Text, Sample_Notes</span></span>
-<span><span class="co">#&gt; <span style="color: #0000BB;">time</span> (1): Vial_Position</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">samplelist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_samplelist.csv"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Loading the metadata list…</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_extractmetadata.csv"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">10</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span> (4): Sample_Code, Organism, Biological_Group, Extract_Notes</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_extractmetadata.csv"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Our sample list contains additional blank samples that are not in the
 feature table, and therefore should be removed prior to import.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>, skip <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="va">samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/fread.html" class="external-link">fread</a></span><span class="op">(</span><span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>, skip <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_subset.html" class="external-link">str_subset</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">"200826"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Rows: </span><span style="color: #0000BB;">4956</span> <span style="font-weight: bold;">Columns: </span><span style="color: #0000BB;">33</span></span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Column specification</span> <span style="color: #00BBBB;">────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Delimiter:</span> ","</span></span>
-<span><span class="co">#&gt; <span style="color: #BB0000;">chr</span>  (1): Compound</span></span>
-<span><span class="co">#&gt; <span style="color: #00BB00;">dbl</span> (32): m/z, Retention time (min), 200826_blank1_r1, 200826_blank1_r2, 200...</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Use `spec()` to retrieve the full column specification for this data.</span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
 <span></span>
 <span><span class="va">meta_data</span> <span class="op">&lt;-</span> <span class="va">samplelist</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">metadata</span>, by <span class="op">=</span> <span class="st">"Sample_Code"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -397,14 +372,14 @@ have been applied, use <code><a href="../reference/get_peak_table.html">get_peak
 <span><span class="co">#&gt; 4: 200826_media1_r1        NA           NA RMS20181105_Balunas_11min_mse</span></span>
 <span><span class="co">#&gt; 5: 200826_media1_r2        NA           NA RMS20181105_Balunas_11min_mse</span></span>
 <span><span class="co">#&gt;                                                         LC method Vial_Position</span></span>
-<span><span class="co">#&gt;                                                            &lt;char&gt;         &lt;hms&gt;</span></span>
-<span><span class="co">#&gt; 1: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA      01:16:00</span></span>
-<span><span class="co">#&gt; 2: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA      01:16:00</span></span>
-<span><span class="co">#&gt; 3: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA      01:16:00</span></span>
-<span><span class="co">#&gt; 4: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA      01:01:00</span></span>
-<span><span class="co">#&gt; 5: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA      01:01:00</span></span>
+<span><span class="co">#&gt;                                                            &lt;char&gt;        &lt;char&gt;</span></span>
+<span><span class="co">#&gt; 1: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:16</span></span>
+<span><span class="co">#&gt; 2: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:16</span></span>
+<span><span class="co">#&gt; 3: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:16</span></span>
+<span><span class="co">#&gt; 4: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:01</span></span>
+<span><span class="co">#&gt; 5: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:01</span></span>
 <span><span class="co">#&gt;    Injection volume Sample_Code  Organism Biological_Group Extract_Notes</span></span>
-<span><span class="co">#&gt;               &lt;num&gt;      &lt;char&gt;    &lt;char&gt;           &lt;char&gt;        &lt;char&gt;</span></span>
+<span><span class="co">#&gt;               &lt;int&gt;      &lt;char&gt;    &lt;char&gt;           &lt;char&gt;        &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1:               10       Blank  50% MeOH           Blanks      50% MeOH</span></span>
 <span><span class="co">#&gt; 2:               10       Blank  50% MeOH           Blanks      50% MeOH</span></span>
 <span><span class="co">#&gt; 3:               10       Blank  50% MeOH           Blanks      50% MeOH</span></span>
