@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 # library(mpactr)
 library(mpactr)
 library(tidyverse)
+library(data.table)
 ```
 
 ```{r setup, echo = FALSE, message=FALSE}
