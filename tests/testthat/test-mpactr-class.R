@@ -4,8 +4,7 @@ test_that("mpactr class initialize works correctly", {
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
 
-  meta <- data.table(read_csv(test_path(directory, meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
 
   mpactr_class <- mpactr$new(
@@ -25,8 +24,7 @@ test_that("mpactr isMultipleTechReps correctly
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta <- data.table(read_csv(test_path(directory, meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
 

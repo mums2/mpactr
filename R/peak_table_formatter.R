@@ -21,7 +21,8 @@ format_by_type <- function(peak_table_path,
   } else if (type_of_peak_table == "None") {
     peak_table <- data.frame()
     if (!(any(c("data.table", "data.frame") %in% class(peak_table_path)))) {
-      peak_table <- data.table(readr::read_csv(peak_table_path))
+      peak_table <- fread(peak_table_path,
+                          sep = ",")
     } else {
       peak_table <- peak_table_path
     }
@@ -36,10 +37,10 @@ format_by_type <- function(peak_table_path,
 
 progenesis_formatter <- function(peak_table) {
   if (!(any(c("data.table", "data.frame") %in% class(peak_table)))) {
-    peak_table <- data.table(readr::read_csv(peak_table,
+    peak_table <- fread(peak_table,
+      sep = ",",
       skip = 2,
-      show_col_types = FALSE
-    ))
+    )
   }
   raw_peak_table <- peak_table
   with(peak_table, setnames(
@@ -57,10 +58,10 @@ progenesis_formatter <- function(peak_table) {
 
 mz_mine_formatter <- function(peak_table) {
   if (!(any(c("data.table", "data.frame") %in% class(peak_table)))) {
-    peak_table <- data.table(readr::read_csv(peak_table,
+    peak_table <- fread(peak_table,
+      sep = ",",
       skip = 2,
-      show_col_types = FALSE
-    ))
+    )
   }
   raw_peak_table <- peak_table
 
@@ -72,8 +73,9 @@ mz_mine_formatter <- function(peak_table) {
 
 metaboscape_formatter <- function(peak_table, sample_names) {
   if (!(any(c("data.table", "data.frame") %in% class(peak_table)))) {
-    peak_table <- data.table(readr::read_csv(peak_table,
-                                             show_col_types = FALSE))
+    peak_table <- fread(peak_table,
+      sep = ","
+    )
   }
   peak_table_convert <- data.table::copy(peak_table)
   peak_table_convert <- with(peak_table_convert, peak_table_convert[

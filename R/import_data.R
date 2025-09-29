@@ -73,7 +73,7 @@
 #'
 import_data <- function(peak_table, meta_data, format = "none") {
   if (!any(class(meta_data) %in% c("data.table", "data.frame"))) {
-    meta_data <- data.table(readr::read_csv(meta_data, show_col_types = FALSE))
+    meta_data <- fread(meta_data)
   }
 
   #*** check for Injection, Sample_Code, Biological_Group

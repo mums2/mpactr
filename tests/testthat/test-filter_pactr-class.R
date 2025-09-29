@@ -3,9 +3,7 @@ test_that("test that filter_pactr-class constructs properly", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
 
   mpactr_class <- mpactr$new(
@@ -29,10 +27,7 @@ when an incorrect filter argument is provided", {
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
 
-
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
 
@@ -54,9 +49,7 @@ filter argument provided has not yet been run (e.g., not in the log)", {
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
 
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
 
@@ -76,9 +69,7 @@ test_that("get_log returns the correct filter summary list", {
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
 
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
 
   mpactr_class <- mpactr$new(
@@ -109,9 +100,7 @@ test_that("get_log returns the correct filter
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
 
@@ -139,9 +128,7 @@ check_mismatched_peaks has not been called", {
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
             mpactr_class <- mpactr$new(
@@ -161,9 +148,7 @@ test_that("get_mispicked_ions correctly returns
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
 
@@ -195,9 +180,7 @@ test_that("get_group_averages calculates a group table", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory,
                                             peak_table_name))
 
@@ -222,9 +205,7 @@ test_that("get_group_averages calculates a group table", {
   expect_equal(class(avgs), c("data.table", "data.frame"))
   expect_equal(nrow(avgs), (1233 * 6))
 
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory,
                                             peak_table_name))
 
@@ -259,9 +240,7 @@ test_that("get_cv returns the cv filter has been applied", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory,
                                             peak_table_name))
 
@@ -297,9 +276,7 @@ test_that("Test that mpactr can be printed from the filter-pactR class", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory,
                                             peak_table_name))
 
@@ -317,9 +294,7 @@ test_that("is_filter_run correctly assesses if a filter has been run", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory,
                                             peak_table_name))
 
@@ -354,9 +329,7 @@ an incorrect filter argument is provided", {
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
             mpactr_class <- mpactr$new(
@@ -375,9 +348,7 @@ test_that("get_log returns an error when the filter
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
             mpactr_class <- mpactr$new(
@@ -395,9 +366,7 @@ test_that("get_log returns the correct filter summary list", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory,
                                             peak_table_name))
   mpactr_class <- mpactr$new(
@@ -424,9 +393,7 @@ check_mismatched_peaks has not been called", {
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
             mpactr_class <- mpactr$new(
@@ -446,9 +413,7 @@ returns the check_mismatched_peaks list", {
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta <- data.table(read_csv(test_path(directory,
-                                                  meta_data_name),
-                                        show_col_types = FALSE))
+            meta <- fread(test_path(directory, meta_data_name))
             pt_list <- progenesis_formatter(test_path(directory,
                                                       peak_table_name))
             mpactr_class <- mpactr$new(
@@ -477,9 +442,7 @@ test_that("get_group_averages calculates a group table", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory,
                                             peak_table_name))
   mpactr_class <- mpactr$new(
@@ -525,9 +488,7 @@ test_that("get_cv returns the cv filter has been applied", {
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
-  meta <- data.table(read_csv(test_path(directory,
-                                        meta_data_name),
-                              show_col_types = FALSE))
+  meta <- fread(test_path(directory, meta_data_name))
   pt_list <- progenesis_formatter(test_path(directory,
                                             peak_table_name))
   mpactr_class <- mpactr$new(

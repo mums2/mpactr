@@ -31,9 +31,6 @@ test_that("metaboscape reads data correctly", {
   expect_true(nrow(pt$peak_table) > 0)
   expect_equal(colnames(pt$peak_table), c("Compound", "mz", "rt", samples))
 })
-test_that("mz_mine formatter reads data correctly", {
-
-})
 
 test_that("format_by_type formats the data properly based on the parameters", {
   limit_cores()

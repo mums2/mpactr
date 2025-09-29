@@ -44,6 +44,10 @@ library(ggdendro)
 library(ggtext)
 ```
 
+```{r, include = FALSE}
+limit_cores()
+```
+
 # Filter MS1 feature table with `mpactr`
 
 ```{r}

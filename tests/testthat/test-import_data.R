@@ -69,11 +69,8 @@ test_that("We can use a data.frame as input our peak table in import_data
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
             meta_data_path <- test_path(directory,  meta_data_name)
-            peak_table <- data.table(readr::read_csv(test_path(directory,
-                                                               peak_table_name),
-              skip = 2,
-              show_col_types = FALSE
-            ))
+            peak_table <- fread(test_path(directory,
+                                          peak_table_name), skip = 2)
             data <- import_data(
               peak_table = peak_table,
               meta_data = meta_data_path,
@@ -84,9 +81,8 @@ test_that("We can use a data.frame as input our peak table in import_data
             expect_true(nrow(formatted_peak_table) == nrow(peak_table))
             metabscape_peak_table <- "MJB_MonoVSCoculture_metaboscape_ft.csv"
             peak_table <-
-              data.table(readr::read_csv(test_path(directory,
-                                                   metabscape_peak_table),
-                                         show_col_types = FALSE))
+              fread(test_path(directory,
+                              metabscape_peak_table))
             samples <- colnames(peak_table)[27:72]
             meta_data <-
               data.frame(Injection = samples,
@@ -110,8 +106,7 @@ test_that("import_data aborts when expected
             directory <- "exttestdata"
             peak_table_name <- "102623_peaktable_coculture_simple.csv"
             meta_data_name <- "102623_metadata_correct.csv"
-            meta_data_abort <- read_csv(test_path(directory,  meta_data_name),
-                                        show_col_types = FALSE)
+            meta_data_abort <- fread(test_path(directory,  meta_data_name))
             colnames(meta_data_abort) <- c("Injection",
                                            "Sample", "Biological_Group")
 

@@ -19,10 +19,9 @@ test_that("filter mismatch ions wrapper works
               merge_peaks = TRUE, merge_method = "sum", copy_object = FALSE
             )
 
-            expected_cut_ions <- read_csv(test_path(directory,
-                                                    "cut_ions.csv"),
-                                          col_names = c("V1"),
-                                          show_col_types = FALSE)
+            expected_cut_ions <- fread(test_path(directory,
+                                                 "cut_ions.csv"),
+                                       col.names = c("V1", "V2"))
             expected_cut_ions <- as.character(expected_cut_ions$V1)
 
             expect_equal(nrow(data_mpactr$mpactr_data$get_peak_table()),
