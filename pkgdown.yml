@@ -2,10 +2,11 @@ pandoc: 3.1.11
 pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
-  downstream_analyses: downstream_analyses.html
-  mpactr: mpactr.html
-  reference_semantics: reference_semantics.html
-last_built: 2025-09-29T04:21Z
+  articles/downstream_analyses: downstream_analyses.html
+  articles/filter: filter.html
+  articles/filter2: filter2.html
+  articles/reference_semantics: reference_semantics.html
+last_built: 2025-09-29T13:55Z
 urls:
-  reference: https://www.mums2.org/mpactr/reference
-  article: https://www.mums2.org/mpactr/articles
+  reference: https://mums2.github.io/mpactr/reference
+  article: https://mums2.github.io/mpactr/articles
