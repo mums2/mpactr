@@ -217,6 +217,10 @@ filter_group <- function(mpactr_object,
 #' @param cv_threshold Coefficient of variation threshold.
 #' A lower cv_threshold will result in more stringent filtering and higher
 #' reproducibility. Recommended values between 0.2 - 0.5.
+#' @param is_recursive A `boolean` parameter that is set to "FALSE" by default. 
+#' When set to "TRUE", mpactr will run the CV filter on samples with a CV
+#' above the threshold. It will then re-run the cv filter on the closest peaks.
+#' Meaning, if you have triplicates it will run the filter on the two closest peaks. 
 #' @param copy_object A `boolean` parameter that allows users to return a copied
 #' object instead of modifying the object.
 #'
@@ -240,6 +244,7 @@ filter_group <- function(mpactr_object,
 #'
 filter_cv <- function(mpactr_object,
                       cv_threshold = NULL,
+                      is_recursive = FALSE,
                       copy_object = FALSE) {
 
   if (isTRUE(mpactr_object$is_filter_run(filter = "replicability"))) {
@@ -256,7 +261,8 @@ filter_cv <- function(mpactr_object,
   }
 
   mpactr_object$cv_filter(
-    cv_threshold = cv_threshold
+    cv_threshold = cv_threshold,
+    is_recursive = is_recursive
   )
   return(mpactr_object)
 }

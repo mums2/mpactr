@@ -67,9 +67,9 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ri
 }
 // [[Rcpp::export]]
 Rcpp::DataFrame FilterCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
-    const double cvCutOff, const size_t replicates) {
+    const double cvCutOff, const size_t replicates, const bool isRecursive) {
     // Map the peak table data to a class
-    CvFilter table;
+    CvFilter table(isRecursive);
     table.CalculateCV(peakTable, uniqueSampleList, cvCutOff, replicates);
     return table.GetCvTable();
 }

@@ -131,7 +131,7 @@ test_that("filter cv filter wrapper works as expected", {
     merge_method = "sum"
   )
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
-  data_mpactr_copy <- filter_cv(data_mpactr, 0.2, copy_object = TRUE)
+  data_mpactr_copy <- filter_cv(data_mpactr, 0.2,  copy_object = TRUE)
   data_mpactr <- filter_cv(data_mpactr, 0.2)
 
 

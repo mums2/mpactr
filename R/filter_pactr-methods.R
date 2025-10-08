@@ -193,7 +193,7 @@ filter_pactr$set(
 ####  filter 3: cv filter    ###
 filter_pactr$set(
   "public", "cv_filter",
-  function(cv_threshold = NULL) {
+  function(cv_threshold = NULL, is_recursive = FALSE) {
     if (is.null(cv_threshold)) {
       cli::cli_abort("{.var cv_threshold} must be supplied.")
     }
@@ -224,7 +224,7 @@ filter_pactr$set(
 
     cv <-
       as.data.table(FilterCV(cv, unique(meta_data$Sample_Code), cv_threshold,
-                             table(meta_data$Sample_Code)[[1]]))
+                             table(meta_data$Sample_Code)[[1]], is_recursive))
 
     samples <- unique(meta_data$Sample_Code)
     for (i in seq_along(samples)) {

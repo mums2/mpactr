@@ -4,7 +4,12 @@
 \alias{filter_cv}
 \title{Filter Non-reproducible ions}
 \usage{
-filter_cv(mpactr_object, cv_threshold = NULL, copy_object = FALSE)
+filter_cv(
+  mpactr_object,
+  cv_threshold = NULL,
+  copy_object = FALSE,
+  is_recursive = FALSE
+)
 }
 \arguments{
 \item{mpactr_object}{An \code{mpactr_object}. See \code{\link[=import_data]{import_data()}}.}
@@ -15,6 +20,11 @@ reproducibility. Recommended values between 0.2 - 0.5.}
 
 \item{copy_object}{A \code{boolean} parameter that allows users to return a copied
 object instead of modifying the object.}
+
+\item{is_recursive}{A \code{boolean} parameter that is set to "FALSE" by default.
+When set to "TRUE", mpactr will run the CV filter on samples with a CV
+above the threshold. It will then re-run the cv filter on the closest peaks.
+Meaning, if you have triplicates it will run the filter on the two closest peaks.}
 }
 \value{
 an \code{mpactr_object}.

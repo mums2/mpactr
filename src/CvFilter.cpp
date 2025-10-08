@@ -45,6 +45,22 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
             if (cvScore < cvCutOff && cvScore > 0) {
                 hasPassedCv = true;
             }
+            else if (useRecursiveMethod) {
+                for (size_t j = 0; j < replicates; j++) {
+                    std::vector<double> permutations(replicates - 1);
+                    size_t count = 0;
+                    for (size_t k = 0; k < replicates; k++) {
+                        if (j == k) continue;
+                        permutations[count++] = intensityList[k];
+                    }
+                    cvScore = VectorMath::CoefficientOfVarianceCalculation(permutations);
+                    if (cvScore < cvCutOff && cvScore > 0) {
+                        hasPassedCv = true;
+                        break;
+                    }
+
+                }
+            }
             coefficientOfVariance.emplace_back(cvScore);
             passesCV.emplace_back(hasPassedCv);
         }
