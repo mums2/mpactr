@@ -5,6 +5,7 @@
 #ifndef MPACTR_PEAKTABLE_H
 #define MPACTR_PEAKTABLE_H
 #include <vector>
+#include <list>
 #include <Rcpp.h>
 #include "FeatureData.h"
 
@@ -21,6 +22,7 @@ private:
     std::list<std::string> biologicalGroupsList;
     std::list<bool> passesCV;
     std::list<double> coefficientOfVariance;
+    std::list<bool> passesWithRecursion;
     std::list<std::string> compoundNamesToCV;
     std::unordered_map<std::string, int> sampleCodesToIndex;
     bool useRecursiveMethod;

@@ -39,6 +39,7 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
         int idx = 0;
         for (const auto& intensityList : features[featureIndex].metaData.intensityPerSample) {
             bool hasPassedCv = false;
+            bool usedRecursion = false;
             compoundNamesToCV.emplace_back(currentCompound);
             sampleCodeList.emplace_back(uniqueSampleList[idx++]);
             double cvScore = VectorMath::CoefficientOfVarianceCalculation(intensityList);
@@ -46,6 +47,7 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
                 hasPassedCv = true;
             }
             else if (useRecursiveMethod) {
+                usedRecursion = true;
                 for (size_t j = 0; j < replicates; j++) {
                     std::vector<double> permutations(replicates - 1);
                     size_t count = 0;
@@ -61,6 +63,7 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
 
                 }
             }
+            passesWithRecursion.emplace_back(usedRecursion);
             coefficientOfVariance.emplace_back(cvScore);
             passesCV.emplace_back(hasPassedCv);
         }
@@ -71,10 +74,14 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
 }
 
 Rcpp::DataFrame CvFilter::GetCvTable() const {
-    return Rcpp::DataFrame::create(
+    Rcpp::DataFrame df = Rcpp::DataFrame::create(
         Rcpp::Named("Compound") = Rcpp::wrap(compoundNamesToCV),
         Rcpp::Named("Biological_Group") = Rcpp::wrap(biologicalGroupsList),
         Rcpp::Named("Sample_Code") = Rcpp::wrap(sampleCodeList),
         Rcpp::Named("PassesCvFilter") = Rcpp::wrap(passesCV),
         Rcpp::Named("cv") = Rcpp::wrap(coefficientOfVariance));
+    if (useRecursiveMethod) {
+        df.push_back(passesWithRecursion, "passes_with_recursion");
+    }
+    return df;
 }

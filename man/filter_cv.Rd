@@ -7,8 +7,8 @@
 filter_cv(
   mpactr_object,
   cv_threshold = NULL,
-  copy_object = FALSE,
-  is_recursive = FALSE
+  is_recursive = FALSE,
+  copy_object = FALSE
 )
 }
 \arguments{
@@ -18,13 +18,13 @@ filter_cv(
 A lower cv_threshold will result in more stringent filtering and higher
 reproducibility. Recommended values between 0.2 - 0.5.}
 
-\item{copy_object}{A \code{boolean} parameter that allows users to return a copied
-object instead of modifying the object.}
-
 \item{is_recursive}{A \code{boolean} parameter that is set to "FALSE" by default.
 When set to "TRUE", mpactr will run the CV filter on samples with a CV
 above the threshold. It will then re-run the cv filter on the closest peaks.
 Meaning, if you have triplicates it will run the filter on the two closest peaks.}
+
+\item{copy_object}{A \code{boolean} parameter that allows users to return a copied
+object instead of modifying the object.}
 }
 \value{
 an \code{mpactr_object}.

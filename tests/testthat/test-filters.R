@@ -131,7 +131,7 @@ test_that("filter cv filter wrapper works as expected", {
     merge_method = "sum"
   )
   data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
-  data_mpactr_copy <- filter_cv(data_mpactr, 0.2,  copy_object = TRUE)
+  data_mpactr_copy <- filter_cv(data_mpactr, 0.2, copy_object = TRUE)
   data_mpactr <- filter_cv(data_mpactr, 0.2)
 
 
@@ -149,6 +149,27 @@ test_that("filter cv filter wrapper works as expected", {
                                     format = "None")
   expect_error(filter_cv(data_no_replicates, cv_threshold = 0.1),
                "There are no technical replicates")
+  
+  data <- import_data(test_path(directory, peak_table_name),
+    test_path(directory, meta_data_name),
+    format = "Progenesis"
+  )
+
+  data_mpactr <- filter_mispicked_ions(data,
+    ringwin = 0.5,
+    isowin = 0.01,
+    trwin = 0.005,
+    max_iso_shift = 3,
+    merge_peaks = TRUE,
+    merge_method = "sum"
+  )
+  data_mpactr <- filter_group(data_mpactr, 0.01, "Blanks", TRUE)
+  
+  data_mpactr_copy <- filter_cv(data_mpactr, 0.2, is_recursive = TRUE,
+                                copy_object = TRUE)
+  expect_equal(length(data_mpactr_copy$logger[["list_of_summaries"]]$
+                        replicability$get_failed_ions()), 2)
+  expect_true("passes_with_recursion" %in% colnames(get_cv_data(data_mpactr_copy)))
 })
 
 test_that("filter insource ions wrapper works as expected", {

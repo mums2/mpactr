@@ -246,6 +246,36 @@ test_that("cv_filter filters out data properly", {
   expect_false(is.null(filter_class$logger$list_of_summaries$replicability))
   expect_equal(class(filter_class$logger$list_of_summaries$replicability),
                c("summary", "R6"))
+  
+  # With fix peaks
+  mpactr_class <- mpactr$new(
+    pt_list,
+    meta
+  )
+  mpactr_class$setup()
+  filter_class <- filter_pactr$new(mpactr_class)
+  filter_class$check_mismatched_peaks(
+    ringwin = 0.5,
+    isowin = 0.01,
+    trwin = 0.005,
+    max_iso_shift = 3,
+    merge_peaks = TRUE,
+    merge_method = "sum"
+  )
+  filter_class$filter_blank()
+  filter_class$parse_ions_by_group(group_threshold = 0.01)
+  filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
+  filter_class_median <- filter_class$clone(deep = TRUE)
+  filter_class$cv_filter(cv_threshold = 0.2, is_recursive = TRUE)
+  cv_filter_passed_ions <- filter_class$logger[["list_of_summaries"]]$
+    replicability$get_passed_ions()
+  expect_equal(length(filter_class$logger[["list_of_summaries"]]$
+                        replicability$get_failed_ions()), 2)
+  expect_true("passes_with_recursion" %in% colnames(filter_class$get_cv()))
+  expect_error(filter_class$cv_filter())
+  expect_false(is.null(filter_class$logger$list_of_summaries$replicability))
+  expect_equal(class(filter_class$logger$list_of_summaries$replicability),
+               c("summary", "R6"))
 })
 test_that("cv_filter errors without threshold", {
   limit_cores()
