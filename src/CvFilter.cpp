@@ -81,7 +81,7 @@ Rcpp::DataFrame CvFilter::GetCvTable() const {
         Rcpp::Named("PassesCvFilter") = Rcpp::wrap(passesCV),
         Rcpp::Named("cv") = Rcpp::wrap(coefficientOfVariance));
     if (useRecursiveMethod) {
-        df.push_back(passesWithRecursion, "passes_with_recursion");
+        df.push_back(Rcpp::wrap(passesWithRecursion), "used_recursion");
     }
     return df;
 }

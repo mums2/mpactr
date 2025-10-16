@@ -284,10 +284,73 @@ cv %>%
     legend.position.inside = c(.90, .08),
     legend.title = element_blank(),
     legend.text = element_text(size = 15)
-  )
+  ) +
+    scale_x_continuous(limits = c(-1, 2))
 ```
 
 Here we can see that roughly `r round(cv_thresh_percent, 0)`% of features were below the CV threshold meaning `r 100 - round(cv_thresh_percent, 0)`% were removed at a CV threshold of 0.2.
+
+
+Using the `get_cv_data()` on a mpactr object when "use_recursive" is set to true, will result in the "used_recursion" column added to the same dataframe.
+
+```{r}
+data_rep_recursive <- filter_cv(data,
+  cv_threshold = 0.2,
+  copy_object = TRUE,
+  is_recursive = TRUE
+)
+
+cv_data_recursive <- get_cv_data(data_rep_recursive)
+head(cv_data_recursive)
+```
+
+If a feature passed the cv filter but was flagged for using "use_recursive", we know that it only passed because of the recursive method.
+
+```{r}
+head(cv_data_recursive[which(cv_data_recursive$PassesCvFilter == TRUE & cv_data_recursive$used_recursion == TRUE),])
+```
+
+Running the same plot as above but with "use_recursive" being true will look like this:
+
+```{r}
+cv_data_recursive %>%
+  pivot_longer(cols = c("cv"),
+               names_to = "param",
+               values_to = "cv") %>%
+  nest(.by = param) %>%
+  mutate(
+    data = map(data, arrange, cv),
+    data = map(data, mutate, index = 0:(length(cv) - 1)),
+    data = map(data, mutate, index_scale = index * 100 / length(cv))
+  ) %>%
+  unnest(cols = data) %>%
+  mutate(param = factor(param, levels = c("cv"),
+                        labels = c("cv"))) %>%
+  ggplot() +
+  aes(x = cv, y = index_scale, group = param, color = param) +
+  geom_line(linewidth = 2) +
+  geom_vline(xintercept = 0.2,
+             color = "darkgrey",
+             linetype = "dashed",
+             linewidth = 1) +
+  geom_hline(yintercept = cv_thresh_percent,
+             color = "darkgrey",
+             linewidth = 1) +
+  labs(x = "CV",
+       y = "Percentage of Features",
+       param = "Statistic") +
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = 20),
+    axis.text = element_text(size = 15),
+    legend.position = "inside",
+    legend.position.inside = c(.90, .08),
+    legend.title = element_blank(),
+    legend.text = element_text(size = 15)
+  ) +
+    scale_x_continuous(limits = c(-1, 2))
+
+```
 
 #### Remove insource fragment ions
 
