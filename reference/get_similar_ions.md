@@ -107,4 +107,5 @@ mispicked_ion_groups
 #> 65:      496          495
 #> 66:     1288    1289,1290
 #>     main_ion similar_ions
+#>       <char>       <list>
 ```
