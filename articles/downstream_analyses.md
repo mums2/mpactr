@@ -35,6 +35,7 @@ packages listed, you can install them with
 `install.packages("packagename")`.
 
 ``` r
+
 library(mpactr)
 library(viridis)
 library(plotly)
@@ -49,6 +50,7 @@ library(ggtext)
 ## Filter MS1 feature table with `mpactr`
 
 ``` r
+
 data <- import_data(example_path("cultures_peak_table.csv"),
   example_path("cultures_metadata.csv"),
   format = "Progenesis"
@@ -64,6 +66,7 @@ and media blanks features with a relative ion abundance \> 0.01,
 relative to other groups, and check ions for replicability.
 
 ``` r
+
 data_filtered <- data |>
   filter_mispicked_ions(merge_peaks = TRUE, merge_method = "sum") |>
   filter_group(group_to_remove = "Solvent_Blank") |>
@@ -86,6 +89,7 @@ Overall, 463 ions remain in the feature table. A summary of the
 filtering, as a tree map is below:
 
 ``` r
+
 plot_qc_tree(data_filtered)
 ```
 
@@ -103,6 +107,7 @@ function
 and then select the Compound, mz, and rt columns.
 
 ``` r
+
 get_raw_data(data_filtered) %>%
   select(Compound, mz, rt) %>%
   head()
@@ -123,6 +128,7 @@ input ion. This includes which filter each ion failed or passed, or if
 the ion passed all applied filters.
 
 ``` r
+
 qc_summary(data_filtered) %>%
   head()
 #>    status compounds
@@ -138,6 +144,7 @@ qc_summary(data_filtered) %>%
 We can join these two `data.table`s for plotting data set:
 
 ``` r
+
 get_raw_data(data_filtered) %>%
   mutate(Compound = as.character(Compound)) %>%
   select(Compound, mz, rt) %>%
@@ -159,6 +166,7 @@ Now we can create a scatter plot to show the input features (m/z ~
 retention time) and their fate (status) using `ggolot` and `geom_point`.
 
 ``` r
+
 get_raw_data(data_filtered) %>%
   mutate(Compound = as.character(Compound)) %>%
   select(Compound, mz, rt) %>%
@@ -184,6 +192,7 @@ We can also make the plot interactive with the `plotly` package function
 `ggplotly`.
 
 ``` r
+
 feature_plot <- get_raw_data(data_filtered) %>%
   mutate(Compound = as.character(Compound)) %>%
   select(Compound, mz, rt) %>%
@@ -219,6 +228,7 @@ features and columns are either compound metadata or intensity values
 for samples.
 
 ``` r
+
 ft <- get_peak_table(data_filtered)
 
 ft[1:5, 1:7]
@@ -258,6 +268,7 @@ any samples that no longer have any features post-filtering (likely
 solvent blanks).
 
 ``` r
+
 counts <- ft %>%
   select(Compound, all_of(get_meta_data(data_filtered)$Injection)) %>%
   column_to_rownames(var = "Compound") %>%
@@ -275,6 +286,7 @@ counts[1:5, 1:2]
 Next we can run the correlation:
 
 ``` r
+
 counts_cor <- rcorr(as.matrix(counts), type = "spearman")
 ```
 
@@ -283,6 +295,7 @@ correlation coefficients are stored in the `r` slot, and p-values in the
 `p` slot. We can see the correlations for first sample below
 
 ``` r
+
 counts_cor$r[, 1]
 #>       102623_UM1848B_JC1_69_1_5004      102623_UM1847B_JC28_68_1_5006 
 #>                         1.00000000                        -0.38680057 
@@ -309,6 +322,7 @@ can be customized to your liking (see
 [corrplot](https://CRAN.R-project.org/package=corrplot/vignettes/corrplot-intro.html)).
 
 ``` r
+
 corrplot(counts_cor$r,
   type = "lower",
   method = "square",
@@ -333,6 +347,7 @@ In the original `counts` table, we set the row names from the column
 `Compound` column and pivot the data table for calculating averages.
 
 ``` r
+
 meta <- get_meta_data(data_filtered)
 
 counts %>%
@@ -358,6 +373,7 @@ Next, we will join with sample meta data so we can calculate averages by
 `Sample_Code`.
 
 ``` r
+
 counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
@@ -382,6 +398,7 @@ Now we can calculate mean intensity for each `Compound` and
 `Sample_Code`.
 
 ``` r
+
 counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
@@ -410,6 +427,7 @@ Finally, we need to reformat the table so columns are sample codes for
 the correlation.
 
 ``` r
+
 sample_counts <- counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
@@ -440,12 +458,14 @@ sample_counts[1:5, 1:5]
 Run the correlation:
 
 ``` r
+
 sample_counts_cor <- rcorr(as.matrix(sample_counts), type = "spearman")
 ```
 
 And finally visualize:
 
 ``` r
+
 corrplot(sample_counts_cor$r,
   type = "lower",
   method = "square",
@@ -467,6 +487,7 @@ calculate mean intensity values for `Biological_Group` in the same
 manner as we did for `Sample_Code`.
 
 ``` r
+
 group_counts <- counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
@@ -490,12 +511,14 @@ Run the correlation analysis with
 [`rcorr()`](https://rdrr.io/pkg/Hmisc/man/rcorr.html):
 
 ``` r
+
 group_counts_cor <- rcorr(as.matrix(group_counts), type = "spearman")
 ```
 
 Visualize correlation:
 
 ``` r
+
 corrplot(group_counts_cor$r,
   type = "lower",
   method = "square",
@@ -521,6 +544,7 @@ visualize with `ggplot` and `ggdendro` packages.
 First, calculate distance and cluster:
 
 ``` r
+
 dist <- stats::dist(t(counts), method = "euclidian")
 cluster <- stats::hclust(dist, method = "complete")
 ```
@@ -529,12 +553,14 @@ Calculate dendrogram components with
 [`stats::as.dendrogram()`](https://rdrr.io/r/stats/dendrogram.html):
 
 ``` r
+
 dendro <- as.dendrogram(cluster)
 ```
 
 Extract plotting elements with `ggdendrogram::dendro_data()`
 
 ``` r
+
 den_data <- dendro_data(dendro, type = "rectangle")
 ```
 
@@ -543,6 +569,7 @@ customizations, see [ggdendro
 documentation](https://CRAN.R-project.org/package=ggdendro/vignettes/ggdendro.html).
 
 ``` r
+
 ggplot(segment(den_data)) +
   geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) +
   geom_text(
@@ -574,6 +601,7 @@ and calculate compound fold change.
 #### Calculate fold change
 
 ``` r
+
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
@@ -596,14 +624,15 @@ Inherently, tandem MS/MS datasets can be filled with many zeros. In some
 instances a compound is found in the experimental group but not in the
 control group, or vice versa. In these cases, the fold change
 calculation yields an infinite number as there is a zero either in the
-numerator or denominator ($foldchange = experimental/control$). There is
-also the chance that the compound is not found in either group, yielding
-a fold change on NaN (0/0).
+numerator or denominator ($`fold change = experimental / control`$).
+There is also the chance that the compound is not found in either group,
+yielding a fold change on NaN (0/0).
 
 Compounds that are not in either group are of no interest in this
 comparison and can therefore be removed from the analysis.
 
 ``` r
+
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
@@ -636,6 +665,7 @@ two groups of interest. Here we are interested in the columns Coculture
 and ANG18:
 
 ``` r
+
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
@@ -656,6 +686,7 @@ control group, here ANG18, and one for the experimental group,
 Coculture:
 
 ``` r
+
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
@@ -674,6 +705,7 @@ get_group_averages(data_filtered) %>%
 Now we create pseudo-counts by adding 0.001 to the counts column:
 
 ``` r
+
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
@@ -696,6 +728,7 @@ Now we can remove compounds with an intensity of 0 in both groups. This
 equates to a pseudo-count of 0.001:
 
 ``` r
+
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
@@ -721,6 +754,7 @@ get_group_averages(data_filtered) %>%
 Next, we calculate fold change for all remaining compounds:
 
 ``` r
+
 get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
@@ -747,6 +781,7 @@ get_group_averages(data_filtered) %>%
 Finally, transform fold change to log2:
 
 ``` r
+
 foldchanges <- get_group_averages(data_filtered) %>%
   filter(Biological_Group == "Coculture" |
            Biological_Group == "ANG18") %>%
@@ -778,6 +813,7 @@ We can then probe compounds by plotting a 3D scatter plot of log2 fold
 changes as a function of m/z and retention time:
 
 ``` r
+
 fc_plotting <- foldchanges %>%
   left_join(select(ft, Compound, mz, rt), by = "Compound")
 
@@ -814,6 +850,7 @@ freedom and use the t distribution
 *combine biological and technical variation and calculate sample size*
 
 ``` r
+
 # Satterwaite
 calc_samplesize_ws <- function(sd1, n1, sd2, n2) {
   s1 <- sd1 / (n1^0.5)
@@ -866,6 +903,7 @@ head(stats)
 *calculate the t statistic*
 
 ``` r
+
 denom <- stats %>%
   summarise(den = combASD^2 / (neff),
             .by = c("Compound", "Biological_Group")) %>%
@@ -894,6 +932,7 @@ head(t_test)
 *calculate degrees of freedom*
 
 ``` r
+
 df <- stats %>%
   select(Compound, Biological_Group, neff) %>%
   mutate(neff = if_else(!is.finite(neff), 0, neff)) %>%
@@ -916,6 +955,7 @@ head(df)
 *calculate p-value*
 
 ``` r
+
 t <- t_test %>%
   left_join(df, by = "Compound") %>%
   mutate(
@@ -940,6 +980,7 @@ head(t)
 *combine t-test results with fold changes we calculated*
 
 ``` r
+
 num_ions <- t %>%
   filter(p <= 1) %>%
   count() %>%
@@ -986,6 +1027,7 @@ The base of a volcano plot is a scatter plot with log2 fold changes on
 the x axis and -log₁₀ p-values on the y axis:
 
 ``` r
+
 fc2 %>%
   ggplot() +
   aes(x = logfc, y = neg_logp) +
@@ -1008,6 +1050,7 @@ show a p-value threshold of 0.05 and fold change threshold of 1.5.
 First add a horizontal line to denote the cutoff of -log₁₀ 0.05:
 
 ``` r
+
 fc2 %>%
   ggplot() +
   aes(x = logfc, y = neg_logp) +
@@ -1027,6 +1070,7 @@ Now we can add vertical lines showing the positive and negative cutoffs
 for log2 fold change:
 
 ``` r
+
 fc2 %>%
   ggplot() +
   aes(x = logfc, y = neg_logp) +
@@ -1062,6 +1106,7 @@ pvalue \< 0.05), `Inconclusive` (fold change -1.5 - 1.5 & pvalue \<
 0.05), and `not_sig` (pvalue \> 0.05).
 
 ``` r
+
 fc2 %>%
   mutate(
     sig = case_when(
@@ -1093,6 +1138,7 @@ custom colors with
 [`scale_color_manual()`](https://ggplot2.tidyverse.org/reference/scale_manual.html):
 
 ``` r
+
 fc2 %>%
   mutate(
     sig = case_when(
@@ -1126,6 +1172,7 @@ fc2 %>%
 Finally, adjust axis text and titles to your liking:
 
 ``` r
+
 fc2 %>%
   mutate(
     sig = case_when(
@@ -1164,6 +1211,7 @@ We can also make the plot interactive, showing the compound id for each
 point:
 
 ``` r
+
 volcano <- fc2 %>%
   mutate(
     sig = case_when(
@@ -1207,6 +1255,7 @@ You can also look at the volcano plot with the q value to control for
 false discovery rate (FDR) using the same approach shown for p values:
 
 ``` r
+
 fc2 %>%
   mutate(
     sig = case_when(

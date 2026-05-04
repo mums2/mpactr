@@ -31,6 +31,7 @@ page](https://www.mums2.org/mpactr/articles/mpactr.html).
 You can install the CRAN version with:
 
 ``` r
+
 install.packages("mpactr")
 ```
 
@@ -38,6 +39,7 @@ You can install the development version of mpactr from
 [GitHub](https://github.com/mums2/mpactr) with:
 
 ``` r
+
 # install.packages("devtools")
 devtools::install_github("mums2/mpactr")
 ```

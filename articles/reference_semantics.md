@@ -1,6 +1,7 @@
 # Reference Semantics
 
 ``` r
+
 library(mpactr)
 ```
 
@@ -14,6 +15,7 @@ object, regardless if they are assigned to a new object, result in
 changes to the original data object. We can see this below.
 
 ``` r
+
 data2 <- import_data(
   example_path("cultures_peak_table.csv"),
   example_path("cultures_metadata.csv"),
@@ -53,6 +55,7 @@ get_peak_table(data2)[, 1:5]
 Where the raw data object has 1334 ions in the feature table.
 
 ``` r
+
 data2_mispicked <- filter_mispicked_ions(data2,
   ringwin = 0.5,
   isowin = 0.01, trwin = 0.005,
@@ -90,6 +93,7 @@ Even though we created an object called `data2_mispicked`, the original
 table:
 
 ``` r
+
 get_peak_table(data2)[, 1:5]
 #> Key: <Compound, mz, kmd, rt>
 #>       Compound       mz     kmd        rt 102423_Blank_77_1_5095

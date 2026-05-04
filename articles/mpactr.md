@@ -1,6 +1,7 @@
 # Filter with mpact original data
 
 ``` r
+
 # library(mpactr)
 library(mpactr)
 library(tidyverse)
@@ -45,12 +46,14 @@ combine these in one prior to import with
 Loading the sample list…
 
 ``` r
+
 samplelist <- fread(example_path("PTY087I2_samplelist.csv"))
 ```
 
 Loading the metadata list…
 
 ``` r
+
 metadata <- fread(example_path("PTY087I2_extractmetadata.csv"))
 ```
 
@@ -58,6 +61,7 @@ Our sample list contains additional blank samples that are not in the
 feature table, and therefore should be removed prior to import.
 
 ``` r
+
 samples <- fread(example_path("PTY087I2_dataset.csv"), skip = 2) %>%
   colnames() %>%
   str_subset(., "200826")
@@ -73,6 +77,7 @@ exported from Progenesis, so we will set the `format` argument to
 Progenesis.
 
 ``` r
+
 data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
   meta_data = meta_data,
   format = "Progenesis"
@@ -86,6 +91,7 @@ Calling the new mpactr object will print the current peak table in the
 terminal:
 
 ``` r
+
 data
 #>               Compound       mz        rt 200826_blank1_r1 200826_blank1_r2
 #>                 <char>    <num>     <num>            <num>            <num>
@@ -275,6 +281,7 @@ To extract the raw input peak table, use the function
 [`get_raw_data()`](https://www.mums2.org/mpactr/reference/get_raw_data.md).
 
 ``` r
+
 get_raw_data(data)[1:5, 1:8]
 #>            Compound       mz        rt 200826_blank1_r1 200826_blank1_r2
 #>              <char>    <num>     <num>            <num>            <num>
@@ -298,6 +305,7 @@ been applied, use
 [`get_peak_table()`](https://www.mums2.org/mpactr/reference/get_peak_table.md):
 
 ``` r
+
 get_peak_table(data)[1:5, 1:8]
 #>            Compound       mz        rt 200826_blank1_r1 200826_blank1_r2
 #>              <char>    <num>     <num>            <num>            <num>
@@ -321,6 +329,7 @@ Metadata can be accessed with
 [`get_meta_data()`](https://www.mums2.org/mpactr/reference/get_meta_data.md):
 
 ``` r
+
 get_meta_data(data)[1:5, ]
 #>           Injection File Text Sample_Notes                     MS method
 #>              <char>    <lgcl>       <lgcl>                        <char>
@@ -357,6 +366,7 @@ changes to the original data object. We can see this below.
 Where the raw data object has 4956 ions in the feature table:
 
 ``` r
+
 data2 <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
   meta_data = meta_data,
   format = "Progenesis"
@@ -382,6 +392,7 @@ We can run the `filter_mispicked_ions` filter, with default setting
 `copy_object = FALSE` (operates on reference semantics).
 
 ``` r
+
 data2_mispicked <- filter_mispicked_ions(data2,
   ringwin = 0.5,
   isowin = 0.01, trwin = 0.005,
@@ -428,6 +439,7 @@ created an object called `data2_mispicked`, the original `data2` object
 was also updated and now has 4665 ions in the feature table:
 
 ``` r
+
 get_peak_table(data2)[, 1:5]
 #> Key: <Compound, mz, kmd, rt>
 #>               Compound        mz        kmd         rt
@@ -497,6 +509,7 @@ splitting of isotopic patterns during peak picking, detector saturation
 artifacts, or incorrect identification of multiply charged oligomers.
 
 ``` r
+
 data_mispicked <- filter_mispicked_ions(data,
   ringwin = 0.5,
   isowin = 0.01, trwin = 0.005,
@@ -521,6 +534,7 @@ This function returns a `data.table` reporting the main ion (the ion
 retained post-merging) and the ions similar to it.
 
 ``` r
+
 head(get_similar_ions(data_mispicked))
 #>            main_ion                      similar_ions
 #>              <char>                            <list>
@@ -547,6 +561,7 @@ metadata file which corresponds to your solvent blank samples, here
 “Blanks”.
 
 ``` r
+
 data_blank <- filter_group(data,
   group_threshold = 0.01,
   group_to_remove = "Blanks", remove_ions = TRUE,
@@ -572,6 +587,7 @@ recommend removing media blank ions following all other filters so all
 high-quality ions are identified (see Chaining filters together below).
 
 ``` r
+
 data_media_blank <- filter_group(data,
   group_threshold = 0.01,
   group_to_remove = "Media", remove_ions = TRUE,
@@ -594,6 +610,7 @@ Note - this filter cannot be applied to data that does not contain
 technical replicates.
 
 ``` r
+
 data_rep <- filter_cv(data,
   cv_threshold = 0.2,
   copy_object = TRUE
@@ -614,6 +631,7 @@ look at both mean and median CV as shown in the example below, or you
 can filter the data by the parameter of choice.
 
 ``` r
+
 cv <- get_cv_data(data_rep) %>%
   pivot_longer(cols = c("cv"),
                names_to = "param",
@@ -649,6 +667,7 @@ There is one tibble for each parameter. We also want to calculate the
 percentage of features represented by the CV threshold.
 
 ``` r
+
 cv_thresh_percent <- cv %>%
   filter(param == "cv") %>%
   unnest(cols = data) %>%
@@ -663,6 +682,7 @@ cv_thresh_percent
 Then we can plot percentage of features by CV:
 
 ``` r
+
 cv %>%
   unnest(cols = data) %>%
   mutate(param = factor(param, levels = c("cv"),
@@ -713,6 +733,7 @@ features. The highest mass feature is identified as the likely precursor
 ion and retained in the feature table.
 
 ``` r
+
 data_insource <- filter_insource_ions(data,
   cluster_threshold = 0.95,
   copy_object = TRUE
@@ -737,6 +758,7 @@ the removal of media blank components with the
 function after identification of high-quality ions.
 
 ``` r
+
 data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
   meta_data = meta_data,
   format = "Progenesis"
@@ -772,12 +794,14 @@ function. You must specify which filter you are interested in, either
 “mispicked”, “group”, “replicability”, or “insource”.
 
 ``` r
+
 mispicked_summary <- filter_summary(data_filtered, filter = "mispicked")
 ```
 
 Failed ions:
 
 ``` r
+
 head(mispicked_summary$failed_ions, 100)
 #>   [1] "9.97_84.9592m/z"   "9.97_91.5049m/z"   "9.97_93.5039m/z"  
 #>   [4] "1.99_93.0679m/z"   "2.00_105.0674m/z"  "9.99_108.0234m/z" 
@@ -818,6 +842,7 @@ head(mispicked_summary$failed_ions, 100)
 Passing ions:
 
 ``` r
+
 head(mispicked_summary$passed_ions, 100)
 #>   [1] "0.03_102.1549m/z" "0.04_113.9641m/z" "0.06_182.9860m/z"
 #>   [4] "0.06_235.9635m/z" "0.09_68.9936m/z"  "0.10_102.1549m/z"
@@ -859,6 +884,7 @@ If you set `filter` to a filter name that you did not apply to your
 data, an error message will be returned.
 
 ``` r
+
 filter_summary(data_filtered, filter = "insource")
 #> Error in `mpactr_object$get_log()`:
 #> ! `filter` insource has not yet been applied to the data. Run the
@@ -869,6 +895,7 @@ If you want to retrieve the filter summary for the group filter, you
 must also supply the group name with the `group` argument:
 
 ``` r
+
 filter_summary(data_filtered, filter = "group", group = "Blanks")
 ```
 
@@ -884,6 +911,7 @@ failed or passed filtering. If the ion failed filtering, its status will
 report the name of the filter it failed.
 
 ``` r
+
 head(qc_summary(data_filtered)[order(compounds), ])
 #>          status        compounds
 #>          <char>           <char>
@@ -912,6 +940,7 @@ data.table, check out their resources on
 [gitlab](https://rdatatable.gitlab.io/data.table/).
 
 ``` r
+
 library(ggplot2)
 library(treemapify)
 
@@ -923,6 +952,7 @@ ion_counts <- qc_summary(data_filtered)[, .(count = .N), by = status][
 Finally, we plot the treemap:
 
 ``` r
+
 tm <- ggplot(ion_counts) +
   aes(area = percent, fill = status) +
   geom_treemap() +
@@ -941,6 +971,7 @@ This plot can be customized with ggplot2, for example we only want to
 display the percentage:
 
 ``` r
+
 tm <- ggplot(ion_counts) +
   aes(area = percent, fill = status) +
   geom_treemap() +
@@ -957,6 +988,7 @@ tm
 Or you no longer need the legend and maybe we want custom colors:
 
 ``` r
+
 tm +
   scale_fill_brewer(palette = "Greens") +
   theme(legend.position = "none")
@@ -969,6 +1001,7 @@ object to the function
 [`plot_qc_tree()`](https://www.mums2.org/mpactr/reference/plot_qc_tree.md).
 
 ``` r
+
 plot_qc_tree(data_filtered)
 ```
 
