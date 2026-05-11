@@ -23,7 +23,7 @@ test_that("get_meta_data correctly returns the table", {
     format = "Progenesis"
   )
 
-  metadata <- get_meta_data(data)
+  metadata <- get_metadata(data)
   expect_equal(class(metadata), c("data.table", "data.frame"))
   expect_equal(nrow(metadata), 18)
 })

@@ -309,10 +309,10 @@ test_that("cv_filter errors when there are no technical replicates", { # hmm
   peak_table_name <- "102623_peaktable_coculture_simple.csv"
   meta_data_name <- "102623_metadata_correct.csv"
   meta <- fread(test_path(directory, meta_data_name))
-  meta_sub <- meta[, head(.SD, 1), by = Sample_Code]
+  meta_sub <- meta[, head(.SD, 1), by = sample_code]
 
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
-  sub <- c("Compound", "mz", "rt", meta_sub$Injection)
+  sub <- c("Compound", "mz", "rt", meta_sub$injection)
   pt_list$peak_table <- pt_list$peak_table[, .SD, .SDcols = sub]
   pt_list$raw_table <- pt_list$raw_table[, .SD, .SDcols = sub]
 

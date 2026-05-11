@@ -77,19 +77,21 @@ import_data <- function(peak_table, meta_data, format = "none") {
   }
 
   #*** check for Injection, Sample_Code, Biological_Group
-  cols <- c("Injection", "Sample_Code", "Biological_Group")
+  cols <- c("injection", "sample_code", "biological_group")
+  colnames(meta_data) <- tolower(colnames(meta_data))
   if (any(cols %in% colnames(meta_data) == FALSE)) {
     cli::cli_abort("{.cls {cols[which(!(cols %in% colnames(meta_data)))]}}
                     are not columns in the provided metadata. Please see
                      function documentation for more details.")
   }
 
+
   df <- format_by_type(
     peak_table_path = peak_table,
     type_of_peak_table = format,
-    sample_names = meta_data$Injection
+    sample_names = meta_data$injection
   )
-
+  
   mpactr_object <- mpactr$new(
     peak_table = unique_compounds(df),
     meta_data = data.table(meta_data)

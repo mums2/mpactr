@@ -29,7 +29,7 @@ get_peak_table <- function(mpactr_object) {
 #' Return the meta_data data.table from the mpactr object.
 #'
 #' @description
-#' `get_meta_data()` a wrapper function to return the meta data object
+#' `get_metadata()` a wrapper function to return the meta data object
 #' of the given mpactr object.
 #'
 #' @param mpactr_object The mpactr object that is created by calling
@@ -48,9 +48,9 @@ get_peak_table <- function(mpactr_object) {
 #'   format = "Progenesis"
 #' )
 #'
-#' meta_data <- get_meta_data(data)
+#' meta_data <- get_metadata(data)
 #'
-get_meta_data <- function(mpactr_object) {
+get_metadata <- function(mpactr_object) {
   return(data.table::copy(mpactr_object$mpactr_data$get_meta_data()))
 }
 

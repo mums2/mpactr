@@ -3,7 +3,7 @@ mpactr$set("public", "setup", function() {
 })
 mpactr$set("private", "initialize_data", function() {
   private$peak_table <- private$peak_table[which(rowSums(
-    private$peak_table[, .SD, .SDcols = private$meta_data$Injection]
+    private$peak_table[, .SD, .SDcols = private$meta_data$injection]
   ) > 0), ]
   private$set_kmd()
   private$peak_table$Compound <- as.character(private$peak_table$Compound)

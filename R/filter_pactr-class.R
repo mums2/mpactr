@@ -63,14 +63,14 @@ filter_pactr <- R6Class("filter_pactr", public = list(
         "sample", value.name = "intensity", variable.factor = FALSE
     )[
       data.table(self$mpactr_data$get_meta_data()),
-      on = .(sample = Injection)
+      on = .(sample = injection)
     ][
       , .(
         average = mean(intensity),
         BiolRSD = rsd(intensity),
         Bioln = length(intensity)
       ),
-      by = .(Compound, Biological_Group)
+      by = .(Compound, biological_group)
     ]
 
     t <- data.table::melt(self$mpactr_data$get_peak_table(),
@@ -80,17 +80,17 @@ filter_pactr <- R6Class("filter_pactr", public = list(
       variable.factor = FALSE
     )[
       data.table(self$mpactr_data$get_meta_data()),
-      on = .(sample = Injection)
+      on = .(sample = injection)
     ][
       , .(sd = rsd(intensity), n = length(intensity)),
-      by = .(Compound, Biological_Group, Sample_Code)
+      by = .(Compound, biological_group, sample_code)
     ][
       , .(techRSD = mean(sd), techn = mean(n)),
-      by = .(Compound, Biological_Group)
+      by = .(Compound, biological_group)
     ]
 
-    group_stats <- b[t, on = .(Compound, Biological_Group)]
-    setorder(group_stats, Compound, Biological_Group)
+    group_stats <- b[t, on = .(Compound, biological_group)]
+    setorder(group_stats, Compound, biological_group)
 
     return(group_stats)
   },

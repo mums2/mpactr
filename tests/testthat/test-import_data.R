@@ -30,7 +30,7 @@ test_that("We can use a data.frame as input our peak table in import_data", {
   )
   peak_table <- get_peak_table(data)
 
-  data_df <- import_data(get_peak_table(data), get_meta_data(data), "None")
+  data_df <- import_data(get_peak_table(data), get_metadata(data), "None")
   peak_table_df <- get_peak_table(data_df)
 
   expect_true(all(peak_table == peak_table_df))
@@ -52,7 +52,7 @@ test_that("We can use a data.frame as input our peak table in import_data", {
     filter_group(0.1, "Blanks") |>
     filter_insource_ions()
 
-  data_df <- import_data(get_peak_table(data), get_meta_data(data), "None")
+  data_df <- import_data(get_peak_table(data), get_metadata(data), "None")
   peak_table_df <- get_peak_table(data_df)
   df <- get_peak_table(data)
   temp <- data.frame(Compound = peak_table_df$Compound,
