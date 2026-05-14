@@ -2,7 +2,7 @@
 title: "Filter with mpact original data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{phylotypr}
+  %\VignetteIndexEntry{mpactr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -2,7 +2,7 @@
 title: "Downstream Analyses"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{downstream_analyses}
+  %\VignetteIndexEntry{Downstream Analyses}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
