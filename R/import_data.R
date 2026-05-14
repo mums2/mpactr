@@ -91,7 +91,7 @@ import_data <- function(peak_table, meta_data, format = "none") {
     type_of_peak_table = format,
     sample_names = meta_data$injection
   )
-  
+
   mpactr_object <- mpactr$new(
     peak_table = unique_compounds(df),
     meta_data = data.table(meta_data)

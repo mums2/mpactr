@@ -33,4 +33,4 @@ test_that("mpactr isMultipleTechReps correctly
               meta
             )
             expect_true(mpactr_class$isMultipleTechReps())
-  })
+          })
