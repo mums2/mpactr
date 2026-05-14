@@ -1,4 +1,4 @@
-# mpactr (development version)
+# mpactr 0.3.2
 
 # mpactr 0.3.1
 

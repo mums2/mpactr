@@ -57,7 +57,7 @@ data <- import_data(example_path("cultures_peak_table.csv"),
 )
 ```
 
-We will be using example data in the `mpactr` package, which has `r nrow(get_meta_data(data))` samples and `r length(unique(get_meta_data(data)$Biological_Group))` biological groups. Biological groups are: `r unique(get_meta_data(data)$Biological_Group)`.
+We will be using example data in the `mpactr` package, which has `r nrow(get_metadata(data))` samples and `r length(unique(get_metadata(data)$biological_group))` biological groups. Biological groups are: `r unique(get_metadata(data)$biological_group)`.
 
 We will check our feature table for mispicked ions, remove solvent blank and media blanks features with a relative ion abundance > 0.01, relative to other groups, and check ions for replicability.
 
@@ -168,11 +168,11 @@ ft[1:5, 1:7]
 
 First, we can look at the correlation between each individual sample, regardless of technical replicates and biological groups. This will show how well technical and biological replicates correlate, where we are expecting to see near perfect correlation replicates.
 
-We will use `Hmisc::rcorr()` to perform spearman correlations. This function is expecting a `matrix` where columns are samples to correlate and rows are features. Since the feature table has columns for both feature metadata and samples, we need to remove feature metadata for `rcorr()`. We can do this by extracting sample names from the metadata `Injection` column, which match sample column names in the feature table. We also need to remove any samples that no longer have any features post-filtering (likely solvent blanks).
+We will use `Hmisc::rcorr()` to perform spearman correlations. This function is expecting a `matrix` where columns are samples to correlate and rows are features. Since the feature table has columns for both feature metadata and samples, we need to remove feature metadata for `rcorr()`. We can do this by extracting sample names from the metadata `injection` column, which match sample column names in the feature table. We also need to remove any samples that no longer have any features post-filtering (likely solvent blanks).
 
 ```{r}
 counts <- ft %>%
-  select(Compound, all_of(get_meta_data(data_filtered)$Injection)) %>%
+  select(Compound, all_of(get_metadata(data_filtered)$injection)) %>%
   column_to_rownames(var = "Compound") %>%
   select(where(~ sum(.x) != 0))
 
@@ -211,46 +211,46 @@ Next, we can look at the correlation between technical replicates to see how the
 In the original `counts` table, we set the row names from the column `Compound`, which holds the compound id. Here we need to reset our `Compound` column and pivot the data table for calculating averages.
 
 ```{r}
-meta <- get_meta_data(data_filtered)
+meta <- get_metadata(data_filtered)
 
 counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
   head()
 ```
 
-Next, we will join with sample meta data so we can calculate averages by `Sample_Code`.
+Next, we will join with sample meta data so we can calculate averages by `sample_code`.
 
 ```{r}
 counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   head()
 ```
 
-Now we can calculate mean intensity for each `Compound` and `Sample_Code`.
+Now we can calculate mean intensity for each `Compound` and `sample_code`.
 
 ```{r}
 counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   summarise(
-    mean_intensity = mean(Intensity),
-    .by = c(Compound, Sample_Code)
+    mean_intensity = mean(intensity),
+    .by = c(Compound, sample_code)
   ) %>%
   head()
 ```
@@ -264,16 +264,16 @@ sample_counts <- counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   summarise(
-    mean_intensity = mean(Intensity),
-    .by = c(Compound, Sample_Code)
+    mean_intensity = mean(intensity),
+    .by = c(Compound, sample_code)
   ) %>%
   pivot_wider(
-    names_from = Sample_Code,
+    names_from = sample_code,
     values_from = mean_intensity
   ) %>%
   column_to_rownames(var = "Compound")
@@ -302,23 +302,23 @@ corrplot(sample_counts_cor$r,
 
 ### Correlation between biological replicates
 
-We can also look at the correlation between biological groups. In this dataset, technical replicates and biological groups are the same; however if you have multiple technical replicates you may also be interested in the correlation between biological groups. We will calculate mean intensity values for `Biological_Group` in the same manner as we did for `Sample_Code`.
+We can also look at the correlation between biological groups. In this dataset, technical replicates and biological groups are the same; however if you have multiple technical replicates you may also be interested in the correlation between biological groups. We will calculate mean intensity values for `biological_group` in the same manner as we did for `sample_code`.
 
 ```{r, warning=FALSE}
 group_counts <- counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   summarise(
-    mean_intensity = mean(Intensity),
-    .by = c(Compound, Biological_Group)
+    mean_intensity = mean(intensity),
+    .by = c(Compound, biological_group)
   ) %>%
   pivot_wider(
-    names_from = Biological_Group,
+    names_from = biological_group,
     values_from = mean_intensity
   ) %>%
   column_to_rownames(var = "Compound")
@@ -394,10 +394,10 @@ Say we wanted to compare metabolite profiles between our Coculture and ANG18 gro
 
 ```{r}
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
 ```
@@ -408,10 +408,10 @@ Compounds that are not in either group are of no interest in this comparison and
 
 ```{r}
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
                                     FALSE,
                                     TRUE)) %>%
@@ -426,9 +426,9 @@ First, extract group averages from the `mpactr` object and select the two groups
 
 ```{r}
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   head()
 ```
 
@@ -436,9 +436,9 @@ To calculate fold change, we need to have two columns: one for the control group
 
 ```{r}
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   head()
 ```
 
@@ -447,11 +447,11 @@ Now we create pseudo-counts by adding 0.001 to the counts column:
 
 ```{r}
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   head()
 ```
 
@@ -460,11 +460,11 @@ Now we can remove compounds with an intensity of 0 in both groups. This equates 
 
 ```{r}
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
@@ -476,11 +476,11 @@ Next, we calculate fold change for all remaining compounds:
 
 ```{r}
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
@@ -493,11 +493,11 @@ Finally, transform fold change to log2:
 
 ```{r}
 foldchanges <- get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
@@ -573,7 +573,7 @@ stats <- get_group_averages(data_filtered) %>%
     techRSD = if_else(is.na(techRSD), 0, techRSD),
     neff = calc_samplesize_ws(techRSD, techn, BiolRSD, Bioln) + 1
   ) %>%
-  filter(Biological_Group %in% my_comp)
+  filter(biological_group %in% my_comp)
 
 head(stats)
 ```
@@ -583,13 +583,13 @@ head(stats)
 ```{r}
 denom <- stats %>%
   summarise(den = combASD^2 / (neff),
-            .by = c("Compound", "Biological_Group")) %>%
+            .by = c("Compound", "biological_group")) %>%
   mutate(den = if_else(!is.finite(den), 0, den)) %>%
   summarise(denom = sqrt(sum(den)), .by = c("Compound"))
 
 t_test <- stats %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  select(Compound, biological_group, average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(numerator = (Coculture - ANG18)) %>% # experimental - control
   left_join(denom, by = "Compound") %>%
   mutate(t = abs(numerator / denom))
@@ -601,9 +601,9 @@ head(t_test)
 
 ```{r}
 df <- stats %>%
-  select(Compound, Biological_Group, neff) %>%
+  select(Compound, biological_group, neff) %>%
   mutate(neff = if_else(!is.finite(neff), 0, neff)) %>%
-  pivot_wider(names_from = Biological_Group, values_from = neff) %>%
+  pivot_wider(names_from = biological_group, values_from = neff) %>%
   mutate(deg = Coculture + ANG18 - 2) %>%
   select(Compound, deg)
 
