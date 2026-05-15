@@ -51,8 +51,8 @@ library(ggtext)
 
 ``` r
 
-data <- import_data(example("cultures_peak_table.csv"),
-  example("cultures_metadata.csv"),
+data <- import_data(example_path("cultures_peak_table.csv"),
+  example_path("cultures_metadata.csv"),
   format = "Progenesis"
 )
 ```
@@ -71,7 +71,7 @@ data_filtered <- data |>
   filter_mispicked_ions(merge_peaks = TRUE, merge_method = "sum") |>
   filter_group(group_to_remove = "Solvent_Blank") |>
   filter_group(group_to_remove = "Media") |>
-  filter_cv(cv_threshold = 0.2, cv_param = "median")
+  filter_cv(cv_threshold = 0.2)
 #> ℹ Checking 1334 peaks for mispicked peaks.
 #> ℹ Argument merge_peaks is: TRUE. Merging mispicked peaks with method sum.
 #> ✔ 73 ions failed the mispicked filter, 1261 ions remain.
@@ -82,10 +82,10 @@ data_filtered <- data |>
 #> ℹ Argument remove_ions is: TRUE.Removing peaks from Media.
 #> ✔ 751 ions failed the Media filter, 485 ions remain.
 #> ℹ Parsing 485 peaks for replicability across technical replicates.
-#> ✔ 62 ions failed the cv_filter filter, 423 ions remain.
+#> ✔ 22 ions failed the cv_filter filter, 463 ions remain.
 ```
 
-Overall, 423 ions remain in the feature table. A summary of the
+Overall, 463 ions remain in the feature table. A summary of the
 filtering, as a tree map is below:
 
 ``` r
@@ -93,7 +93,7 @@ filtering, as a tree map is below:
 plot_qc_tree(data_filtered)
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-4-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-5-1.png)
 
 ## Interactive scatter plot of all input ions and their fate during filtering
 
@@ -103,7 +103,7 @@ at certain retention time or m/z ranges. To create this plot, we first
 need to extract the raw data table, which has all pre-filtered ions
 (including m/z and retention time). We can do this with the mpactr
 function
-[`get_raw_data()`](https://mums2.github.io/mpactr/reference/get_raw_data.md),
+[`get_raw_data()`](https://www.mums2.org/mpactr/reference/get_raw_data.md),
 and then select the Compound, mz, and rt columns.
 
 ``` r
@@ -112,7 +112,7 @@ get_raw_data(data_filtered) %>%
   select(Compound, mz, rt) %>%
   head()
 #>    Compound       mz        rt
-#>       <num>    <num>     <num>
+#>       <int>    <num>     <num>
 #> 1:        1 256.0883 0.7748333
 #> 2:        2 484.2921 0.7756667
 #> 3:        3 445.2276 0.7786667
@@ -122,7 +122,7 @@ get_raw_data(data_filtered) %>%
 ```
 
 Next, we need to extract the ion status with `mpactr` function
-[`qc_summary()`](https://mums2.github.io/mpactr/reference/qc_summary.md).
+[`qc_summary()`](https://www.mums2.org/mpactr/reference/qc_summary.md).
 This function returns a `data.table` reporting the ion status for each
 input ion. This includes which filter each ion failed or passed, or if
 the ion passed all applied filters.
@@ -168,7 +168,7 @@ retention time) and their fate (status) using `ggolot` and `geom_point`.
 ``` r
 
 get_raw_data(data_filtered) %>%
-  mutate(Compound = as.character(Compound)) %>% 
+  mutate(Compound = as.character(Compound)) %>%
   select(Compound, mz, rt) %>%
   left_join(qc_summary(data_filtered),
     by = join_by("Compound" == "compounds")
@@ -186,7 +186,7 @@ get_raw_data(data_filtered) %>%
   theme(legend.position = "top")
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-8-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-9-1.png)
 
 We can also make the plot interactive with the `plotly` package function
 `ggplotly`.
@@ -222,7 +222,7 @@ ggplotly(feature_plot)
 We may be interested in how individual samples, or biological groups
 correlate to each other. For this analysis, we will need to extract the
 filtered feature table with `mpactr` function
-[`get_peak_table()`](https://mums2.github.io/mpactr/reference/get_peak_table.md).
+[`get_peak_table()`](https://www.mums2.org/mpactr/reference/get_peak_table.md).
 This function will return the filtered `data.table` where rows are
 features and columns are either compound metadata or intensity values
 for samples.
@@ -262,7 +262,7 @@ where columns are samples to correlate and rows are features. Since the
 feature table has columns for both feature metadata and samples, we need
 to remove feature metadata for
 [`rcorr()`](https://rdrr.io/pkg/Hmisc/man/rcorr.html). We can do this by
-extracting sample names from the metadata `Injection` column, which
+extracting sample names from the metadata `injection` column, which
 match sample column names in the feature table. We also need to remove
 any samples that no longer have any features post-filtering (likely
 solvent blanks).
@@ -270,17 +270,17 @@ solvent blanks).
 ``` r
 
 counts <- ft %>%
-  select(Compound, all_of(get_meta_data(data_filtered)$Injection)) %>%
+  select(Compound, all_of(get_metadata(data_filtered)$injection)) %>%
   column_to_rownames(var = "Compound") %>%
   select(where(~ sum(.x) != 0))
 
 counts[1:5, 1:2]
-#>      102623_UM1848B_JC1_69_1_5004 102623_UM1846B_Media_67_1_5005
-#> 1000                            0                              0
-#> 1001                            0                              0
-#> 1002                            0                              0
-#> 1003                            0                              0
-#> 1004                            0                              0
+#>      102623_UM1848B_JC1_69_1_5004 102623_UM1847B_JC28_68_1_5006
+#> 1000                            0                     183612.30
+#> 1001                            0                      67698.17
+#> 1002                            0                      26108.09
+#> 1003                            0                      10467.85
+#> 1004                            0                      22165.75
 ```
 
 Next we can run the correlation:
@@ -297,33 +297,29 @@ correlation coefficients are stored in the `r` slot, and p-values in the
 ``` r
 
 counts_cor$r[, 1]
-#>       102623_UM1848B_JC1_69_1_5004     102623_UM1846B_Media_67_1_5005 
-#>                         1.00000000                         0.17541589 
-#>      102623_UM1847B_JC28_68_1_5006     102623_UM1850B_ANGDT_71_1_5007 
-#>                        -0.40190441                        -0.46544728 
-#>     102623_UM1849B_ANG18_70_1_5008 102623_UM1852B_Coculture_72_1_5009 
-#>                        -0.03971590                        -0.66162852 
-#>  102623_MixedMonoculture_84_1_5015       102623_UM1848B_JC1_69_1_5017 
-#>                         0.26791815                         0.98020218 
-#>     102623_UM1846B_Media_67_1_5018      102623_UM1847B_JC28_68_1_5019 
-#>                         0.17402775                        -0.40305906 
+#>       102623_UM1848B_JC1_69_1_5004      102623_UM1847B_JC28_68_1_5006 
+#>                         1.00000000                        -0.38680057 
+#>     102623_UM1850B_ANGDT_71_1_5007     102623_UM1849B_ANG18_70_1_5008 
+#>                        -0.44327083                        -0.06901314 
+#> 102623_UM1852B_Coculture_72_1_5009  102623_MixedMonoculture_84_1_5015 
+#>                        -0.63515074                         0.20015123 
+#>       102623_UM1848B_JC1_69_1_5017      102623_UM1847B_JC28_68_1_5019 
+#>                         0.99850314                        -0.38586432 
 #>     102623_UM1850B_ANGDT_71_1_5020     102623_UM1849B_ANG18_70_1_5021 
-#>                        -0.46660263                        -0.03989960 
+#>                        -0.44449167                        -0.06919162 
 #> 102623_UM1852B_Coculture_72_1_5022  102623_MixedMonoculture_84_1_5028 
-#>                        -0.65976408                         0.26407704 
-#>       102623_UM1848B_JC1_69_1_5030     102623_UM1846B_Media_67_1_5031 
-#>                         0.97770847                         0.17541193 
-#>      102623_UM1847B_JC28_68_1_5032     102623_UM1850B_ANGDT_71_1_5033 
-#>                        -0.40190659                        -0.46138695 
-#>     102623_UM1849B_ANG18_70_1_5034 102623_UM1852B_Coculture_72_1_5035 
-#>                        -0.01196953                        -0.66541048 
-#>  102623_MixedMonoculture_84_1_5041 
-#>                         0.25869973
+#>                        -0.63669267                         0.19887627 
+#>       102623_UM1848B_JC1_69_1_5030      102623_UM1847B_JC28_68_1_5032 
+#>                         0.99832601                        -0.38552256 
+#>     102623_UM1850B_ANGDT_71_1_5033     102623_UM1849B_ANG18_70_1_5034 
+#>                        -0.44384366                        -0.06919162 
+#> 102623_UM1852B_Coculture_72_1_5035  102623_MixedMonoculture_84_1_5041 
+#>                        -0.63785492                         0.19125997
 ```
 
 Finally, we can plot the correlations map with `corrplot`. Style options
 can be customized to your liking (see
-[corrplot](https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html)).
+[corrplot](https://CRAN.R-project.org/package=corrplot/vignettes/corrplot-intro.html)).
 
 ``` r
 
@@ -337,7 +333,7 @@ corrplot(counts_cor$r,
 )
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-14-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-15-1.png)
 
 #### Correlation between technical replicates
 
@@ -352,29 +348,29 @@ In the original `counts` table, we set the row names from the column
 
 ``` r
 
-meta <- get_meta_data(data_filtered)
+meta <- get_metadata(data_filtered)
 
 counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
   head()
 #> # A tibble: 6 × 3
-#>   Compound Injection                          Intensity
+#>   Compound injection                          intensity
 #>   <chr>    <chr>                                  <dbl>
 #> 1 1000     102623_UM1848B_JC1_69_1_5004              0 
-#> 2 1000     102623_UM1846B_Media_67_1_5005            0 
-#> 3 1000     102623_UM1847B_JC28_68_1_5006        183612.
-#> 4 1000     102623_UM1850B_ANGDT_71_1_5007         3680.
-#> 5 1000     102623_UM1849B_ANG18_70_1_5008            0 
-#> 6 1000     102623_UM1852B_Coculture_72_1_5009        0
+#> 2 1000     102623_UM1847B_JC28_68_1_5006        183612.
+#> 3 1000     102623_UM1850B_ANGDT_71_1_5007         3680.
+#> 4 1000     102623_UM1849B_ANG18_70_1_5008            0 
+#> 5 1000     102623_UM1852B_Coculture_72_1_5009        0 
+#> 6 1000     102623_MixedMonoculture_84_1_5015     15295.
 ```
 
-Next, we will join with sample meta data so we can calcuate averages by
-`Sample_Code`.
+Next, we will join with sample meta data so we can calculate averages by
+`sample_code`.
 
 ``` r
 
@@ -382,24 +378,24 @@ counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   head()
 #> # A tibble: 6 × 6
-#>   Compound Injection             Intensity Sample_Code Biological_Group dilution
-#>   <chr>    <chr>                     <dbl> <chr>       <chr>               <dbl>
+#>   Compound injection             intensity sample_code biological_group dilution
+#>   <chr>    <chr>                     <dbl> <chr>       <chr>               <int>
 #> 1 1000     102623_UM1848B_JC1_6…        0  UM1848B     JC1                     1
-#> 2 1000     102623_UM1846B_Media…        0  UM1846B     Media                   1
-#> 3 1000     102623_UM1847B_JC28_…   183612. UM1847B     JC28                    1
-#> 4 1000     102623_UM1850B_ANGDT…     3680. UM1850B     ANGDT                   1
-#> 5 1000     102623_UM1849B_ANG18…        0  UM1849B     ANG18                   1
-#> 6 1000     102623_UM1852B_Cocul…        0  UM1852B     Coculture               1
+#> 2 1000     102623_UM1847B_JC28_…   183612. UM1847B     JC28                    1
+#> 3 1000     102623_UM1850B_ANGDT…     3680. UM1850B     ANGDT                   1
+#> 4 1000     102623_UM1849B_ANG18…        0  UM1849B     ANG18                   1
+#> 5 1000     102623_UM1852B_Cocul…        0  UM1852B     Coculture               1
+#> 6 1000     102623_MixedMonocult…    15295. MixedMonoc… Mixed_Monocultu…        1
 ```
 
 Now we can calculate mean intensity for each `Compound` and
-`Sample_Code`.
+`sample_code`.
 
 ``` r
 
@@ -407,24 +403,24 @@ counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   summarise(
-    mean_intensity = mean(Intensity),
-    .by = c(Compound, Sample_Code)
+    mean_intensity = mean(intensity),
+    .by = c(Compound, sample_code)
   ) %>%
   head()
 #> # A tibble: 6 × 3
-#>   Compound Sample_Code mean_intensity
-#>   <chr>    <chr>                <dbl>
-#> 1 1000     UM1848B                 0 
-#> 2 1000     UM1846B                 0 
-#> 3 1000     UM1847B            182682.
-#> 4 1000     UM1850B              3762.
-#> 5 1000     UM1849B                 0 
-#> 6 1000     UM1852B                 0
+#>   Compound sample_code      mean_intensity
+#>   <chr>    <chr>                     <dbl>
+#> 1 1000     UM1848B                      0 
+#> 2 1000     UM1847B                 182682.
+#> 3 1000     UM1850B                   3762.
+#> 4 1000     UM1849B                      0 
+#> 5 1000     UM1852B                      0 
+#> 6 1000     MixedMonoculture         14130.
 ```
 
 Finally, we need to reformat the table so columns are sample codes for
@@ -436,27 +432,27 @@ sample_counts <- counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   summarise(
-    mean_intensity = mean(Intensity),
-    .by = c(Compound, Sample_Code)
+    mean_intensity = mean(intensity),
+    .by = c(Compound, sample_code)
   ) %>%
   pivot_wider(
-    names_from = Sample_Code,
+    names_from = sample_code,
     values_from = mean_intensity
   ) %>%
   column_to_rownames(var = "Compound")
 
 sample_counts[1:5, 1:5]
-#>      UM1848B UM1846B   UM1847B  UM1850B UM1849B
-#> 1000       0       0 182681.78 3762.133       0
-#> 1001       0       0  69643.45 6540.170       0
-#> 1002       0       0  25588.00 3730.070       0
-#> 1003       0       0  10424.57    0.000       0
-#> 1004       0       0  23216.59 1724.140       0
+#>      UM1848B   UM1847B  UM1850B UM1849B UM1852B
+#> 1000       0 182681.78 3762.133       0       0
+#> 1001       0  69643.45 6540.170       0       0
+#> 1002       0  25588.00 3730.070       0       0
+#> 1003       0  10424.57    0.000       0       0
+#> 1004       0  23216.59 1724.140       0       0
 ```
 
 Run the correlation:
@@ -479,7 +475,7 @@ corrplot(sample_counts_cor$r,
 )
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-20-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-21-1.png)
 
 #### Correlation between biological replicates
 
@@ -487,8 +483,8 @@ We can also look at the correlation between biological groups. In this
 dataset, technical replicates and biological groups are the same;
 however if you have multiple technical replicates you may also be
 interested in the correlation between biological groups. We will
-calculate mean intensity values for `Biological_Group` in the same
-manner as we did for `Sample_Code`.
+calculate mean intensity values for `biological_group` in the same
+manner as we did for `sample_code`.
 
 ``` r
 
@@ -496,16 +492,16 @@ group_counts <- counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   summarise(
-    mean_intensity = mean(Intensity),
-    .by = c(Compound, Biological_Group)
+    mean_intensity = mean(intensity),
+    .by = c(Compound, biological_group)
   ) %>%
   pivot_wider(
-    names_from = Biological_Group,
+    names_from = biological_group,
     values_from = mean_intensity
   ) %>%
   column_to_rownames(var = "Compound")
@@ -532,7 +528,7 @@ corrplot(group_counts_cor$r,
 )
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-23-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-24-1.png)
 
 As expected, the biological group correlation matrix matches the
 technical replicates correlation.
@@ -570,7 +566,7 @@ den_data <- dendro_data(dendro, type = "rectangle")
 
 Use `ggplot` and `ggdendrogram` to plot the dendrogram. For more
 customizations, see [ggdendro
-documentation](https://cran.r-project.org/web/packages/ggdendro/vignettes/ggdendro.html).
+documentation](https://CRAN.R-project.org/package=ggdendro/vignettes/ggdendro.html).
 
 ``` r
 
@@ -591,14 +587,14 @@ ggplot(segment(den_data)) +
 #> ℹ Adding new coordinate system, which will replace the existing one.
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-27-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-28-1.png)
 
 ## Fold change analysis
 
 Say we wanted to compare metabolite profiles between our Coculture and
 ANG18 groups. We can extract group means from the filtered compounds
 using the mpactr function
-[`get_group_averages()`](https://mums2.github.io/mpactr/reference/get_group_averages.md),
+[`get_group_averages()`](https://www.mums2.org/mpactr/reference/get_group_averages.md),
 isolate the groups of interest, here Coculture and ANG18 monocoluture,
 and calculate compound fold change.
 
@@ -607,10 +603,10 @@ and calculate compound fold change.
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
 #> # A tibble: 6 × 4
@@ -628,7 +624,7 @@ Inherently, tandem MS/MS datasets can be filled with many zeros. In some
 instances a compound is found in the experimental group but not in the
 control group, or vice versa. In these cases, the fold change
 calculation yields an infinite number as there is a zero either in the
-numerator or denominator ($`fold chage = experimental / control`$).
+numerator or denominator ($`fold change = experimental / control`$).
 There is also the chance that the compound is not found in either group,
 yielding a fold change on NaN (0/0).
 
@@ -638,10 +634,10 @@ comparison and can therefore be removed from the analysis.
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
                                     FALSE,
                                     TRUE)) %>%
@@ -652,9 +648,9 @@ get_group_averages(data_filtered) %>%
 #>   Compound ANG18 Coculture nonzero_compound    fc
 #>   <chr>    <dbl>     <dbl> <lgl>            <dbl>
 #> 1 1007        0      8929. TRUE               Inf
-#> 2 1024        0     11317. TRUE               Inf
-#> 3 103         0      5152. TRUE               Inf
-#> 4 1039     1145.        0  TRUE                 0
+#> 2 1023        0      6117. TRUE               Inf
+#> 3 1024        0     11317. TRUE               Inf
+#> 4 103         0      5152. TRUE               Inf
 #> 5 1040      669.        0  TRUE                 0
 #> 6 105         0     16501. TRUE               Inf
 ```
@@ -671,11 +667,11 @@ and ANG18:
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   head()
-#>    Compound Biological_Group average
+#>    Compound biological_group average
 #>      <char>           <char>   <num>
 #> 1:     1000            ANG18       0
 #> 2:     1000        Coculture       0
@@ -692,11 +688,11 @@ Coculture:
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   head()
-#>    Compound Biological_Group average
+#>    Compound biological_group average
 #>      <char>           <char>   <num>
 #> 1:     1000            ANG18       0
 #> 2:     1000        Coculture       0
@@ -711,11 +707,11 @@ Now we create pseudo-counts by adding 0.001 to the counts column:
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   head()
 #> # A tibble: 6 × 3
 #>   Compound ANG18 Coculture
@@ -729,30 +725,30 @@ get_group_averages(data_filtered) %>%
 ```
 
 Now we can remove compounds with an intensity of 0 in both groups. This
-equates to a pseuo-count of 0.001:
+equates to a pseudo-count of 0.001:
 
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
   filter(nonzero_compound == TRUE) %>%
   head()
 #> # A tibble: 6 × 4
-#>   Compound    ANG18 Coculture nonzero_compound
-#>   <chr>       <dbl>     <dbl> <lgl>           
-#> 1 1007        0.001  8929.    TRUE            
-#> 2 1024        0.001 11317.    TRUE            
-#> 3 103         0.001  5152.    TRUE            
-#> 4 1039     1145.        0.001 TRUE            
-#> 5 1040      669.        0.001 TRUE            
-#> 6 105         0.001 16501.    TRUE
+#>   Compound   ANG18 Coculture nonzero_compound
+#>   <chr>      <dbl>     <dbl> <lgl>           
+#> 1 1007       0.001  8929.    TRUE            
+#> 2 1023       0.001  6117.    TRUE            
+#> 3 1024       0.001 11317.    TRUE            
+#> 4 103        0.001  5152.    TRUE            
+#> 5 1040     669.        0.001 TRUE            
+#> 6 105        0.001 16501.    TRUE
 ```
 
 Next, we calculate fold change for all remaining compounds:
@@ -760,11 +756,11 @@ Next, we calculate fold change for all remaining compounds:
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
@@ -772,14 +768,14 @@ get_group_averages(data_filtered) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
 #> # A tibble: 6 × 5
-#>   Compound    ANG18 Coculture nonzero_compound      fc
-#>   <chr>       <dbl>     <dbl> <lgl>              <dbl>
-#> 1 1007        0.001  8929.    TRUE             8.93e+6
-#> 2 1024        0.001 11317.    TRUE             1.13e+7
-#> 3 103         0.001  5152.    TRUE             5.15e+6
-#> 4 1039     1145.        0.001 TRUE             8.73e-7
-#> 5 1040      669.        0.001 TRUE             1.49e-6
-#> 6 105         0.001 16501.    TRUE             1.65e+7
+#>   Compound   ANG18 Coculture nonzero_compound      fc
+#>   <chr>      <dbl>     <dbl> <lgl>              <dbl>
+#> 1 1007       0.001  8929.    TRUE             8.93e+6
+#> 2 1023       0.001  6117.    TRUE             6.12e+6
+#> 3 1024       0.001 11317.    TRUE             1.13e+7
+#> 4 103        0.001  5152.    TRUE             5.15e+6
+#> 5 1040     669.        0.001 TRUE             1.49e-6
+#> 6 105        0.001 16501.    TRUE             1.65e+7
 ```
 
 Finally, transform fold change to log2:
@@ -787,11 +783,11 @@ Finally, transform fold change to log2:
 ``` r
 
 foldchanges <- get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
@@ -801,14 +797,14 @@ foldchanges <- get_group_averages(data_filtered) %>%
 
 head(foldchanges)
 #> # A tibble: 6 × 6
-#>   Compound    ANG18 Coculture nonzero_compound      fc logfc
-#>   <chr>       <dbl>     <dbl> <lgl>              <dbl> <dbl>
-#> 1 1007        0.001  8929.    TRUE             8.93e+6  23.1
-#> 2 1024        0.001 11317.    TRUE             1.13e+7  23.4
-#> 3 103         0.001  5152.    TRUE             5.15e+6  22.3
-#> 4 1039     1145.        0.001 TRUE             8.73e-7 -20.1
-#> 5 1040      669.        0.001 TRUE             1.49e-6 -19.4
-#> 6 105         0.001 16501.    TRUE             1.65e+7  24.0
+#>   Compound   ANG18 Coculture nonzero_compound      fc logfc
+#>   <chr>      <dbl>     <dbl> <lgl>              <dbl> <dbl>
+#> 1 1007       0.001  8929.    TRUE             8.93e+6  23.1
+#> 2 1023       0.001  6117.    TRUE             6.12e+6  22.5
+#> 3 1024       0.001 11317.    TRUE             1.13e+7  23.4
+#> 4 103        0.001  5152.    TRUE             5.15e+6  22.3
+#> 5 1040     669.        0.001 TRUE             1.49e-6 -19.4
+#> 6 105        0.001 16501.    TRUE             1.65e+7  24.0
 ```
 
 #### Visualize fold change for compounds in a 3D scatter plot
@@ -883,10 +879,10 @@ stats <- get_group_averages(data_filtered) %>%
     techRSD = if_else(is.na(techRSD), 0, techRSD),
     neff = calc_samplesize_ws(techRSD, techn, BiolRSD, Bioln) + 1
   ) %>%
-  filter(Biological_Group %in% my_comp)
+  filter(biological_group %in% my_comp)
 
 head(stats)
-#>    Compound Biological_Group average BiolRSD Bioln techRSD techn combRSD
+#>    Compound biological_group average BiolRSD Bioln techRSD techn combRSD
 #>      <char>           <char>   <num>   <num> <int>   <num> <num>   <num>
 #> 1:     1000            ANG18       0       0     3       0     3      NA
 #> 2:     1000        Coculture       0       0     3       0     3      NA
@@ -910,13 +906,13 @@ head(stats)
 
 denom <- stats %>%
   summarise(den = combASD^2 / (neff),
-            .by = c("Compound", "Biological_Group")) %>%
+            .by = c("Compound", "biological_group")) %>%
   mutate(den = if_else(!is.finite(den), 0, den)) %>%
   summarise(denom = sqrt(sum(den)), .by = c("Compound"))
 
 t_test <- stats %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  select(Compound, biological_group, average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(numerator = (Coculture - ANG18)) %>% # experimental - control
   left_join(denom, by = "Compound") %>%
   mutate(t = abs(numerator / denom))
@@ -938,9 +934,9 @@ head(t_test)
 ``` r
 
 df <- stats %>%
-  select(Compound, Biological_Group, neff) %>%
+  select(Compound, biological_group, neff) %>%
   mutate(neff = if_else(!is.finite(neff), 0, neff)) %>%
-  pivot_wider(names_from = Biological_Group, values_from = neff) %>%
+  pivot_wider(names_from = biological_group, values_from = neff) %>%
   mutate(deg = Coculture + ANG18 - 2) %>%
   select(Compound, deg)
 
@@ -1044,7 +1040,7 @@ fc2 %>%
 #> • colour : "Differential Abundance"
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-42-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-43-1.png)
 
 This is good, but we probably want to know which compounds are above the
 p-value threshold and outside the log2 fold change threshold. Fold
@@ -1068,7 +1064,7 @@ fc2 %>%
 #> • colour : "Differential Abundance"
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-43-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-44-1.png)
 
 Now we can add vertical lines showing the positive and negative cutoffs
 for log2 fold change:
@@ -1090,7 +1086,7 @@ fc2 %>%
 #> • colour : "Differential Abundance"
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-44-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-45-1.png)
 
 So now we can see the thresholds, but it’s difficult to make out which
 compounds have significant fold change values. It would be nice to color
@@ -1127,14 +1123,14 @@ fc2 %>%
   select(Compound, ANG18, Coculture, fc, logfc, p, sig) %>%
   head()
 #> # A tibble: 6 × 7
-#>   Compound    ANG18 Coculture      fc   logfc     p sig            
-#>   <chr>       <dbl>     <dbl>   <dbl>   <dbl> <dbl> <fct>          
-#> 1 637      2174.     2022.    9.30e-1  -0.105 0.458 Not significant
-#> 2 1284        0.001   312.    3.12e+5  18.3   0.429 Not significant
-#> 3 856       130.        0.001 7.69e-6 -17.0   0.429 Not significant
-#> 4 1127     5164.        0.001 1.94e-7 -22.3   0.169 Not significant
-#> 5 667         0.001   619.    6.19e+5  19.2   0.167 Not significant
-#> 6 1302        0.001  2900.    2.90e+6  21.5   0.166 Not significant
+#>   Compound    ANG18 Coculture      fc   logfc       p sig            
+#>   <chr>       <dbl>     <dbl>   <dbl>   <dbl>   <dbl> <fct>          
+#> 1 637      2174.     2022.    9.30e-1  -0.105 0.458   Not significant
+#> 2 699         0.001 38505.    3.85e+7  25.2   0.00420 Increased      
+#> 3 1094      988.        0.001 1.01e-6 -19.9   0.00388 Decreased      
+#> 4 597         0.001  5907.    5.91e+6  22.5   0.00388 Increased      
+#> 5 782         0.001  6250.    6.25e+6  22.6   0.00374 Increased      
+#> 6 664         0.001  4263.    4.26e+6  22.0   0.00348 Increased
 ```
 
 Now we can set the color aesthetic to the variable `sig` and select
@@ -1171,7 +1167,7 @@ fc2 %>%
   theme_bw()
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-46-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-47-1.png)
 
 Finally, adjust axis text and titles to your liking:
 
@@ -1209,7 +1205,7 @@ fc2 %>%
   )
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-47-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-48-1.png)
 
 We can also make the plot interactive, showing the compound id for each
 point:
@@ -1292,4 +1288,4 @@ fc2 %>%
   )
 ```
 
-![](downstream_analyses_files/figure-html/unnamed-chunk-49-1.png)
+![](downstream_analyses_files/figure-html/unnamed-chunk-50-1.png)

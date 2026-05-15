@@ -19,7 +19,7 @@ filter_group(
 - mpactr_object:
 
   An `mpactr_object`. See
-  [`import_data()`](https://mums2.github.io/mpactr/reference/import_data.md).
+  [`import_data()`](https://www.mums2.org/mpactr/reference/import_data.md).
 
 - group_threshold:
 
@@ -48,7 +48,7 @@ an `mpactr_object`.
 `filter_group()` removes feature ions that are present in a user-defined
 group based on a relative abundance threshold. This could be
 particularly useful to filter out features found present in solvent
-blank samples. Further, this filter can be ultilized to remove features
+blank samples. Further, this filter can be utilized to remove features
 in media blank sample for experiments on microbial cultures. The
 presence or absence of features in a group of samples is determined by
 first averaging injection replicates and then averaging biological
@@ -78,8 +78,9 @@ filter examples.
 ## Examples
 
 ``` r
-data <- import_data(example("coculture_peak_table.csv"),
-  example("metadata.csv"),
+data <- import_data(
+  example_path("coculture_peak_table.csv"),
+  example_path("metadata.csv"),
   format = "Progenesis"
 )
 

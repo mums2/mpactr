@@ -11,7 +11,7 @@ for some instruments, such as Waters Synapse G2-Si-Q-ToF, to account for
 high concentration samples.
 
 Parameter `isowin` is the isotopic mass window, which accounts for
-isotopic peaks of the same precussor mass that were incorrectly assigned
+isotopic peaks of the same precursor mass that were incorrectly assigned
 during preprocessing.
 
 `copy_object`: mpactr is built on an R6 class-system, meaning it
@@ -46,7 +46,7 @@ filter_mispicked_ions(
 - mpactr_object:
 
   An `mpactr_object`. See
-  [`import_data()`](https://mums2.github.io/mpactr/reference/import_data.md).
+  [`import_data()`](https://www.mums2.org/mpactr/reference/import_data.md).
 
 - ringwin:
 
@@ -88,8 +88,9 @@ an `mpactr_object`.
 ## Examples
 
 ``` r
-data <- import_data(example("coculture_peak_table.csv"),
-  example("metadata.csv"),
+data <- import_data(
+  example_path("coculture_peak_table.csv"),
+  example_path("metadata.csv"),
   format = "Progenesis"
 )
 

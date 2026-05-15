@@ -2,7 +2,7 @@
 
 `plot_qc_tree()` visualizes the filtering summary as a treemap. Ion
 status (see
-[`qc_summary()`](https://mums2.github.io/mpactr/reference/qc_summary.md))
+[`qc_summary()`](https://www.mums2.org/mpactr/reference/qc_summary.md))
 is reported here as percentage of all pre-filtered ions.
 
 ## Usage
@@ -24,8 +24,9 @@ a tree map plot of class `ggplot`.
 ## Examples
 
 ``` r
-data <- import_data(example("coculture_peak_table.csv"),
-  example("metadata.csv"),
+data <- import_data(
+  example_path("coculture_peak_table.csv"),
+  example_path("metadata.csv"),
   format = "Progenesis"
 )
 

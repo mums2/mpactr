@@ -36,7 +36,7 @@ filter_insource_ions(
 - mpactr_object:
 
   An `mpactr_object`. See
-  [`import_data()`](https://mums2.github.io/mpactr/reference/import_data.md).
+  [`import_data()`](https://www.mums2.org/mpactr/reference/import_data.md).
 
 - cluster_threshold:
 
@@ -54,8 +54,9 @@ an `mpactr_object`
 ## Examples
 
 ``` r
-data <- import_data(example("coculture_peak_table.csv"),
-  example("metadata.csv"),
+data <- import_data(
+  example_path("coculture_peak_table.csv"),
+  example_path("metadata.csv"),
   format = "Progenesis"
 )
 

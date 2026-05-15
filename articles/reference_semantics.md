@@ -3,17 +3,6 @@
 ``` r
 
 library(mpactr)
-#> Loading required package: data.table
-#> 
-#> Attaching package: 'data.table'
-#> The following object is masked from 'package:base':
-#> 
-#>     %notin%
-#> 
-#> Attaching package: 'mpactr'
-#> The following object is masked from 'package:utils':
-#> 
-#>     example
 ```
 
 ## Reference semantics
@@ -27,8 +16,9 @@ changes to the original data object. We can see this below.
 
 ``` r
 
-data2 <- import_data(example("cultures_peak_table.csv"),
-  example("cultures_metadata.csv"),
+data2 <- import_data(
+  example_path("cultures_peak_table.csv"),
+  example_path("cultures_metadata.csv"),
   format = "Progenesis"
 )
 
@@ -162,5 +152,5 @@ execution.
 Memory usage really shines when you use R6 classes vs. a traditional
 workflow, such as copy by value. In a traditional workflow, all of the
 data must be copied to call functions and compute operations, using R6
-classes we can minimize that problem, improving performace for large
+classes we can minimize that problem, improving performance for large
 datasets.

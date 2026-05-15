@@ -8,23 +8,23 @@ during the pre-processing of tandem mass spectrometry data.
 
 Filters in this package address the following issues:
 
-- [`filter_mispicked_ions()`](https://mums2.github.io/mpactr/reference/filter_mispicked_ions.md):
+- [`filter_mispicked_ions()`](https://www.mums2.org/mpactr/reference/filter_mispicked_ions.md):
   removal of mispicked peaks, or those isotopic patterns that are
   incorrectly split during preprocessing.
-- [`filter_group()`](https://mums2.github.io/mpactr/reference/filter_group.md):
+- [`filter_group()`](https://www.mums2.org/mpactr/reference/filter_group.md):
   removal of features overrepresented in a specific group of samples;
   for example removal of features present in solvent blanks due to
   carryover between samples.
-- [`filter_cv()`](https://mums2.github.io/mpactr/reference/filter_cv.md):
+- [`filter_cv()`](https://www.mums2.org/mpactr/reference/filter_cv.md):
   removal of non-reproducible features, or those that are inconsistent
   between technical replicates.
-- [`filter_insource_ions()`](https://mums2.github.io/mpactr/reference/filter_insource_ions.md):
+- [`filter_insource_ions()`](https://www.mums2.org/mpactr/reference/filter_insource_ions.md):
   removal of fragment ions created during the first ionization in the
   tandem MS/MS workflow.
 
 All filters are independent, meaning they can be used to create a
-project-specific workflow, or you can learn more in [the Filter
-vignette](https://mums2.github.io/mpactr/articles/filter2.html).
+project-specific workflow, or you can learn more in [the Getting Started
+page](https://www.mums2.org/mpactr/articles/mpactr.html).
 
 ## Installation
 
@@ -41,13 +41,13 @@ You can install the development version of mpactr from
 ``` r
 
 # install.packages("devtools")
-devtools::install_github("SchlossLab/mpactr")
+devtools::install_github("mums2/mpactr")
 ```
 
 ## Get started
 
-See [the Filter
-vignette](https://mums2.github.io/mpactr/articles/filter2.html) to get
+See the [Getting
+Started](https://www.mums2.org/mpactr/articles/mpactr.html) page to get
 started.
 
 ## Getting help

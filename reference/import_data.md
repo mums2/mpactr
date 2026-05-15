@@ -38,9 +38,9 @@ to be comma separated files (*.csv*).
     through the `format` argument. Currently supported value for
     `format` are "Progenesis", "Metaboscape", or "None".
 
-`format` = "Progensis" allows users to provide a feature table exported
-by Progenesis. To export a compatable peak table in Progenesis, navigate
-to the *Review Compounds* tab then File -\> Export Compound
+`format` = "Progenesis." allows users to provide a feature table
+exported by Progenesis. To export a compatible peak table in Progenesis,
+navigate to the *Review Compounds* tab then File -\> Export Compound
 Measurements. Select the following properties: Compound, m/z, Retention
 time (min), and Raw abundance and click ok.
 
@@ -60,7 +60,7 @@ individual features, while columns are compound metadata and samples.
 The feature table must have the compound metadata columns "Compound",
 "mz", and "rt". Where "Compound" is the compound id, and can be
 `numeric` or `character`. "mz" is the compound m/z, and should be
-`numeric`. "rt" is the retention time, in mintues, and should be
+`numeric`. "rt" is the retention time, in minutes, and should be
 `numeric`. The remaining columns should be samples, and match the names
 in the "Injection" column of the `meta_data` file. 2. `meta_data`: a
 table with sample information. Either a file path or `data.frame` can be
@@ -75,13 +75,14 @@ following filtering with mpactr.
 ## Examples
 
 ``` r
-data <- import_data(example("coculture_peak_table.csv"),
-  example("metadata.csv"),
+data <- import_data(
+  example_path("coculture_peak_table.csv"),
+  example_path("metadata.csv"),
   format = "Progenesis"
 )
 
-meta_data <- read.csv(example("metadata.csv"))
-data <- import_data(example("coculture_peak_table.csv"),
+meta_data <- read.csv(example_path("metadata.csv"))
+data <- import_data(example_path("coculture_peak_table.csv"),
   meta_data,
   format = "Progenesis"
 )
