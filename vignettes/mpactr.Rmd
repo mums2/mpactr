@@ -38,7 +38,7 @@ mpactr requires 2 files as input: a feature table and metadata file. Both are ex
 1. peak_table: a peak table in Progenesis format is expected. To export a compatible peak table in Progenesis, navigate to the *Review Compounds* tab then File -> Export Compound Measurements. Select the following properties: Compound, m/z, Retention time (min), and Raw abundance and click ok. 
 2. metadata: a table with sample information. At minimum the following columns are expected: Injection, Sample_Code, Biological_Group. Injection is the sample name and is expected to match sample column names in the peak_table. Sample_Code is the id for technical replicate groups. Biological_Group is the id for biological replicate groups. Other sample metadata can be added, and is encouraged for downstream analysis following filtering with mpactr.
 
-To import these data into R, use the mpactr function `import_data()`, which has the arguments: `peak_table_file_path` and `meta_data_file_path`. This tutorial will show you examples with data from the original mpact program, found on [GitHub](https://github.com/BalunasLab/mpact/tree/main/rawdata/PTY087I2). This dataset contain 38 samples for biological groups solvent blanks, media blanks, Streptomyces sp. PTY08712 grown with (250um_Ce) and without (0um_Ce) rare earth element cerium. For more information about the experiments conducted see [Samples, Puckett, and Balunas 2023](https://pubs.acs.org/doi/abs/10.1021/acs.analchem.2c04632). 
+To import these data into R, use the mpactr function `import_data()`, which has the arguments: `peak_table_file_path` and `metadata_file_path`. This tutorial will show you examples with data from the original mpact program, found on [GitHub](https://github.com/BalunasLab/mpact/tree/main/rawdata/PTY087I2). This dataset contain 38 samples for biological groups solvent blanks, media blanks, Streptomyces sp. PTY08712 grown with (250um_Ce) and without (0um_Ce) rare earth element cerium. For more information about the experiments conducted see [Samples, Puckett, and Balunas 2023](https://pubs.acs.org/doi/abs/10.1021/acs.analchem.2c04632). 
 
 The original program has sample metadata split across two files: the sample list and metadata. mpactr accepts a single file, so we need to combine these in one prior to import with `import_data()`.
 
@@ -63,16 +63,16 @@ samples <- fread(example_path("PTY087I2_dataset.csv"), skip = 2) %>%
   colnames() %>%
   str_subset(., "200826")
 
-meta_data <- samplelist %>%
+metadata <- samplelist %>%
   left_join(metadata, by = "Sample_Code") %>%
   filter(Injection %in% samples)
 ```
 
-Now we can import the data. We will provide the url for the `peak_table`, and our reformatted meta_data object. This peak table was exported from Progenesis, so we will set the `format` argument to Progenesis.
+Now we can import the data. We will provide the url for the `peak_table`, and our reformatted metadata object. This peak table was exported from Progenesis, so we will set the `format` argument to Progenesis.
 
 ```{r}
 data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
-  meta_data = meta_data,
+  metadata = metadata,
   format = "Progenesis"
 )
 ```
@@ -119,7 +119,7 @@ Where the raw data object has `r nrow(get_peak_table(data))` ions in the feature
 
 ```{r}
 data2 <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
-  meta_data = meta_data,
+  metadata = metadata,
   format = "Progenesis"
 )
 
@@ -308,7 +308,7 @@ Filters can be chained in a customizable workflow, shown below. While filters ca
 
 ```{r}
 data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
-  meta_data = meta_data,
+  metadata = metadata,
   format = "Progenesis"
 )
 
