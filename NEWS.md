@@ -1,3 +1,5 @@
+# mpactr (development version)
+
 # mpactr 0.3.2
 * Updated mpactr so that all column names inside the metadata file are lowercase. You may still enter you data with uppercase column names, but we will force all data inside the metadata file to be lowercase. This change happens within the `import_data()` function.
 * Updated vignette to reflect current changes. 
