@@ -62,7 +62,7 @@ filter_pactr <- R6Class("filter_pactr", public = list(
       id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
         "sample", value.name = "intensity", variable.factor = FALSE
     )[
-      data.table(self$mpactr_data$get_meta_data()),
+      data.table(self$mpactr_data$get_metadata()),
       on = .(sample = injection)
     ][
       , .(
@@ -79,7 +79,7 @@ filter_pactr <- R6Class("filter_pactr", public = list(
       value.name = "intensity",
       variable.factor = FALSE
     )[
-      data.table(self$mpactr_data$get_meta_data()),
+      data.table(self$mpactr_data$get_metadata()),
       on = .(sample = injection)
     ][
       , .(sd = rsd(intensity), n = length(intensity)),

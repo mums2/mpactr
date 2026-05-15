@@ -81,7 +81,7 @@ filter_pactr$set("public", "filter_blank", function() {
     id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
       "sample", value.name = "intensity", variable.factor = FALSE
   )[
-    data.table(self$mpactr_data$get_meta_data()),
+    data.table(self$mpactr_data$get_metadata()),
     on = .(sample = injection)
   ][
     , .(
@@ -98,7 +98,7 @@ filter_pactr$set("public", "filter_blank", function() {
     value.name = "intensity",
     variable.factor = FALSE
   )[
-    data.table(self$mpactr_data$get_meta_data()),
+    data.table(self$mpactr_data$get_metadata()),
     on = .(sample = injection)
   ][
     , .(sd = rsd(intensity), n = length(intensity)),
@@ -154,7 +154,7 @@ filter_pactr$set(
 filter_pactr$set(
   "public", "apply_group_filter",
   function(group, remove_ions = TRUE) {
-    groups <- unique(self$mpactr_data$get_meta_data()$biological_group)
+    groups <- unique(self$mpactr_data$get_metadata()$biological_group)
     if (isFALSE(group %in% groups)) {
 
       cli::cli_abort(c("{.var group} {group} is not in ",
@@ -214,13 +214,13 @@ filter_pactr$set(
       id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
         "sample", value.name = "intensity", variable.factor = FALSE
     )[
-      self$mpactr_data$get_meta_data(),
+      self$mpactr_data$get_metadata(),
       on = .(sample = injection)
     ][order(Compound)]
 
 
     peak_table <- self$mpactr_data$get_peak_table()
-    meta_data <- self$mpactr_data$get_meta_data()
+    meta_data <- self$mpactr_data$get_metadata()
 
     cv <-
       as.data.table(FilterCV(cv, unique(meta_data$sample_code), cv_threshold,

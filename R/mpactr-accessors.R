@@ -51,7 +51,7 @@ get_peak_table <- function(mpactr_object) {
 #' meta_data <- get_metadata(data)
 #'
 get_metadata <- function(mpactr_object) {
-  return(data.table::copy(mpactr_object$mpactr_data$get_meta_data()))
+  return(data.table::copy(mpactr_object$mpactr_data$get_metadata()))
 }
 
 #' Return the input peak table from mpactr object.

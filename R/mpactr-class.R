@@ -3,21 +3,21 @@ mpactr <- R6Class("mpactr",
     # Properties
 
     # Constructor
-    initialize = function(peak_table, meta_data) {
+    initialize = function(peak_table, metadata) {
       stopifnot(any(class(peak_table$raw_table) == "data.table"))
       stopifnot(any(class(peak_table$peak_table) == "data.table"))
-      stopifnot(any(class(meta_data) == "data.table"))
+      stopifnot(any(class(metadata) == "data.table"))
       private$raw_peak_table <- data.table(peak_table$raw_table)
       private$peak_table <- data.table(peak_table$peak_table)
-      private$meta_data <- data.table(meta_data)
+      private$metadata <- data.table(metadata)
     },
     isMultipleTechReps = function() {
-      any(private$meta_data[, .N, by = sample_code][["N"]] > 1)
+      any(private$metadata[, .N, by = sample_code][["N"]] > 1)
     }
   ),
   private = list(
     peak_table = NA,
-    meta_data = NA,
+    metadata = NA,
     raw_peak_table = NA
   )
 )

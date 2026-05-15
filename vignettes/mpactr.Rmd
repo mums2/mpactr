@@ -105,7 +105,7 @@ get_peak_table(data)[1:5, 1:8]
 
 ### Extract metadata
 
-Metadata can be accessed with `get_meta_data()`:
+Metadata can be accessed with `get_metadata()`:
 
 ```{r}
 get_metadata(data)[1:5, ]

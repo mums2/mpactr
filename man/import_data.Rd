@@ -4,13 +4,13 @@
 \alias{import_data}
 \title{Import data into an mpactr object.}
 \usage{
-import_data(peak_table, meta_data, format = "none")
+import_data(peak_table, metadata, format = "none")
 }
 \arguments{
 \item{peak_table}{The file path or valid \code{https} url to your feature table
 file.}
 
-\item{meta_data}{The file path to your meta_data file or \code{data.frame}.}
+\item{metadata}{The file path to your metadata file or \code{data.frame}.}
 
 \item{format}{The expected exported type of your peak table, can be
 one of "Progenesis", "Metaboscape", "None".}
@@ -43,7 +43,7 @@ Metaboscape with default settings. The import function will save the raw peak
 table in the \code{mpactr_object} and store a formatted peak table for filtering.
 Reformatting includes selecting "FEATURE_ID", "RT", "PEPMASS", and sample
 columns. Sample columns are determined from the "Injection" column in
-\code{meta_data} (see below). "PEPMASS" is converted to m/z using the "ADDUCT"
+\code{metadata} (see below). "PEPMASS" is converted to m/z using the "ADDUCT"
 column and compound metadata columns are renamed for mpactr.
 
 \code{format} = "None" allows users to provide a feature table file in the
@@ -54,8 +54,8 @@ must have the compound metadata columns "Compound", "mz", and "rt". Where
 "Compound" is the compound id, and can be \code{numeric} or \code{character}. "mz" is
 the compound m/z, and should be \code{numeric}. "rt" is the retention time, in
 minutes, and should be \code{numeric}. The remaining columns should be samples,
-and match the names in the "Injection" column of the \code{meta_data} file.
-2. \code{meta_data}: a table with sample information. Either a file path or
+and match the names in the "Injection" column of the \code{metadata} file.
+2. \code{metadata}: a table with sample information. Either a file path or
 \code{data.frame} can be supplied. At minimum the following columns are expected:
 "Injection", "Sample_Code", and "Biological_Group". "Injection" is the sample
 name and is expected to match sample column names in the \code{peak_table}.
@@ -74,9 +74,9 @@ data <- import_data(
   format = "Progenesis"
 )
 
-meta_data <- read.csv(example_path("metadata.csv"))
+metadata <- read.csv(example_path("metadata.csv"))
 data <- import_data(example_path("coculture_peak_table.csv"),
-  meta_data,
+  metadata,
   format = "Progenesis"
 )
 
