@@ -2,9 +2,9 @@
 
 `filter_cv()` removes feature ions that are found to be non-reproducible
 between technical injection replicates. Reproducibility is assessed via
-mean coefficient of variation (CV) between technical replicates. As
-such, this filter is expecting an input dataset with at least two
-replicate injections per sample.
+mean or median coefficient of variation (CV) between technical
+replicates. As such, this filter is expecting an input dataset with at
+least two replicate injections per sample.
 
 `copy_object`: mpactr is built on an R6 class-system, meaning it
 operates on reference semantics in which data is updated *in-place*.
@@ -21,7 +21,7 @@ filter examples.
 ## Usage
 
 ``` r
-filter_cv(mpactr_object, cv_threshold = NULL, copy_object = FALSE)
+filter_cv(mpactr_object, cv_threshold = NULL, cv_param, copy_object = FALSE)
 ```
 
 ## Arguments
@@ -29,13 +29,19 @@ filter_cv(mpactr_object, cv_threshold = NULL, copy_object = FALSE)
 - mpactr_object:
 
   An `mpactr_object`. See
-  [`import_data()`](https://www.mums2.org/mpactr/reference/import_data.md).
+  [`import_data()`](https://mums2.github.io/mpactr/reference/import_data.md).
 
 - cv_threshold:
 
   Coefficient of variation threshold. A lower cv_threshold will result
   in more stringent filtering and higher reproducibility. Recommended
   values between 0.2 - 0.5.
+
+- cv_param:
+
+  Coefficient of variation (CV) statistic to use for filtering Options
+  are "mean" or "median", corresponding to mean and median CV,
+  respectively.
 
 - copy_object:
 
@@ -49,16 +55,25 @@ an `mpactr_object`.
 ## Examples
 
 ``` r
-data <- import_data(
-  example_path("coculture_peak_table.csv"),
-  example_path("metadata.csv"),
+
+data <- import_data(example("coculture_peak_table.csv"),
+  example("metadata.csv"),
   format = "Progenesis"
 )
 
 data_filter <- filter_cv(data,
   cv_threshold = 0.01,
+  cv_param = "mean",
   copy_object = TRUE
 )
 #> ℹ Parsing 1303 peaks for replicability across technical replicates.
-#> ✔ 1261 ions failed the cv_filter filter, 42 ions remain.
+#> ✔ 1298 ions failed the cv_filter filter, 5 ions remain.
+
+data_filter <- filter_cv(data,
+  cv_threshold = 0.01,
+  cv_param = "median",
+  copy_object = TRUE
+)
+#> ℹ Parsing 1303 peaks for replicability across technical replicates.
+#> ✔ 1298 ions failed the cv_filter filter, 5 ions remain.
 ```

@@ -2,7 +2,7 @@
 
 `get_similar_ions()` is a wrapper function to return similar ion groups
 determined with the
-[`filter_mispicked_ions()`](https://www.mums2.org/mpactr/reference/filter_mispicked_ions.md).
+[`filter_mispicked_ions()`](https://mums2.github.io/mpactr/reference/filter_mispicked_ions.md).
 
 ## Usage
 
@@ -20,14 +20,13 @@ get_similar_ions(mpactr_object)
 ## Value
 
 a `data.table` reporting the main ion and those found to be similar with
-[`filter_mispicked_ions()`](https://www.mums2.org/mpactr/reference/filter_mispicked_ions.md).
+[`filter_mispicked_ions()`](https://mums2.github.io/mpactr/reference/filter_mispicked_ions.md).
 
 ## Examples
 
 ``` r
-data <- import_data(
-  example_path("coculture_peak_table.csv"),
-  example_path("metadata.csv"),
+data <- import_data(example("coculture_peak_table.csv"),
+  example("metadata.csv"),
   format = "Progenesis"
 )
 

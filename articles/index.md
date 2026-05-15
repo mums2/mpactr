@@ -3,8 +3,9 @@
 ### All vignettes
 
 - [Downstream
-  Analyses](https://www.mums2.org/mpactr/articles/downstream_analyses.md):
+  Analyses](https://mums2.github.io/mpactr/articles/downstream_analyses.md):
+- [Filter](https://mums2.github.io/mpactr/articles/filter.md):
 - [Filter with mpact original
-  data](https://www.mums2.org/mpactr/articles/mpactr.md):
+  data](https://mums2.github.io/mpactr/articles/filter2.md):
 - [Reference
-  Semantics](https://www.mums2.org/mpactr/articles/reference_semantics.md):
+  Semantics](https://mums2.github.io/mpactr/articles/reference_semantics.md):

@@ -23,9 +23,8 @@ a `data.table`.
 ## Examples
 
 ``` r
-data <- import_data(
-  example_path("coculture_peak_table.csv"),
-  example_path("metadata.csv"),
+data <- import_data(example("coculture_peak_table.csv"),
+  example("metadata.csv"),
   format = "Progenesis"
 )
 
