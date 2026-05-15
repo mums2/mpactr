@@ -82,14 +82,14 @@ filter_pactr$set("public", "filter_blank", function() {
       "sample", value.name = "intensity", variable.factor = FALSE
   )[
     data.table(self$mpactr_data$get_meta_data()),
-    on = .(sample = Injection)
+    on = .(sample = injection)
   ][
     , .(
       average = mean(intensity),
       BiolRSD = rsd(intensity),
       Bioln = length(intensity)
     ),
-    by = .(Compound, Biological_Group)
+    by = .(Compound, biological_group)
   ]
 
   t <- data.table::melt(self$mpactr_data$get_peak_table(),
@@ -99,16 +99,16 @@ filter_pactr$set("public", "filter_blank", function() {
     variable.factor = FALSE
   )[
     data.table(self$mpactr_data$get_meta_data()),
-    on = .(sample = Injection)
+    on = .(sample = injection)
   ][
     , .(sd = rsd(intensity), n = length(intensity)),
-    by = .(Compound, Biological_Group, Sample_Code)
+    by = .(Compound, biological_group, sample_code)
   ][
     , .(techRSD = mean(sd), techn = mean(n)),
-    by = .(Compound, Biological_Group)
+    by = .(Compound, biological_group)
   ]
-  group_stats <- b[t, on = .(Compound, Biological_Group)]
-  setorder(group_stats, Compound, Biological_Group)
+  group_stats <- b[t, on = .(Compound, biological_group)]
+  setorder(group_stats, Compound, biological_group)
   self$logger[["group_filter-group_stats"]] <- group_stats
 })
 
@@ -120,12 +120,12 @@ filter_pactr$set(
   "public", "parse_ions_by_group",
   function(group_threshold = 0.01) {
     group_avgs <- dcast(self$logger[["group_filter-group_stats"]],
-      Compound ~ Biological_Group,
+      Compound ~ biological_group,
       value.var = "average"
     )
 
     max <- self$logger[["group_filter-group_stats"]][
-      , .(Compound, Biological_Group, average)
+      , .(Compound, biological_group, average)
     ][
       , .(max = max(average)),
       by = Compound
@@ -136,7 +136,7 @@ filter_pactr$set(
         x / max
       }),
       .SDcols = unique(
-        self$logger[["group_filter-group_stats"]]$Biological_Group
+        self$logger[["group_filter-group_stats"]]$biological_group
       )
     ]
 
@@ -154,11 +154,11 @@ filter_pactr$set(
 filter_pactr$set(
   "public", "apply_group_filter",
   function(group, remove_ions = TRUE) {
-    groups <- unique(self$mpactr_data$get_meta_data()$Biological_Group)
+    groups <- unique(self$mpactr_data$get_meta_data()$biological_group)
     if (isFALSE(group %in% groups)) {
 
       cli::cli_abort(c("{.var group} {group} is not in ",
-                       "{.var Biological_Group}.",
+                       "{.var biological_group}.",
                        "Options are: {groups}"))
     }
 
@@ -215,7 +215,7 @@ filter_pactr$set(
         "sample", value.name = "intensity", variable.factor = FALSE
     )[
       self$mpactr_data$get_meta_data(),
-      on = .(sample = Injection)
+      on = .(sample = injection)
     ][order(Compound)]
 
 
@@ -223,18 +223,18 @@ filter_pactr$set(
     meta_data <- self$mpactr_data$get_meta_data()
 
     cv <-
-      as.data.table(FilterCV(cv, unique(meta_data$Sample_Code), cv_threshold,
-                             table(meta_data$Sample_Code)[[1]]))
+      as.data.table(FilterCV(cv, unique(meta_data$sample_code), cv_threshold,
+                             table(meta_data$sample_code)[[1]]))
 
-    samples <- unique(meta_data$Sample_Code)
+    samples <- unique(meta_data$sample_code)
     for (i in seq_along(samples)) {
-      peak_table[Compound %in% cv[Sample_Code == samples[[i]] &
-                                    !PassesCvFilter]$Compound,
-                 meta_data$Injection[which(meta_data$Sample_Code
+      peak_table[Compound %in% cv[sample_code == samples[[i]] &
+                                    !passes_cv_filter]$Compound,
+                 meta_data$injection[which(meta_data$sample_code
                                            == samples[[i]])] := 0]
     }
 
-    failed_indexes <- which(rowSums(peak_table[, meta_data$Injection,
+    failed_indexes <- which(rowSums(peak_table[, meta_data$injection,
                                                with = FALSE]) == 0)
 
 

@@ -11,7 +11,7 @@ reference:
 - title: Access Data
   contents:
   - get_peak_table
-  - get_meta_data
+  - get_metadata
   - get_raw_data
   - get_group_averages
   - get_cv_data

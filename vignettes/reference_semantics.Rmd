@@ -2,7 +2,7 @@
 title: "Reference Semantics"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{reference_semantics}
+  %\VignetteIndexEntry{Reference Semantics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -2,7 +2,7 @@
 title: "Filter with mpact original data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{phylotypr}
+  %\VignetteIndexEntry{mpactr}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -87,7 +87,7 @@ data
 
 ## Accessing data in mpactr object
 
-You can extract the peak table or metadata at any point with `get_raw_data()`, `get_peak_table()` and `get_meta_data()` functions. Both functions will return a `data.table` object with the corresponding information.
+You can extract the peak table or metadata at any point with `get_raw_data()`, `get_peak_table()` and `get_metadata()` functions. Both functions will return a `data.table` object with the corresponding information.
 
 ### Extract peak table
 
@@ -108,7 +108,7 @@ get_peak_table(data)[1:5, 1:8]
 Metadata can be accessed with `get_meta_data()`:
 
 ```{r}
-get_meta_data(data)[1:5, ]
+get_metadata(data)[1:5, ]
 ```
 
 ## Reference semantics

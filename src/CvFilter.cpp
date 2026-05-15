@@ -9,8 +9,8 @@
 void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
                      const double cvCutOff, const size_t replicates) {
     const std::vector<std::string>& compounds = peakTable["Compound"];
-    const std::vector<std::string>& sampleCodes = peakTable["Sample_Code"];
-    const std::vector<std::string>& biologicalGroups = peakTable["Biological_Group"];
+    const std::vector<std::string>& sampleCodes = peakTable["sample_code"];
+    const std::vector<std::string>& biologicalGroups = peakTable["biological_group"];
     const std::vector<double>& intensity = peakTable["intensity"];
     const size_t size = compounds.size();
     features = std::vector<FeatureData>(size);
@@ -57,8 +57,8 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
 Rcpp::DataFrame CvFilter::GetCvTable() const {
     return Rcpp::DataFrame::create(
         Rcpp::Named("Compound") = Rcpp::wrap(compoundNamesToCV),
-        Rcpp::Named("Biological_Group") = Rcpp::wrap(biologicalGroupsList),
-        Rcpp::Named("Sample_Code") = Rcpp::wrap(sampleCodeList),
-        Rcpp::Named("PassesCvFilter") = Rcpp::wrap(passesCV),
+        Rcpp::Named("biological_group") = Rcpp::wrap(biologicalGroupsList),
+        Rcpp::Named("sample_code") = Rcpp::wrap(sampleCodeList),
+        Rcpp::Named("passes_cv_filter") = Rcpp::wrap(passesCV),
         Rcpp::Named("cv") = Rcpp::wrap(coefficientOfVariance));
 }

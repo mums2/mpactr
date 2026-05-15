@@ -7,8 +7,8 @@ library(tidyverse)
 ft <- read_csv(test_path("exttestdata", "102623_MonoVCoculture_pt.csv"),
                skip = 2)
 
-data.frame(Injection = colnames(ft)) %>%
-  filter(startsWith(Injection, "10")) %>%
+data.frame(Injection = colnames(ft)) |>
+  filter(startsWith(Injection, "10")) |>
   mutate(
     Sample_Code = str_split_i(Injection, "_", 2),
     Biological_Group = case_when(
@@ -23,18 +23,18 @@ data.frame(Injection = colnames(ft)) %>%
       TRUE ~ NA_character_
     ),
     dilution = if_else(str_detect(Injection, "0.25"), "0.25", "1")
-  ) %>%
-  filter(dilution == 1) %>%
+  ) |>
+  filter(dilution == 1) |>
   write_csv(here::here("inst/extdata/cultures_metadata.csv"))
 
 
 # Filter the feature table by diltion for a simple example dataset
 colnames(ft)
-samples <- read_csv(here::here("inst/extdata/cultures_metadata.csv")) %>%
+samples <- read_csv(here::here("inst/extdata/cultures_metadata.csv")) |>
   pull(sample_id)
 
-pt <- ft %>%
-  select(Compound, `m/z`, `Retention time (min)`, all_of(samples)) %>%
+pt <- ft |>
+  select(Compound, `m/z`, `Retention time (min)`, all_of(samples)) |>
   rbind(rep(NA, ncol(.)), rep(NA, ncol(.)), colnames(.), .)
 
 write_csv(pt, here::here("inst/extdata/cultures_peak_table.csv"),
