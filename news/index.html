@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mpactr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,8 +38,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="development version" id="mpactr-development-version">mpactr (development version)<a class="anchor" aria-label="anchor" href="#mpactr-development-version"></a></h2>
-</div>
+<h2 class="pkg-version" data-toc-text="0.3.2" id="mpactr-032">mpactr 0.3.2<a class="anchor" aria-label="anchor" href="#mpactr-032"></a></h2><p class="text-muted">CRAN release: 2026-05-14</p>
+<ul><li>Updated mpactr so that all column names inside the metadata file are lowercase. You may still enter you data with uppercase column names, but we will force all data inside the metadata file to be lowercase. This change happens within the <code><a href="../reference/import_data.html">import_data()</a></code> function.</li>
+<li>Updated vignette to reflect current changes.</li>
+<li>Renamed the <code>get_meta_data()</code> to <code><a href="../reference/get_metadata.html">get_metadata()</a></code>.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.1" id="mpactr-031">mpactr 0.3.1<a class="anchor" aria-label="anchor" href="#mpactr-031"></a></h2><p class="text-muted">CRAN release: 2025-09-27</p>
 <ul><li><p>Fixed the Valgrind memory issues. This package should now work with valgrind, clang-asan, and gcc-asan.</p></li>

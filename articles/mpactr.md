@@ -270,7 +270,7 @@ You can extract the peak table or metadata at any point with
 [`get_raw_data()`](https://www.mums2.org/mpactr/reference/get_raw_data.md),
 [`get_peak_table()`](https://www.mums2.org/mpactr/reference/get_peak_table.md)
 and
-[`get_meta_data()`](https://www.mums2.org/mpactr/reference/get_meta_data.md)
+[`get_metadata()`](https://www.mums2.org/mpactr/reference/get_metadata.md)
 functions. Both functions will return a `data.table` object with the
 corresponding information.
 
@@ -325,27 +325,26 @@ get_peak_table(data)[1:5, 1:8]
 
 ### Extract metadata
 
-Metadata can be accessed with
-[`get_meta_data()`](https://www.mums2.org/mpactr/reference/get_meta_data.md):
+Metadata can be accessed with `get_meta_data()`:
 
 ``` r
 
-get_meta_data(data)[1:5, ]
-#>           Injection File Text Sample_Notes                     MS method
+get_metadata(data)[1:5, ]
+#>           injection file text sample_notes                     ms method
 #>              <char>    <lgcl>       <lgcl>                        <char>
 #> 1: 200826_blank1_r1        NA           NA RMS20181105_Balunas_11min_mse
 #> 2: 200826_blank1_r2        NA           NA RMS20181105_Balunas_11min_mse
 #> 3: 200826_blank1_r3        NA           NA RMS20181105_Balunas_11min_mse
 #> 4: 200826_media1_r1        NA           NA RMS20181105_Balunas_11min_mse
 #> 5: 200826_media1_r2        NA           NA RMS20181105_Balunas_11min_mse
-#>                                                         LC method Vial_Position
+#>                                                         lc method vial_position
 #>                                                            <char>        <char>
 #> 1: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:16
 #> 2: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:16
 #> 3: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:16
 #> 4: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:01
 #> 5: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:01
-#>    Injection volume Sample_Code  Organism Biological_Group Extract_Notes
+#>    injection volume sample_code  organism biological_group extract_notes
 #>               <int>      <char>    <char>           <char>        <char>
 #> 1:               10       Blank  50% MeOH           Blanks      50% MeOH
 #> 2:               10       Blank  50% MeOH           Blanks      50% MeOH
@@ -650,18 +649,18 @@ head(cv)
 #> 1 cv    <tibble [49,560 × 7]>
 ```
 
-The nested data are tibbles with the columns Compound, Biological_Group,
-Sample_Code, PassesCvFilter, cv, index, index_scale:
+The nested data are tibbles with the columns Compound, biological_group,
+sample_code, passes_cv_filter, cv, index, index_scale:
 
     #> # A tibble: 6 × 7
-    #>   Compound   Biological_Group Sample_Code PassesCvFilter    cv index index_scale
-    #>   <chr>      <chr>            <chr>       <lgl>          <dbl> <int>       <dbl>
-    #> 1 0.03_102.… Media            MB1109      FALSE             -1     0     0      
-    #> 2 0.03_102.… Media            MB1110      FALSE             -1     1     0.00202
-    #> 3 0.03_102.… Media            MB1111      FALSE             -1     2     0.00404
-    #> 4 0.03_102.… 0um_Ce           MB1112      FALSE             -1     3     0.00605
-    #> 5 0.03_102.… 0um_Ce           MB1113      FALSE             -1     4     0.00807
-    #> 6 0.03_102.… 0um_Ce           MB1114      FALSE             -1     5     0.0101
+    #>   Compound biological_group sample_code passes_cv_filter    cv index index_scale
+    #>   <chr>    <chr>            <chr>       <lgl>            <dbl> <int>       <dbl>
+    #> 1 0.03_10… Media            MB1109      FALSE               -1     0     0      
+    #> 2 0.03_10… Media            MB1110      FALSE               -1     1     0.00202
+    #> 3 0.03_10… Media            MB1111      FALSE               -1     2     0.00404
+    #> 4 0.03_10… 0um_Ce           MB1112      FALSE               -1     3     0.00605
+    #> 5 0.03_10… 0um_Ce           MB1113      FALSE               -1     4     0.00807
+    #> 6 0.03_10… 0um_Ce           MB1114      FALSE               -1     5     0.0101
 
 There is one tibble for each parameter. We also want to calculate the
 percentage of features represented by the CV threshold.

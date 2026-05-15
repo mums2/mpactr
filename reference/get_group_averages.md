@@ -37,7 +37,7 @@ data_filter <- filter_group(data, group_to_remove = "Blanks")
 
 group_averages <- get_group_averages(data_filter)
 head(group_averages)
-#>    Compound  Biological_Group    average    BiolRSD Bioln    techRSD techn
+#>    Compound  biological_group    average    BiolRSD Bioln    techRSD techn
 #>      <char>            <char>      <num>      <num> <int>      <num> <num>
 #> 1:     1000 ANG18 monoculture      0.000         NA     3         NA     3
 #> 2:     1000 ANGDT monoculture   3762.133 0.01990561     3 0.01990561     3

@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mpactr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -315,7 +315,7 @@ the terminal:</p>
 </h2>
 <p>You can extract the peak table or metadata at any point with
 <code><a href="../reference/get_raw_data.html">get_raw_data()</a></code>, <code><a href="../reference/get_peak_table.html">get_peak_table()</a></code> and
-<code><a href="../reference/get_meta_data.html">get_meta_data()</a></code> functions. Both functions will return a
+<code><a href="../reference/get_metadata.html">get_metadata()</a></code> functions. Both functions will return a
 <code>data.table</code> object with the corresponding information.</p>
 <div class="section level3">
 <h3 id="extract-peak-table">Extract peak table<a class="anchor" aria-label="anchor" href="#extract-peak-table"></a>
@@ -362,24 +362,24 @@ have been applied, use <code><a href="../reference/get_peak_table.html">get_peak
 <div class="section level3">
 <h3 id="extract-metadata">Extract metadata<a class="anchor" aria-label="anchor" href="#extract-metadata"></a>
 </h3>
-<p>Metadata can be accessed with <code><a href="../reference/get_meta_data.html">get_meta_data()</a></code>:</p>
+<p>Metadata can be accessed with <code>get_meta_data()</code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_meta_data.html">get_meta_data</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span></span>
-<span><span class="co">#&gt;           Injection File Text Sample_Notes                     MS method</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/get_metadata.html">get_metadata</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span></span>
+<span><span class="co">#&gt;           injection file text sample_notes                     ms method</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;    &lt;lgcl&gt;       &lt;lgcl&gt;                        &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: 200826_blank1_r1        NA           NA RMS20181105_Balunas_11min_mse</span></span>
 <span><span class="co">#&gt; 2: 200826_blank1_r2        NA           NA RMS20181105_Balunas_11min_mse</span></span>
 <span><span class="co">#&gt; 3: 200826_blank1_r3        NA           NA RMS20181105_Balunas_11min_mse</span></span>
 <span><span class="co">#&gt; 4: 200826_media1_r1        NA           NA RMS20181105_Balunas_11min_mse</span></span>
 <span><span class="co">#&gt; 5: 200826_media1_r2        NA           NA RMS20181105_Balunas_11min_mse</span></span>
-<span><span class="co">#&gt;                                                         LC method Vial_Position</span></span>
+<span><span class="co">#&gt;                                                         lc method vial_position</span></span>
 <span><span class="co">#&gt;                                                            &lt;char&gt;        &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:16</span></span>
 <span><span class="co">#&gt; 2: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:16</span></span>
 <span><span class="co">#&gt; 3: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:16</span></span>
 <span><span class="co">#&gt; 4: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:01</span></span>
 <span><span class="co">#&gt; 5: jlb20170623_Balunas_11minRogermethod_450uLmin_5to98_col3_noPDA          1:01</span></span>
-<span><span class="co">#&gt;    Injection volume Sample_Code  Organism Biological_Group Extract_Notes</span></span>
+<span><span class="co">#&gt;    injection volume sample_code  organism biological_group extract_notes</span></span>
 <span><span class="co">#&gt;               &lt;int&gt;      &lt;char&gt;    &lt;char&gt;           &lt;char&gt;        &lt;char&gt;</span></span>
 <span><span class="co">#&gt; 1:               10       Blank  50% MeOH           Blanks      50% MeOH</span></span>
 <span><span class="co">#&gt; 2:               10       Blank  50% MeOH           Blanks      50% MeOH</span></span>
@@ -652,17 +652,17 @@ can filter the data by the parameter of choice.</p>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> cv    <span style="color: #949494;">&lt;tibble [49,560 × 7]&gt;</span></span></span></code></pre></div>
 <p>The nested data are tibbles with the columns Compound,
-Biological_Group, Sample_Code, PassesCvFilter, cv, index,
+biological_group, sample_code, passes_cv_filter, cv, index,
 index_scale:</p>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
-<span><span class="co">#&gt;   Compound   Biological_Group Sample_Code PassesCvFilter    cv index index_scale</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 0.03_102.… Media            MB1109      FALSE             -<span style="color: #BB0000;">1</span>     0     0      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 0.03_102.… Media            MB1110      FALSE             -<span style="color: #BB0000;">1</span>     1     0.002<span style="text-decoration: underline;">02</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 0.03_102.… Media            MB1111      FALSE             -<span style="color: #BB0000;">1</span>     2     0.004<span style="text-decoration: underline;">04</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 0.03_102.… 0um_Ce           MB1112      FALSE             -<span style="color: #BB0000;">1</span>     3     0.006<span style="text-decoration: underline;">05</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 0.03_102.… 0um_Ce           MB1113      FALSE             -<span style="color: #BB0000;">1</span>     4     0.008<span style="text-decoration: underline;">07</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 0.03_102.… 0um_Ce           MB1114      FALSE             -<span style="color: #BB0000;">1</span>     5     0.010<span style="text-decoration: underline;">1</span></span></span></code></pre>
+<span><span class="co">#&gt;   Compound biological_group sample_code passes_cv_filter    cv index index_scale</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 0.03_10… Media            MB1109      FALSE               -<span style="color: #BB0000;">1</span>     0     0      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 0.03_10… Media            MB1110      FALSE               -<span style="color: #BB0000;">1</span>     1     0.002<span style="text-decoration: underline;">02</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 0.03_10… Media            MB1111      FALSE               -<span style="color: #BB0000;">1</span>     2     0.004<span style="text-decoration: underline;">04</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 0.03_10… 0um_Ce           MB1112      FALSE               -<span style="color: #BB0000;">1</span>     3     0.006<span style="text-decoration: underline;">05</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 0.03_10… 0um_Ce           MB1113      FALSE               -<span style="color: #BB0000;">1</span>     4     0.008<span style="text-decoration: underline;">07</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 0.03_10… 0um_Ce           MB1114      FALSE               -<span style="color: #BB0000;">1</span>     5     0.010<span style="text-decoration: underline;">1</span></span></span></code></pre>
 <p>There is one tibble for each parameter. We also want to calculate the
 percentage of features represented by the CV threshold.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">

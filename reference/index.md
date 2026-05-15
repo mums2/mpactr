@@ -11,7 +11,7 @@
 
 - [`get_peak_table()`](https://www.mums2.org/mpactr/reference/get_peak_table.md)
   : Return the peak table data.table from the mpactr object.
-- [`get_meta_data()`](https://www.mums2.org/mpactr/reference/get_meta_data.md)
+- [`get_metadata()`](https://www.mums2.org/mpactr/reference/get_metadata.md)
   : Return the meta_data data.table from the mpactr object.
 - [`get_raw_data()`](https://www.mums2.org/mpactr/reference/get_raw_data.md)
   : Return the input peak table from mpactr object.

@@ -262,7 +262,7 @@ where columns are samples to correlate and rows are features. Since the
 feature table has columns for both feature metadata and samples, we need
 to remove feature metadata for
 [`rcorr()`](https://rdrr.io/pkg/Hmisc/man/rcorr.html). We can do this by
-extracting sample names from the metadata `Injection` column, which
+extracting sample names from the metadata `injection` column, which
 match sample column names in the feature table. We also need to remove
 any samples that no longer have any features post-filtering (likely
 solvent blanks).
@@ -270,7 +270,7 @@ solvent blanks).
 ``` r
 
 counts <- ft %>%
-  select(Compound, all_of(get_meta_data(data_filtered)$Injection)) %>%
+  select(Compound, all_of(get_metadata(data_filtered)$injection)) %>%
   column_to_rownames(var = "Compound") %>%
   select(where(~ sum(.x) != 0))
 
@@ -348,18 +348,18 @@ In the original `counts` table, we set the row names from the column
 
 ``` r
 
-meta <- get_meta_data(data_filtered)
+meta <- get_metadata(data_filtered)
 
 counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
   head()
 #> # A tibble: 6 × 3
-#>   Compound Injection                          Intensity
+#>   Compound injection                          intensity
 #>   <chr>    <chr>                                  <dbl>
 #> 1 1000     102623_UM1848B_JC1_69_1_5004              0 
 #> 2 1000     102623_UM1847B_JC28_68_1_5006        183612.
@@ -370,7 +370,7 @@ counts %>%
 ```
 
 Next, we will join with sample meta data so we can calculate averages by
-`Sample_Code`.
+`sample_code`.
 
 ``` r
 
@@ -378,13 +378,13 @@ counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   head()
 #> # A tibble: 6 × 6
-#>   Compound Injection             Intensity Sample_Code Biological_Group dilution
+#>   Compound injection             intensity sample_code biological_group dilution
 #>   <chr>    <chr>                     <dbl> <chr>       <chr>               <int>
 #> 1 1000     102623_UM1848B_JC1_6…        0  UM1848B     JC1                     1
 #> 2 1000     102623_UM1847B_JC28_…   183612. UM1847B     JC28                    1
@@ -395,7 +395,7 @@ counts %>%
 ```
 
 Now we can calculate mean intensity for each `Compound` and
-`Sample_Code`.
+`sample_code`.
 
 ``` r
 
@@ -403,17 +403,17 @@ counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   summarise(
-    mean_intensity = mean(Intensity),
-    .by = c(Compound, Sample_Code)
+    mean_intensity = mean(intensity),
+    .by = c(Compound, sample_code)
   ) %>%
   head()
 #> # A tibble: 6 × 3
-#>   Compound Sample_Code      mean_intensity
+#>   Compound sample_code      mean_intensity
 #>   <chr>    <chr>                     <dbl>
 #> 1 1000     UM1848B                      0 
 #> 2 1000     UM1847B                 182682.
@@ -432,16 +432,16 @@ sample_counts <- counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   summarise(
-    mean_intensity = mean(Intensity),
-    .by = c(Compound, Sample_Code)
+    mean_intensity = mean(intensity),
+    .by = c(Compound, sample_code)
   ) %>%
   pivot_wider(
-    names_from = Sample_Code,
+    names_from = sample_code,
     values_from = mean_intensity
   ) %>%
   column_to_rownames(var = "Compound")
@@ -483,8 +483,8 @@ We can also look at the correlation between biological groups. In this
 dataset, technical replicates and biological groups are the same;
 however if you have multiple technical replicates you may also be
 interested in the correlation between biological groups. We will
-calculate mean intensity values for `Biological_Group` in the same
-manner as we did for `Sample_Code`.
+calculate mean intensity values for `biological_group` in the same
+manner as we did for `sample_code`.
 
 ``` r
 
@@ -492,16 +492,16 @@ group_counts <- counts %>%
   rownames_to_column(var = "Compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
-    names_to = "Injection",
-    values_to = "Intensity"
+    names_to = "injection",
+    values_to = "intensity"
   ) %>%
-  left_join(meta, by = "Injection") %>%
+  left_join(meta, by = "injection") %>%
   summarise(
-    mean_intensity = mean(Intensity),
-    .by = c(Compound, Biological_Group)
+    mean_intensity = mean(intensity),
+    .by = c(Compound, biological_group)
   ) %>%
   pivot_wider(
-    names_from = Biological_Group,
+    names_from = biological_group,
     values_from = mean_intensity
   ) %>%
   column_to_rownames(var = "Compound")
@@ -603,10 +603,10 @@ and calculate compound fold change.
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
 #> # A tibble: 6 × 4
@@ -634,10 +634,10 @@ comparison and can therefore be removed from the analysis.
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
                                     FALSE,
                                     TRUE)) %>%
@@ -667,11 +667,11 @@ and ANG18:
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   head()
-#>    Compound Biological_Group average
+#>    Compound biological_group average
 #>      <char>           <char>   <num>
 #> 1:     1000            ANG18       0
 #> 2:     1000        Coculture       0
@@ -688,11 +688,11 @@ Coculture:
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   head()
-#>    Compound Biological_Group average
+#>    Compound biological_group average
 #>      <char>           <char>   <num>
 #> 1:     1000            ANG18       0
 #> 2:     1000        Coculture       0
@@ -707,11 +707,11 @@ Now we create pseudo-counts by adding 0.001 to the counts column:
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   head()
 #> # A tibble: 6 × 3
 #>   Compound ANG18 Coculture
@@ -730,11 +730,11 @@ equates to a pseudo-count of 0.001:
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
@@ -756,11 +756,11 @@ Next, we calculate fold change for all remaining compounds:
 ``` r
 
 get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
@@ -783,11 +783,11 @@ Finally, transform fold change to log2:
 ``` r
 
 foldchanges <- get_group_averages(data_filtered) %>%
-  filter(Biological_Group == "Coculture" |
-           Biological_Group == "ANG18") %>%
-  select(Compound, Biological_Group, average) %>%
+  filter(biological_group == "Coculture" |
+           biological_group == "ANG18") %>%
+  select(Compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
                                     FALSE,
                                     TRUE)) %>%
@@ -879,10 +879,10 @@ stats <- get_group_averages(data_filtered) %>%
     techRSD = if_else(is.na(techRSD), 0, techRSD),
     neff = calc_samplesize_ws(techRSD, techn, BiolRSD, Bioln) + 1
   ) %>%
-  filter(Biological_Group %in% my_comp)
+  filter(biological_group %in% my_comp)
 
 head(stats)
-#>    Compound Biological_Group average BiolRSD Bioln techRSD techn combRSD
+#>    Compound biological_group average BiolRSD Bioln techRSD techn combRSD
 #>      <char>           <char>   <num>   <num> <int>   <num> <num>   <num>
 #> 1:     1000            ANG18       0       0     3       0     3      NA
 #> 2:     1000        Coculture       0       0     3       0     3      NA
@@ -906,13 +906,13 @@ head(stats)
 
 denom <- stats %>%
   summarise(den = combASD^2 / (neff),
-            .by = c("Compound", "Biological_Group")) %>%
+            .by = c("Compound", "biological_group")) %>%
   mutate(den = if_else(!is.finite(den), 0, den)) %>%
   summarise(denom = sqrt(sum(den)), .by = c("Compound"))
 
 t_test <- stats %>%
-  select(Compound, Biological_Group, average) %>%
-  pivot_wider(names_from = Biological_Group, values_from = average) %>%
+  select(Compound, biological_group, average) %>%
+  pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(numerator = (Coculture - ANG18)) %>% # experimental - control
   left_join(denom, by = "Compound") %>%
   mutate(t = abs(numerator / denom))
@@ -934,9 +934,9 @@ head(t_test)
 ``` r
 
 df <- stats %>%
-  select(Compound, Biological_Group, neff) %>%
+  select(Compound, biological_group, neff) %>%
   mutate(neff = if_else(!is.finite(neff), 0, neff)) %>%
-  pivot_wider(names_from = Biological_Group, values_from = neff) %>%
+  pivot_wider(names_from = biological_group, values_from = neff) %>%
   mutate(deg = Coculture + ANG18 - 2) %>%
   select(Compound, deg)
 
