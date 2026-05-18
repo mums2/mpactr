@@ -106,10 +106,10 @@ test_that("group filter wrapper works as expected", {
 
   log_name <- "group_filter-failing_list"
   expect_true(all(!(data_mpactr$logger[[log_name]]$Blanks
-                    %in% data_mpactr$mpactr_data$get_peak_table()$Compound)))
+                    %in% data_mpactr$mpactr_data$get_peak_table()$compound)))
 
   expect_true(all(!(data_mpactr_copy$logger[[log_name]]$Blanks %in%
-                      data_mpactr_copy$mpactr_data$get_peak_table()$Compound)))
+                      data_mpactr_copy$mpactr_data$get_peak_table()$compound)))
 })
 
 test_that("filter cv filter wrapper works as expected", {
@@ -189,9 +189,9 @@ test_that("filter insource ions wrapper works as expected", {
                        insource$get_failed_ions()) == 27)
 
   expect_true(all(!(insource_ion_expected_list %in%
-                      data_mpactr$mpactr_data$get_peak_table()$Compound)))
+                      data_mpactr$mpactr_data$get_peak_table()$compound)))
   expect_true(all(!(insource_ion_expected_list %in% data_mpactr_copy$
-                      mpactr_data$get_peak_table()$Compound)))
+                      mpactr_data$get_peak_table()$compound)))
 })
 
 test_that("filters abort if the filter has already been run", {

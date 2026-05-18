@@ -17,10 +17,10 @@ graph_qc_pactr <- R6Class("graph_qc_pactr", public = list(
 
     passed_ions_dt <- data.table(
       "status" = rep("Passed", length(
-        private$filter_pactr_data$mpactr_data$get_peak_table()$Compound
+        private$filter_pactr_data$mpactr_data$get_peak_table()$compound
       )),
       "compounds" =
-        private$filter_pactr_data$mpactr_data$get_peak_table()$Compound
+        private$filter_pactr_data$mpactr_data$get_peak_table()$compound
     )
 
     private$filter_summarized <- rbind(passed_ions_dt, failed_ions_dt)

@@ -8,7 +8,7 @@
 
 void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<std::string>& uniqueSampleList,
                      const double cvCutOff, const size_t replicates) {
-    const std::vector<std::string>& compounds = peakTable["Compound"];
+    const std::vector<std::string>& compounds = peakTable["compound"];
     const std::vector<std::string>& sampleCodes = peakTable["sample_code"];
     const std::vector<std::string>& biologicalGroups = peakTable["biological_group"];
     const std::vector<double>& intensity = peakTable["intensity"];
@@ -20,8 +20,8 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
         sampleCodesToIndex[sample] = index++;
     }
     for (size_t i = 0, featureIndex = 0; i < size; i++) {
-        const std::string& currentCompound = compounds[i];
-        features[featureIndex].compoundName = currentCompound;
+        const std::string& currentcompound = compounds[i];
+        features[featureIndex].compoundName = currentcompound;
         features[featureIndex].metaData.intensityPerSample = std::vector<std::vector<double>>(uniqueSampleSize);
         std::unordered_set<std::string> previousSampleCodes;
 
@@ -39,7 +39,7 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
         int idx = 0;
         for (const auto& intensityList : features[featureIndex].metaData.intensityPerSample) {
             bool hasPassedCv = false;
-            compoundNamesToCV.emplace_back(currentCompound);
+            compoundNamesToCV.emplace_back(currentcompound);
             sampleCodeList.emplace_back(uniqueSampleList[idx++]);
             double cvScore = VectorMath::CoefficientOfVarianceCalculation(intensityList);
             if (cvScore < cvCutOff && cvScore > 0) {
@@ -56,7 +56,7 @@ void CvFilter::CalculateCV(const Rcpp::DataFrame& peakTable, const std::vector<s
 
 Rcpp::DataFrame CvFilter::GetCvTable() const {
     return Rcpp::DataFrame::create(
-        Rcpp::Named("Compound") = Rcpp::wrap(compoundNamesToCV),
+        Rcpp::Named("compound") = Rcpp::wrap(compoundNamesToCV),
         Rcpp::Named("biological_group") = Rcpp::wrap(biologicalGroupsList),
         Rcpp::Named("sample_code") = Rcpp::wrap(sampleCodeList),
         Rcpp::Named("passes_cv_filter") = Rcpp::wrap(passesCV),

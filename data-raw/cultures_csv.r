@@ -34,7 +34,7 @@ samples <- read_csv(here::here("inst/extdata/cultures_metadata.csv")) |>
   pull(sample_id)
 
 pt <- ft |>
-  select(Compound, `m/z`, `Retention time (min)`, all_of(samples)) |>
+  select(compound, `m/z`, `Retention time (min)`, all_of(samples)) |>
   rbind(rep(NA, ncol(.)), rep(NA, ncol(.)), colnames(.), .)
 
 write_csv(pt, here::here("inst/extdata/cultures_peak_table.csv"),

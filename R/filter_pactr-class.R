@@ -59,7 +59,7 @@ filter_pactr <- R6Class("filter_pactr", public = list(
   get_group_averages = function() {
     # return averages and variations for all ions in filtered table
     b <- data.table::melt(self$mpactr_data$get_peak_table(),
-      id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
+      id.vars = c("compound", "mz", "rt", "kmd"), variable.name =
         "sample", value.name = "intensity", variable.factor = FALSE
     )[
       data.table(self$mpactr_data$get_metadata()),
@@ -70,11 +70,11 @@ filter_pactr <- R6Class("filter_pactr", public = list(
         BiolRSD = rsd(intensity),
         Bioln = length(intensity)
       ),
-      by = .(Compound, biological_group)
+      by = .(compound, biological_group)
     ]
 
     t <- data.table::melt(self$mpactr_data$get_peak_table(),
-      id.vars = c("Compound", "mz", "rt", "kmd"),
+      id.vars = c("compound", "mz", "rt", "kmd"),
       variable.name = "sample",
       value.name = "intensity",
       variable.factor = FALSE
@@ -83,14 +83,14 @@ filter_pactr <- R6Class("filter_pactr", public = list(
       on = .(sample = injection)
     ][
       , .(sd = rsd(intensity), n = length(intensity)),
-      by = .(Compound, biological_group, sample_code)
+      by = .(compound, biological_group, sample_code)
     ][
       , .(techRSD = mean(sd), techn = mean(n)),
-      by = .(Compound, biological_group)
+      by = .(compound, biological_group)
     ]
 
-    group_stats <- b[t, on = .(Compound, biological_group)]
-    setorder(group_stats, Compound, biological_group)
+    group_stats <- b[t, on = .(compound, biological_group)]
+    setorder(group_stats, compound, biological_group)
 
     return(group_stats)
   },

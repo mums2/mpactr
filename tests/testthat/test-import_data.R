@@ -55,7 +55,7 @@ test_that("We can use a data.frame as input our peak table in import_data", {
   data_df <- import_data(get_peak_table(data), get_metadata(data), "None")
   peak_table_df <- get_peak_table(data_df)
   df <- get_peak_table(data)
-  temp <- data.frame(Compound = peak_table_df$Compound,
+  temp <- data.frame(compound = peak_table_df$compound,
                      mz = peak_table_df$mz, kmd = peak_table_df$kmd,
                      rt = peak_table_df$rt)
   dat <- cbind(temp, peak_table_df[, 5:22])
@@ -121,29 +121,29 @@ test_that("import_data aborts when expected
 
 test_that("unique_compounds annotate duplicates properly", {
   limit_cores()
-  df <- data.frame(Compound = c(1, 2, 3, 1:3, 4:7))
+  df <- data.frame(compound = c(1, 2, 3, 1:3, 4:7))
   ls <- list(peak_table = df, raw_table = df)
   uniqued_list <- unique_compounds(ls)
 
-  expect_true(length(unique(uniqued_list$peak_table$Compound)) ==
-                length(uniqued_list$peak_table$Compound))
-  expect_true(length(unique(uniqued_list$raw_table$Compound)) ==
-                length(uniqued_list$raw_table$Compound))
+  expect_true(length(unique(uniqued_list$peak_table$compound)) ==
+                length(uniqued_list$peak_table$compound))
+  expect_true(length(unique(uniqued_list$raw_table$compound)) ==
+                length(uniqued_list$raw_table$compound))
 
-  expect_false(length(unique(df$Compound)) == length(df$Compound))
+  expect_false(length(unique(df$compound)) == length(df$compound))
 
-  df <- data.frame(Compound = c("1", "1", "1_1", "1_1_1"))
+  df <- data.frame(compound = c("1", "1", "1_1", "1_1_1"))
   ls <- list(peak_table = df, raw_table = df)
   uniqued_list <- unique_compounds(list(peak_table = df, raw_table = df))
 
-  expect_true(uniqued_list$peak_table$Compound[[3]] == "1_1_1")
-  expect_true(uniqued_list$peak_table$Compound[[4]] == "1_1_1_1")
+  expect_true(uniqued_list$peak_table$compound[[3]] == "1_1_1")
+  expect_true(uniqued_list$peak_table$compound[[4]] == "1_1_1_1")
 
-  df <- data.frame(Compound = c("1", "1", "1_1", "1_1_1"))
+  df <- data.frame(compound = c("1", "1", "1_1", "1_1_1"))
   ls <- list(peak_table = df, raw_table = df)
   expect_message(unique_compounds(ls))
 
-  df <- data.frame(Compound = c("1", "1", NA, "1_1_1"))
+  df <- data.frame(compound = c("1", "1", NA, "1_1_1"))
   ls <- list(peak_table = df, raw_table = df)
   expect_error(unique_compounds(ls))
 })

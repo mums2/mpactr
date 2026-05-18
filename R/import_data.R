@@ -15,8 +15,8 @@
 #'
 #' `format` = "Progenesis." allows users to provide a feature table exported by
 #' Progenesis. To export a compatible peak table in Progenesis, navigate to the
-#' *Review Compounds* tab then File -> Export Compound Measurements. Select
-#' the following properties: Compound, m/z, Retention time (min), and Raw
+#' *Review compounds* tab then File -> Export compound Measurements. Select
+#' the following properties: compound, m/z, Retention time (min), and Raw
 #' abundance and click ok.
 #'
 #' `format` = "Metaboscape" allows users to provide a feature table exported by
@@ -31,8 +31,8 @@
 #' expected format. This can be useful if you have a file from another tool and
 #' want to manually format it in R. The table rows are expected to be individual
 #' features, while columns are compound metadata and samples. The feature table
-#' must have the compound metadata columns "Compound", "mz", and "rt". Where
-#' "Compound" is the compound id, and can be `numeric` or `character`. "mz" is
+#' must have the compound metadata columns "compound", "mz", and "rt". Where
+#' "compound" is the compound id, and can be `numeric` or `character`. "mz" is
 #' the compound m/z, and should be `numeric`. "rt" is the retention time, in
 #' minutes, and should be `numeric`. The remaining columns should be samples,
 #' and match the names in the "Injection" column of the `metadata` file.
@@ -86,13 +86,17 @@ import_data <- function(peak_table, metadata, format = "none") {
                      function documentation for more details.")
   }
 
-
   df <- format_by_type(
     peak_table_path = peak_table,
     type_of_peak_table = format,
     sample_names = metadata$injection
   )
 
+  non_injection_columns <- 
+    which(!(colnames(df$peak_table) %in% metadata$injection))
+  colnames(df$peak_table)[non_injection_columns] <- 
+    tolower(colnames(df$peak_table)[non_injection_columns])
+  # colnames(df) <- tolower(colnames(df))
   mpactr_object <- mpactr$new(
     peak_table = unique_compounds(df),
     metadata = data.table(metadata)
@@ -104,15 +108,15 @@ import_data <- function(peak_table, metadata, format = "none") {
 
 unique_compounds <- function(peak_table_list, show_message = TRUE) {
   peak_table <- peak_table_list$peak_table
-  duplicates <- names(which(table(peak_table$Compound) > 1))
-  if (any(is.na(peak_table$Compound))) {
+  duplicates <- names(which(table(peak_table$compound) > 1))
+  if (any(is.na(peak_table$compound))) {
     stop("Found NA values inside your compounds names,
     please remove them.")
   }
   if (length(duplicates) > 0 && show_message) {
     cli::cli_inform("Found duplicate compound values, will add a suffix to
     unique the value.")
-    peak_table$Compound <- UniqueDuplicates(as.character(peak_table$Compound))
+    peak_table$compound <- UniqueDuplicates(as.character(peak_table$compound))
   }
   return(list(
     "peak_table" = peak_table,

@@ -32,7 +32,7 @@ properly with filter_pactr-class data", {
             expect_equal(filter_class$logger[[logger_index_name]][["cut_ions"]],
                          expected_cut_ions)
             expect_equal(filter_class$mpactr_data$get_peak_table()[
-              Compound == "153",
+              compound == "153",
               "102623_UM1850B_ANGDT_71_1_5007"
             ][[1]], 2158.4)
             expect_equal(nrow(filter_class$mpactr_data$get_peak_table()), 1233)
@@ -103,9 +103,9 @@ test_that("blank filter works correctly", {
   test_path(directory, grp_avg)
   error_prop <- fread(test_path(directory, grp_avg),
     skip = 1,
-    col.names = c("Compound", "mz", "rt", "biologicalGroup", "average")
-  )[, Compound := as.character(Compound)]
-  setorder(error_prop, Compound)
+    col.names = c("compound", "mz", "rt", "biologicalGroup", "average")
+  )[, compound := as.character(compound)]
+  setorder(error_prop, compound)
   logger_index_name <- "group_filter-group_stats"
   expect_true(all(filter_class$logger[[logger_index_name]]$Biological_Group %in%
                     error_prop$biologicalGroup))
@@ -202,7 +202,7 @@ test_that("apply_group_filter removes the correct ions", {
   filter_class$apply_group_filter("Blanks", remove_ions = TRUE)
   log_failing <- "group_filter-failing_list"
   expect_true(all(!(filter_class$logger[[log_failing]]$Blanks %in%
-                      filter_class$mpactr_data$get_peak_table()$Compound)))
+                      filter_class$mpactr_data$get_peak_table()$compound)))
 
   expect_false(is.null(filter_class$logger$list_of_summaries[["group-Blanks"]]))
   expect_equal(class(filter_class$logger$list_of_summaries[["group-Blanks"]]),
@@ -312,7 +312,7 @@ test_that("cv_filter errors when there are no technical replicates", { # hmm
   meta_sub <- meta[, head(.SD, 1), by = sample_code]
 
   pt_list <- progenesis_formatter(test_path(directory, peak_table_name))
-  sub <- c("Compound", "mz", "rt", meta_sub$injection)
+  sub <- c("compound", "mz", "rt", meta_sub$injection)
   pt_list$peak_table <- pt_list$peak_table[, .SD, .SDcols = sub]
   pt_list$raw_table <- pt_list$raw_table[, .SD, .SDcols = sub]
 
@@ -378,7 +378,7 @@ test_that("filter_inscource_ions filters out data properly", {
   expect_true(length(filter_class$logger[["list_of_summaries"]]$
                        insource$get_failed_ions()) == 27)
   expect_true(all(!(insource_ion_expected_list %in%
-                      filter_class$mpactr_data$get_peak_table()$Compound)))
+                      filter_class$mpactr_data$get_peak_table()$compound)))
 
   expect_false(is.null(filter_class$logger$list_of_summaries$insource))
   expect_true(is.null(filter_class$logger$list_of_summaries$replicability))

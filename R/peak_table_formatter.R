@@ -105,12 +105,12 @@ metaboscape_formatter <- function(peak_table, sample_names) {
   with(peak_table_convert, setnames(
     peak_table_convert,
     c("FEATURE_ID", "RT"),
-    c("Compound", "rt")
+    c("compound", "rt")
   ))
   peak_table_mpactr <- with(peak_table_convert, peak_table_convert[
     , .SD,
     .SDcols = c(
-      "Compound", "mz", "rt",
+      "compound", "mz", "rt",
       sample_names
     )
   ])

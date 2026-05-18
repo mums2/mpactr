@@ -6,7 +6,7 @@ mpactr$set("private", "initialize_data", function() {
     private$peak_table[, .SD, .SDcols = private$metadata$injection]
   ) > 0), ]
   private$set_kmd()
-  private$peak_table$Compound <- as.character(private$peak_table$Compound)
+  private$peak_table$compound <- as.character(private$peak_table$compound)
 })
 mpactr$set("private", "set_kmd", function() {
   private$peak_table[, kmd := mz - floor(mz)]
