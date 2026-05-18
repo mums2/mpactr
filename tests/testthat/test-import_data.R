@@ -17,6 +17,49 @@ test_that("import_data creates a proper mpactr and filter-pactr object", {
   expect_true(nrow(data$mpactr_data$get_metadata()) > 1)
 })
 
+test_that("import_data's peaktable will have lowercase names", {
+  limit_cores()
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple_Uppercase.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+
+  data <- import_data(
+    peak_table = test_path(directory, peak_table_name),
+    metadata = test_path(directory,  meta_data_name),
+    format = "Progenesis"
+  )
+
+  expect_true(colnames(get_peak_table(data))[1] == "compound")
+  
+  metabscape_peak_table <- "MJB_MonoVSCoculture_metaboscape_ft.csv"
+  peak_table <-
+    fread(test_path(directory,
+                    metabscape_peak_table))
+  samples <- colnames(peak_table)[27:72]
+  meta_data <-
+    data.frame(Injection = samples,
+               Biological_Group = rep("Blank",
+                                      times = length(samples)),
+               Sample_Code = rep("Blank", times = length(samples)))
+
+  data <- import_data(
+    peak_table = peak_table,
+    metadata = meta_data,
+    format = "Metaboscape"
+  )
+
+  expect_true(colnames(get_peak_table(data))[1] == "compound")
+
+  peak_table <- get_peak_table(data)
+  colnames(peak_table)[1] <- "Compound"
+  data <- import_data(peak_table = peak_table,
+                      metadata = get_metadata(data),
+                      format = "None")
+  
+  expect_true(colnames(get_peak_table(data))[1] == "compound")
+})
+
+
 test_that("We can use a data.frame as input our peak table in import_data", {
   limit_cores()
   directory <- "exttestdata"

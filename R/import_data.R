@@ -92,11 +92,6 @@ import_data <- function(peak_table, metadata, format = "none") {
     sample_names = metadata$injection
   )
 
-  non_injection_columns <- 
-    which(!(colnames(df$peak_table) %in% metadata$injection))
-  colnames(df$peak_table)[non_injection_columns] <- 
-    tolower(colnames(df$peak_table)[non_injection_columns])
-  # colnames(df) <- tolower(colnames(df))
   mpactr_object <- mpactr$new(
     peak_table = unique_compounds(df),
     metadata = data.table(metadata)
