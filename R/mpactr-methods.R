@@ -12,14 +12,14 @@ mpactr$set("private", "set_kmd", function() {
   private$peak_table[, kmd := mz - floor(mz)]
 })
 mpactr$set("public", "get_peak_table", function() {
-  return(private$peak_table)
+  private$peak_table
 })
 mpactr$set("public", "set_peak_table", function(peak_table) {
   private$peak_table <- peak_table
 })
 mpactr$set("public", "get_metadata", function() {
-  return(private$metadata)
+  private$metadata
 })
 mpactr$set("public", "get_raw_data", function() {
-  return(private$raw_peak_table)
+  private$raw_peak_table
 })

@@ -30,7 +30,7 @@ graph_qc_pactr <- R6Class("graph_qc_pactr", public = list(
       , percent := (count / sum(count) * 100)
     ]
 
-    return(ggplot2::ggplot(ion_counts) +
+    ggplot2::ggplot(ion_counts) +
       ggplot2::aes(area = percent, fill = status) +
       treemapify::geom_treemap() +
       treemapify::geom_treemap_text(
@@ -42,10 +42,10 @@ graph_qc_pactr <- R6Class("graph_qc_pactr", public = list(
         fontface = c("bold")
       ) +
       ggplot2::theme(legend.position = "none") +
-      viridis::scale_fill_viridis(option = "G", discrete = TRUE))
+      viridis::scale_fill_viridis(option = "G", discrete = TRUE)
   },
   get_summarized_dt = function() {
-    return(private$filter_summarized)
+    private$filter_summarized
   }
 ), private = list(
   filter_summarized = NA,

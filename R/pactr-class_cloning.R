@@ -15,5 +15,5 @@ clone <- function(mpactr_object) {
   new_object$logger <- as.environment(as.list(mpactr_object$logger,
     all.names = TRUE
   ))
-  return(new_object)
+  new_object
 }

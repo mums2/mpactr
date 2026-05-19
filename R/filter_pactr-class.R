@@ -16,9 +16,8 @@ filter_pactr <- R6Class("filter_pactr", public = list(
 
     if ((filter %in% names(self$logger$list_of_summaries))) {
       return(TRUE)
-    } else {
-      return(FALSE)
     }
+    FALSE
   },
   get_log = function(filter, group = NULL) {
     if (!(filter %in% c("mispicked", "group", "replicability", "insource"))) {
@@ -36,10 +35,10 @@ filter_pactr <- R6Class("filter_pactr", public = list(
                      to extracting the summary.")
     }
 
-    return(list(
+    list(
       "failed_ions" = self$logger$list_of_summaries[[filter]]$get_failed_ions(),
       "passed_ions" = self$logger$list_of_summaries[[filter]]$get_passed_ions()
-    ))
+    )
   },
   get_mispicked_ions = function() {
     if (!exists("check_mismatched_peaks", self$logger)) {
@@ -54,7 +53,7 @@ filter_pactr <- R6Class("filter_pactr", public = list(
       "similar_ions" = merge_groups
     )
 
-    return(similar_ions)
+    similar_ions
   },
   get_group_averages = function() {
     # return averages and variations for all ions in filtered table
@@ -92,7 +91,7 @@ filter_pactr <- R6Class("filter_pactr", public = list(
     group_stats <- b[t, on = .(compound, biological_group)]
     setorder(group_stats, compound, biological_group)
 
-    return(group_stats)
+    group_stats
   },
   get_cv = function() {
     if (!exists("cv_values", self$logger)) {
@@ -100,6 +99,6 @@ filter_pactr <- R6Class("filter_pactr", public = list(
                       to the data - run filter_cv() first.")
     }
 
-    return(self$logger$cv_values)
+    self$logger$cv_values
   }
 ))

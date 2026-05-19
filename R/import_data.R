@@ -98,7 +98,7 @@ import_data <- function(peak_table, metadata, format = "none") {
   )
   mpactr_object$setup()
   filter_object <- filter_pactr$new(mpactr_object)
-  return(filter_object)
+  filter_object
 }
 
 unique_compounds <- function(peak_table_list, show_message = TRUE) {
@@ -113,8 +113,8 @@ unique_compounds <- function(peak_table_list, show_message = TRUE) {
     unique the value.")
     peak_table$compound <- UniqueDuplicates(as.character(peak_table$compound))
   }
-  return(list(
+  list(
     "peak_table" = peak_table,
     "raw_table" = peak_table
-  ))
+  )
 }

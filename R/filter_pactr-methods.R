@@ -312,7 +312,7 @@ filter_pactr$set(
       by = .(cut_tree)
     ]
 
-    return(x$keep)
+    x$keep
   }
 )
 
@@ -321,5 +321,5 @@ filter_pactr$set(
 filter_pactr$set("private", "cluster_max", function(mz) {
   keep <- rep(FALSE, length(mz))
   keep[which.max(mz)] <- TRUE
-  return(keep)
+  keep
 })

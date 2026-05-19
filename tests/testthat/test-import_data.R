@@ -30,7 +30,7 @@ test_that("import_data's peaktable will have lowercase names", {
   )
 
   expect_true(colnames(get_peak_table(data))[1] == "compound")
-  
+
   metabscape_peak_table <- "MJB_MonoVSCoculture_metaboscape_ft.csv"
   peak_table <-
     fread(test_path(directory,
@@ -55,7 +55,6 @@ test_that("import_data's peaktable will have lowercase names", {
   data <- import_data(peak_table = peak_table,
                       metadata = get_metadata(data),
                       format = "None")
-  
   expect_true(colnames(get_peak_table(data))[1] == "compound")
 })
 

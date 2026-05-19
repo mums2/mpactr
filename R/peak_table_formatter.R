@@ -35,9 +35,9 @@ format_by_type <- function(peak_table_path,
 
   } # default condition = NULL
 
-  non_injection_columns <- 
+  non_injection_columns <-
     which(!(colnames(result$peak_table) %in% sample_names))
-  colnames(result$peak_table)[non_injection_columns] <- 
+  colnames(result$peak_table)[non_injection_columns] <-
     tolower(colnames(result$peak_table)[non_injection_columns])
   result
 }
@@ -56,10 +56,10 @@ progenesis_formatter <- function(peak_table) {
     c("mz", "rt")
   ))
 
-  return(list(
+  list(
     "peak_table" = peak_table,
     "raw_table" = raw_peak_table
-  ))
+  )
 }
 
 
@@ -72,10 +72,10 @@ mz_mine_formatter <- function(peak_table) {
   }
   raw_peak_table <- peak_table
 
-  return(list(
+  list(
     "peak_table" = peak_table,
     "raw_table" = raw_peak_table
-  ))
+  )
 }
 
 metaboscape_formatter <- function(peak_table, sample_names) {
@@ -122,8 +122,8 @@ metaboscape_formatter <- function(peak_table, sample_names) {
     )
   ])
 
-  return(list(
+  list(
     "peak_table" = peak_table_mpactr,
     "raw_table" = peak_table_convert
-  ))
+  )
 }
