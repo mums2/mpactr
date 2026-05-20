@@ -29,7 +29,7 @@ test_that("metaboscape reads data correctly", {
   expect_equal(class(pt$peak_table), c("data.table", "data.frame"))
   expect_true(all(c("data.table", "data.frame") %in% class(pt$peak_table)))
   expect_true(nrow(pt$peak_table) > 0)
-  expect_equal(colnames(pt$peak_table), c("Compound", "mz", "rt", samples))
+  expect_equal(colnames(pt$peak_table), c("compound", "mz", "rt", samples))
 })
 
 test_that("format_by_type formats the data properly based on the parameters", {

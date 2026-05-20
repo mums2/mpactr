@@ -34,7 +34,7 @@ filter_pactr$set(
 
     self$logger$list_of_summaries$mispicked <- summary$new(
       filter = "mispicked", failed_ions = results$cut_ions,
-      passed_ions = self$mpactr_data$get_peak_table()$Compound
+      passed_ions = self$mpactr_data$get_peak_table()$compound
     )
 
     self$logger$list_of_summaries$mispicked$summarize()
@@ -52,23 +52,23 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
   }
   if (method == "sum") {
     dat <- melt(self$mpactr_data$get_peak_table(),
-      id.vars = c("Compound", "mz", "rt", "kmd"),
+      id.vars = c("compound", "mz", "rt", "kmd"),
       variable.name = "sample",
       value.name = "intensity",
       variable.factor = FALSE
     )
 
     for (ion in names(ion_filter_list$merge_groups)) {
-      dat <- dat[Compound %in% c(ion, ion_filter_list$merge_groups[[ion]]),
+      dat <- dat[compound %in% c(ion, ion_filter_list$merge_groups[[ion]]),
         intensity := sum(intensity),
         by = .(sample)
       ]
     }
     self$mpactr_data$set_peak_table(dcast(dat,
-      Compound + mz + kmd + rt ~ sample,
+      compound + mz + kmd + rt ~ sample,
       value.var = "intensity"
     )[
-      (!Compound %in% ion_filter_list$cut_ions),
+      (!compound %in% ion_filter_list$cut_ions),
     ])
   }
 })
@@ -78,10 +78,10 @@ filter_pactr$set("private", "merge_ions", function(ion_filter_list, method) {
 # across biological groups and technical replicates
 filter_pactr$set("public", "filter_blank", function() {
   b <- data.table::melt(self$mpactr_data$get_peak_table(),
-    id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
+    id.vars = c("compound", "mz", "rt", "kmd"), variable.name =
       "sample", value.name = "intensity", variable.factor = FALSE
   )[
-    data.table(self$mpactr_data$get_meta_data()),
+    data.table(self$mpactr_data$get_metadata()),
     on = .(sample = injection)
   ][
     , .(
@@ -89,26 +89,26 @@ filter_pactr$set("public", "filter_blank", function() {
       BiolRSD = rsd(intensity),
       Bioln = length(intensity)
     ),
-    by = .(Compound, biological_group)
+    by = .(compound, biological_group)
   ]
 
   t <- data.table::melt(self$mpactr_data$get_peak_table(),
-    id.vars = c("Compound", "mz", "rt", "kmd"),
+    id.vars = c("compound", "mz", "rt", "kmd"),
     variable.name = "sample",
     value.name = "intensity",
     variable.factor = FALSE
   )[
-    data.table(self$mpactr_data$get_meta_data()),
+    data.table(self$mpactr_data$get_metadata()),
     on = .(sample = injection)
   ][
     , .(sd = rsd(intensity), n = length(intensity)),
-    by = .(Compound, biological_group, sample_code)
+    by = .(compound, biological_group, sample_code)
   ][
     , .(techRSD = mean(sd), techn = mean(n)),
-    by = .(Compound, biological_group)
+    by = .(compound, biological_group)
   ]
-  group_stats <- b[t, on = .(Compound, biological_group)]
-  setorder(group_stats, Compound, biological_group)
+  group_stats <- b[t, on = .(compound, biological_group)]
+  setorder(group_stats, compound, biological_group)
   self$logger[["group_filter-group_stats"]] <- group_stats
 })
 
@@ -120,18 +120,18 @@ filter_pactr$set(
   "public", "parse_ions_by_group",
   function(group_threshold = 0.01) {
     group_avgs <- dcast(self$logger[["group_filter-group_stats"]],
-      Compound ~ biological_group,
+      compound ~ biological_group,
       value.var = "average"
     )
 
     max <- self$logger[["group_filter-group_stats"]][
-      , .(Compound, biological_group, average)
+      , .(compound, biological_group, average)
     ][
       , .(max = max(average)),
-      by = Compound
+      by = compound
     ]
 
-    group_max <- group_avgs[max, on = .(Compound = Compound)][
+    group_max <- group_avgs[max, on = .(compound = compound)][
       , lapply(.SD, function(x) {
         x / max
       }),
@@ -141,7 +141,7 @@ filter_pactr$set(
     ]
 
     biol_groups <- as.list(group_max)
-    biol_groups <- lapply(biol_groups, setNames, group_avgs[, Compound])
+    biol_groups <- lapply(biol_groups, setNames, group_avgs[, compound])
     group_filter_list <- lapply(biol_groups, function(x) {
       names(x)[which(x > group_threshold)]
     })
@@ -154,7 +154,7 @@ filter_pactr$set(
 filter_pactr$set(
   "public", "apply_group_filter",
   function(group, remove_ions = TRUE) {
-    groups <- unique(self$mpactr_data$get_meta_data()$biological_group)
+    groups <- unique(self$mpactr_data$get_metadata()$biological_group)
     if (isFALSE(group %in% groups)) {
 
       cli::cli_abort(c("{.var group} {group} is not in ",
@@ -175,14 +175,14 @@ filter_pactr$set(
 
     ions <- self$logger[["group_filter-failing_list"]][[group]]
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
-      !(self$mpactr_data$get_peak_table()$Compound
+      !(self$mpactr_data$get_peak_table()$compound
         %in% ions),
     ])
 
     self$logger$list_of_summaries[[paste0("group-", group)]] <- summary$new(
       filter = group,
       failed_ions = ions,
-      passed_ions = self$mpactr_data$get_peak_table()$Compound
+      passed_ions = self$mpactr_data$get_peak_table()$compound
     )
 
 
@@ -205,22 +205,22 @@ filter_pactr$set(
                   "replicates are required."))
     }
 
-    input_ions <- self$mpactr_data$get_peak_table()$Compound
+    input_ions <- self$mpactr_data$get_peak_table()$compound
     cli <- cli::cli_alert_info
     n <- length(input_ions)
     cli("Parsing {n} peaks for replicability across technical replicates.")
 
     cv <- data.table::melt(self$mpactr_data$get_peak_table(),
-      id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
+      id.vars = c("compound", "mz", "rt", "kmd"), variable.name =
         "sample", value.name = "intensity", variable.factor = FALSE
     )[
-      self$mpactr_data$get_meta_data(),
+      self$mpactr_data$get_metadata(),
       on = .(sample = injection)
-    ][order(Compound)]
+    ][order(compound)]
 
 
     peak_table <- self$mpactr_data$get_peak_table()
-    meta_data <- self$mpactr_data$get_meta_data()
+    meta_data <- self$mpactr_data$get_metadata()
 
     cv <-
       as.data.table(FilterCV(cv, unique(meta_data$sample_code), cv_threshold,
@@ -228,8 +228,8 @@ filter_pactr$set(
 
     samples <- unique(meta_data$sample_code)
     for (i in seq_along(samples)) {
-      peak_table[Compound %in% cv[sample_code == samples[[i]] &
-                                    !passes_cv_filter]$Compound,
+      peak_table[compound %in% cv[sample_code == samples[[i]] &
+                                    !passes_cv_filter]$compound,
                  meta_data$injection[which(meta_data$sample_code
                                            == samples[[i]])] := 0]
     }
@@ -239,9 +239,9 @@ filter_pactr$set(
 
 
     self$logger[["cv_values"]] <- cv
-    failed_ions <- peak_table$Compound[failed_indexes]
+    failed_ions <- peak_table$compound[failed_indexes]
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
-      Compound %in% setdiff(
+      compound %in% setdiff(
         input_ions,
         failed_ions
       ),
@@ -250,7 +250,7 @@ filter_pactr$set(
     self$logger$list_of_summaries$replicability <- summary$new(
       filter = "cv_filter",
       failed_ions = failed_ions,
-      passed_ions = self$mpactr_data$get_peak_table()$Compound
+      passed_ions = self$mpactr_data$get_peak_table()$compound
     )
 
     self$logger$list_of_summaries$replicability$summarize()
@@ -261,7 +261,7 @@ filter_pactr$set(
 filter_pactr$set(
   "public", "filter_insource_ions",
   function(cluster_threshold = 0.95) {
-    input_ions <- self$mpactr_data$get_peak_table()$Compound
+    input_ions <- self$mpactr_data$get_peak_table()$compound
     cli::cli_alert_info("Parsing {length(input_ions)} peaks for insource ions.")
 
     self$mpactr_data$set_peak_table(self$mpactr_data$get_peak_table()[
@@ -273,9 +273,9 @@ filter_pactr$set(
       filter = "insource",
       failed_ions = setdiff(
         input_ions,
-        self$mpactr_data$get_peak_table()$Compound
+        self$mpactr_data$get_peak_table()$compound
       ),
-      passed_ions = self$mpactr_data$get_peak_table()$Compound
+      passed_ions = self$mpactr_data$get_peak_table()$compound
     )
 
     self$logger$list_of_summaries$insource$summarize()
@@ -290,29 +290,29 @@ filter_pactr$set(
     }
 
     dat <- melt(group_1,
-      id.vars = c("Compound", "mz", "kmd"),
+      id.vars = c("compound", "mz", "kmd"),
       variable.name = "sample",
       value.name = "intensity",
       variable.factor = FALSE
     )[
-      , c("Compound", "sample", "intensity")
+      , c("compound", "sample", "intensity")
     ]
-    data <- dcast(dat, sample ~ Compound, value.var = "intensity")
+    data <- dcast(dat, sample ~ compound, value.var = "intensity")
     data[, c("sample") := NULL]
     corr <- stats::cor(data, method = c("pearson"))
     dist <- stats::dist(corr, method = "euclidian")
     cluster <- stats::hclust(dist, method = "complete")
     cut_tree <- stats::cutree(cluster, h = 1 - cluster_threshold)
 
-    x <- as.data.table(cut_tree, keep.rownames = "Compound")[
+    x <- as.data.table(cut_tree, keep.rownames = "compound")[
       group_1,
-      on = .(Compound = Compound)
+      on = .(compound = compound)
     ][
       , keep := private$cluster_max(mz),
       by = .(cut_tree)
     ]
 
-    return(x$keep)
+    x$keep
   }
 )
 
@@ -321,5 +321,5 @@ filter_pactr$set(
 filter_pactr$set("private", "cluster_max", function(mz) {
   keep <- rep(FALSE, length(mz))
   keep[which.max(mz)] <- TRUE
-  return(keep)
+  keep
 })

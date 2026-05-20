@@ -23,7 +23,7 @@
 #' peak_table <- get_peak_table(data)
 #'
 get_peak_table <- function(mpactr_object) {
-  return(data.table::copy(mpactr_object$mpactr_data$get_peak_table()))
+  data.table::copy(mpactr_object$mpactr_data$get_peak_table())
 }
 
 #' Return the meta_data data.table from the mpactr object.
@@ -51,7 +51,7 @@ get_peak_table <- function(mpactr_object) {
 #' meta_data <- get_metadata(data)
 #'
 get_metadata <- function(mpactr_object) {
-  return(data.table::copy(mpactr_object$mpactr_data$get_meta_data()))
+  data.table::copy(mpactr_object$mpactr_data$get_metadata())
 }
 
 #' Return the input peak table from mpactr object.
@@ -79,5 +79,5 @@ get_metadata <- function(mpactr_object) {
 #' raw_data <- get_raw_data(data)
 #'
 get_raw_data <- function(mpactr_object) {
-  return(data.table::copy(mpactr_object$mpactr_data$get_raw_data()))
+  data.table::copy(mpactr_object$mpactr_data$get_raw_data())
 }

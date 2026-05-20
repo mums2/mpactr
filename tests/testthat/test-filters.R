@@ -35,7 +35,7 @@ test_that("filter mismatch ions wrapper works
             expect_equal(nrow(data_mpactr$mpactr_data$get_peak_table()), 1233)
 
             dat <- import_data(peak_table = get_peak_table(data_mpactr_copy),
-                               meta_data = get_metadata(data_mpactr_copy),
+                               metadata = get_metadata(data_mpactr_copy),
                                format = "None")
             filtered_data <- dat |>
               filter_mispicked_ions(merge_peaks = TRUE,
@@ -106,10 +106,10 @@ test_that("group filter wrapper works as expected", {
 
   log_name <- "group_filter-failing_list"
   expect_true(all(!(data_mpactr$logger[[log_name]]$Blanks
-                    %in% data_mpactr$mpactr_data$get_peak_table()$Compound)))
+                    %in% data_mpactr$mpactr_data$get_peak_table()$compound)))
 
   expect_true(all(!(data_mpactr_copy$logger[[log_name]]$Blanks %in%
-                      data_mpactr_copy$mpactr_data$get_peak_table()$Compound)))
+                      data_mpactr_copy$mpactr_data$get_peak_table()$compound)))
 })
 
 test_that("filter cv filter wrapper works as expected", {
@@ -145,7 +145,7 @@ test_that("filter cv filter wrapper works as expected", {
   df <- cbind(df[, 1:3], df[, meta$injection, with = FALSE])
 
   data_no_replicates <- import_data(peak_table = df,
-                                    meta_data = meta,
+                                    metadata = meta,
                                     format = "None")
   expect_error(filter_cv(data_no_replicates, cv_threshold = 0.1),
                "There are no technical replicates")
@@ -189,9 +189,9 @@ test_that("filter insource ions wrapper works as expected", {
                        insource$get_failed_ions()) == 27)
 
   expect_true(all(!(insource_ion_expected_list %in%
-                      data_mpactr$mpactr_data$get_peak_table()$Compound)))
+                      data_mpactr$mpactr_data$get_peak_table()$compound)))
   expect_true(all(!(insource_ion_expected_list %in% data_mpactr_copy$
-                      mpactr_data$get_peak_table()$Compound)))
+                      mpactr_data$get_peak_table()$compound)))
 })
 
 test_that("filters abort if the filter has already been run", {

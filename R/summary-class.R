@@ -25,13 +25,13 @@ summary <- R6::R6Class("summary",
                                "{r} ions remain."))
     },
     get_failed_ions = function() {
-      return(private$failed_ions)
+      private$failed_ions
     },
     get_passed_ions = function() {
-      return(private$passed_ions)
+      private$passed_ions
     },
     get_filter = function() {
-      return(private$filter)
+      private$filter
     }
   ),
   private = list(

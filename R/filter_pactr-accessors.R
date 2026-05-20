@@ -63,7 +63,7 @@ filter_summary <- function(mpactr_object, filter, group = NULL) {
 #' mispicked_ion_groups
 #'
 get_similar_ions <- function(mpactr_object) {
-  return(mpactr_object$get_mispicked_ions())
+  mpactr_object$get_mispicked_ions()
 }
 
 #' Get groups averages.
@@ -96,7 +96,7 @@ get_similar_ions <- function(mpactr_object) {
 #' head(group_averages)
 #'
 get_group_averages <- function(mpactr_object) {
-  return(mpactr_object$get_group_averages())
+  mpactr_object$get_group_averages()
 }
 
 #' Get CV values.
@@ -130,5 +130,5 @@ get_group_averages <- function(mpactr_object) {
 #' head(cv)
 #'
 get_cv_data <- function(mpactr_object) {
-  return(mpactr_object$get_cv())
+  mpactr_object$get_cv()
 }

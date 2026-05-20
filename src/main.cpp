@@ -12,7 +12,7 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ri
     const auto rows = static_cast<size_t>(peakTable.nrows());
     const Rcpp::NumericVector mzVector = peakTable["mz"];
     const Rcpp::NumericVector rtVector = peakTable["rt"];
-    const Rcpp::CharacterVector compoundVector = peakTable["Compound"];
+    const Rcpp::CharacterVector compoundVector = peakTable["compound"];
     std::vector<std::string> cutIons;
     cutIons.reserve(rows);
     std::vector<bool> cutIonsChecked(rows, false);
@@ -28,7 +28,7 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ri
         const Rcpp::String compound = compoundVector[i];
         bool addName = false;
         for (size_t j = i + 1; j < rows; j++) {
-            const Rcpp::String nextCompound = compoundVector[j];
+            const Rcpp::String nextcompound = compoundVector[j];
             if (cutIonsChecked[j]) continue;
             const double nextMz = mzVector[j];
             const double nextRt = rtVector[j];
@@ -43,9 +43,9 @@ Rcpp::List FilterMispickedIons(const Rcpp::DataFrame &peakTable, const double ri
                                                (ringBand == 0 || doubleBand < isoWin);
 
             if (!shiftDifference && betweenIonCalculation) {
-                cutIons.emplace_back(nextCompound);
+                cutIons.emplace_back(nextcompound);
                 cutIonsChecked[j] = true;
-                mergeGroupList[i].emplace_back(nextCompound);
+                mergeGroupList[i].emplace_back(nextcompound);
                 addName = true;
             }
         }
@@ -87,11 +87,11 @@ Rcpp::StringVector UniqueDuplicates(Rcpp::StringVector &compoundNames) {
         bool duplicate = true;
         int count = 1;
         while(duplicate) {
-            Rcpp::String newCompound = compound;
-            newCompound.push_back("_" + std::to_string(count++));
-            if(duplicates.find(newCompound) == duplicates.end()) {
-                duplicates.insert(newCompound);
-                compoundNames[i] = newCompound;
+            Rcpp::String newcompound = compound;
+            newcompound.push_back("_" + std::to_string(count++));
+            if(duplicates.find(newcompound) == duplicates.end()) {
+                duplicates.insert(newcompound);
+                compoundNames[i] = newcompound;
                 duplicate = false;
                 break;
             }

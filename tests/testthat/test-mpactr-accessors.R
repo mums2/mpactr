@@ -13,7 +13,7 @@ test_that("get_peak_table correctly returns the table", {
   expect_equal(nrow(peak_table), 1303)
 })
 
-test_that("get_meta_data correctly returns the table", {
+test_that("get_metadata correctly returns the table", {
   limit_cores()
   directory <- "exttestdata"
   peak_table_name <- "102623_peaktable_coculture_simple.csv"

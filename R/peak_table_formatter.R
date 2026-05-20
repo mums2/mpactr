@@ -12,12 +12,13 @@ format_by_type <- function(peak_table_path,
     cli::cli_abort("Your peak_table is not a valid file path,
                     please enter a new one")
   }
+  result <- list()
   if (type_of_peak_table == "Progenesis") {
-    return(progenesis_formatter(peak_table_path))
+    result <- progenesis_formatter(peak_table_path)
   } else if (type_of_peak_table == "MzMine") {
-    return(mz_mine_formatter(peak_table_path))
+    result <- mz_mine_formatter(peak_table_path)
   } else if (type_of_peak_table == "Metaboscape") {
-    return(metaboscape_formatter(peak_table_path, sample_names))
+    result <- metaboscape_formatter(peak_table_path, sample_names)
   } else if (type_of_peak_table == "None") {
     peak_table <- data.frame()
     if (!(any(c("data.table", "data.frame") %in% class(peak_table_path)))) {
@@ -26,13 +27,19 @@ format_by_type <- function(peak_table_path,
     } else {
       peak_table <- peak_table_path
     }
-    return(list(
+    result <- list(
       "peak_table" = peak_table,
       "raw_table" = peak_table
-    ))
+    )
   } else {
 
   } # default condition = NULL
+
+  non_injection_columns <-
+    which(!(colnames(result$peak_table) %in% sample_names))
+  colnames(result$peak_table)[non_injection_columns] <-
+    tolower(colnames(result$peak_table)[non_injection_columns])
+  result
 }
 
 progenesis_formatter <- function(peak_table) {
@@ -49,10 +56,10 @@ progenesis_formatter <- function(peak_table) {
     c("mz", "rt")
   ))
 
-  return(list(
+  list(
     "peak_table" = peak_table,
     "raw_table" = raw_peak_table
-  ))
+  )
 }
 
 
@@ -65,10 +72,10 @@ mz_mine_formatter <- function(peak_table) {
   }
   raw_peak_table <- peak_table
 
-  return(list(
+  list(
     "peak_table" = peak_table,
     "raw_table" = raw_peak_table
-  ))
+  )
 }
 
 metaboscape_formatter <- function(peak_table, sample_names) {
@@ -105,18 +112,18 @@ metaboscape_formatter <- function(peak_table, sample_names) {
   with(peak_table_convert, setnames(
     peak_table_convert,
     c("FEATURE_ID", "RT"),
-    c("Compound", "rt")
+    c("compound", "rt")
   ))
   peak_table_mpactr <- with(peak_table_convert, peak_table_convert[
     , .SD,
     .SDcols = c(
-      "Compound", "mz", "rt",
+      "compound", "mz", "rt",
       sample_names
     )
   ])
 
-  return(list(
+  list(
     "peak_table" = peak_table_mpactr,
     "raw_table" = peak_table_convert
-  ))
+  )
 }

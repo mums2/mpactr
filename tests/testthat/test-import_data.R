@@ -6,7 +6,7 @@ test_that("import_data creates a proper mpactr and filter-pactr object", {
 
   data <- import_data(
     peak_table = test_path(directory, peak_table_name),
-    meta_data = test_path(directory,  meta_data_name),
+    metadata = test_path(directory,  meta_data_name),
     format = "Progenesis"
   )
 
@@ -14,8 +14,50 @@ test_that("import_data creates a proper mpactr and filter-pactr object", {
   expect_true(exists("list_of_summaries", data$logger))
   expect_true(all(sapply(data$logger[["list_of_summaries"]], is.null) == TRUE))
   expect_true(nrow(data$mpactr_data$get_peak_table()) > 1)
-  expect_true(nrow(data$mpactr_data$get_meta_data()) > 1)
+  expect_true(nrow(data$mpactr_data$get_metadata()) > 1)
 })
+
+test_that("import_data's peaktable will have lowercase names", {
+  limit_cores()
+  directory <- "exttestdata"
+  peak_table_name <- "102623_peaktable_coculture_simple_Uppercase.csv"
+  meta_data_name <- "102623_metadata_correct.csv"
+
+  data <- import_data(
+    peak_table = test_path(directory, peak_table_name),
+    metadata = test_path(directory,  meta_data_name),
+    format = "Progenesis"
+  )
+
+  expect_true(colnames(get_peak_table(data))[1] == "compound")
+
+  metabscape_peak_table <- "MJB_MonoVSCoculture_metaboscape_ft.csv"
+  peak_table <-
+    fread(test_path(directory,
+                    metabscape_peak_table))
+  samples <- colnames(peak_table)[27:72]
+  meta_data <-
+    data.frame(Injection = samples,
+               Biological_Group = rep("Blank",
+                                      times = length(samples)),
+               Sample_Code = rep("Blank", times = length(samples)))
+
+  data <- import_data(
+    peak_table = peak_table,
+    metadata = meta_data,
+    format = "Metaboscape"
+  )
+
+  expect_true(colnames(get_peak_table(data))[1] == "compound")
+
+  peak_table <- get_peak_table(data)
+  colnames(peak_table)[1] <- "Compound"
+  data <- import_data(peak_table = peak_table,
+                      metadata = get_metadata(data),
+                      format = "None")
+  expect_true(colnames(get_peak_table(data))[1] == "compound")
+})
+
 
 test_that("We can use a data.frame as input our peak table in import_data", {
   limit_cores()
@@ -25,7 +67,7 @@ test_that("We can use a data.frame as input our peak table in import_data", {
   meta_data_path <- test_path(directory,  meta_data_name)
   data <- import_data(
     peak_table = test_path(directory, peak_table_name),
-    meta_data = meta_data_path,
+    metadata = meta_data_path,
     format = "Progenesis"
   )
   peak_table <- get_peak_table(data)
@@ -44,7 +86,7 @@ test_that("We can use a data.frame as input our peak table in import_data", {
 
   data <- import_data(
     peak_table = test_path(directory, peak_table_name),
-    meta_data = meta_data_path,
+    metadata = meta_data_path,
     format = "Progenesis"
   ) |>
     filter_mispicked_ions() |>
@@ -55,7 +97,7 @@ test_that("We can use a data.frame as input our peak table in import_data", {
   data_df <- import_data(get_peak_table(data), get_metadata(data), "None")
   peak_table_df <- get_peak_table(data_df)
   df <- get_peak_table(data)
-  temp <- data.frame(Compound = peak_table_df$Compound,
+  temp <- data.frame(compound = peak_table_df$compound,
                      mz = peak_table_df$mz, kmd = peak_table_df$kmd,
                      rt = peak_table_df$rt)
   dat <- cbind(temp, peak_table_df[, 5:22])
@@ -73,7 +115,7 @@ test_that("We can use a data.frame as input our peak table in import_data
                                           peak_table_name), skip = 2)
             data <- import_data(
               peak_table = peak_table,
-              meta_data = meta_data_path,
+              metadata = meta_data_path,
               format = "Progenesis"
             )
             formatted_peak_table <- get_raw_data(data)
@@ -92,7 +134,7 @@ test_that("We can use a data.frame as input our peak table in import_data
 
             data <- import_data(
               peak_table = peak_table,
-              meta_data = meta_data,
+              metadata = meta_data,
               format = "Metaboscape"
             )
             formatted_peak_table <- get_raw_data(data)
@@ -121,29 +163,29 @@ test_that("import_data aborts when expected
 
 test_that("unique_compounds annotate duplicates properly", {
   limit_cores()
-  df <- data.frame(Compound = c(1, 2, 3, 1:3, 4:7))
+  df <- data.frame(compound = c(1, 2, 3, 1:3, 4:7))
   ls <- list(peak_table = df, raw_table = df)
   uniqued_list <- unique_compounds(ls)
 
-  expect_true(length(unique(uniqued_list$peak_table$Compound)) ==
-                length(uniqued_list$peak_table$Compound))
-  expect_true(length(unique(uniqued_list$raw_table$Compound)) ==
-                length(uniqued_list$raw_table$Compound))
+  expect_true(length(unique(uniqued_list$peak_table$compound)) ==
+                length(uniqued_list$peak_table$compound))
+  expect_true(length(unique(uniqued_list$raw_table$compound)) ==
+                length(uniqued_list$raw_table$compound))
 
-  expect_false(length(unique(df$Compound)) == length(df$Compound))
+  expect_false(length(unique(df$compound)) == length(df$compound))
 
-  df <- data.frame(Compound = c("1", "1", "1_1", "1_1_1"))
+  df <- data.frame(compound = c("1", "1", "1_1", "1_1_1"))
   ls <- list(peak_table = df, raw_table = df)
   uniqued_list <- unique_compounds(list(peak_table = df, raw_table = df))
 
-  expect_true(uniqued_list$peak_table$Compound[[3]] == "1_1_1")
-  expect_true(uniqued_list$peak_table$Compound[[4]] == "1_1_1_1")
+  expect_true(uniqued_list$peak_table$compound[[3]] == "1_1_1")
+  expect_true(uniqued_list$peak_table$compound[[4]] == "1_1_1_1")
 
-  df <- data.frame(Compound = c("1", "1", "1_1", "1_1_1"))
+  df <- data.frame(compound = c("1", "1", "1_1", "1_1_1"))
   ls <- list(peak_table = df, raw_table = df)
   expect_message(unique_compounds(ls))
 
-  df <- data.frame(Compound = c("1", "1", NA, "1_1_1"))
+  df <- data.frame(compound = c("1", "1", NA, "1_1_1"))
   ls <- list(peak_table = df, raw_table = df)
   expect_error(unique_compounds(ls))
 })

@@ -16,9 +16,8 @@ filter_pactr <- R6Class("filter_pactr", public = list(
 
     if ((filter %in% names(self$logger$list_of_summaries))) {
       return(TRUE)
-    } else {
-      return(FALSE)
     }
+    FALSE
   },
   get_log = function(filter, group = NULL) {
     if (!(filter %in% c("mispicked", "group", "replicability", "insource"))) {
@@ -36,10 +35,10 @@ filter_pactr <- R6Class("filter_pactr", public = list(
                      to extracting the summary.")
     }
 
-    return(list(
+    list(
       "failed_ions" = self$logger$list_of_summaries[[filter]]$get_failed_ions(),
       "passed_ions" = self$logger$list_of_summaries[[filter]]$get_passed_ions()
-    ))
+    )
   },
   get_mispicked_ions = function() {
     if (!exists("check_mismatched_peaks", self$logger)) {
@@ -54,15 +53,15 @@ filter_pactr <- R6Class("filter_pactr", public = list(
       "similar_ions" = merge_groups
     )
 
-    return(similar_ions)
+    similar_ions
   },
   get_group_averages = function() {
     # return averages and variations for all ions in filtered table
     b <- data.table::melt(self$mpactr_data$get_peak_table(),
-      id.vars = c("Compound", "mz", "rt", "kmd"), variable.name =
+      id.vars = c("compound", "mz", "rt", "kmd"), variable.name =
         "sample", value.name = "intensity", variable.factor = FALSE
     )[
-      data.table(self$mpactr_data$get_meta_data()),
+      data.table(self$mpactr_data$get_metadata()),
       on = .(sample = injection)
     ][
       , .(
@@ -70,29 +69,29 @@ filter_pactr <- R6Class("filter_pactr", public = list(
         BiolRSD = rsd(intensity),
         Bioln = length(intensity)
       ),
-      by = .(Compound, biological_group)
+      by = .(compound, biological_group)
     ]
 
     t <- data.table::melt(self$mpactr_data$get_peak_table(),
-      id.vars = c("Compound", "mz", "rt", "kmd"),
+      id.vars = c("compound", "mz", "rt", "kmd"),
       variable.name = "sample",
       value.name = "intensity",
       variable.factor = FALSE
     )[
-      data.table(self$mpactr_data$get_meta_data()),
+      data.table(self$mpactr_data$get_metadata()),
       on = .(sample = injection)
     ][
       , .(sd = rsd(intensity), n = length(intensity)),
-      by = .(Compound, biological_group, sample_code)
+      by = .(compound, biological_group, sample_code)
     ][
       , .(techRSD = mean(sd), techn = mean(n)),
-      by = .(Compound, biological_group)
+      by = .(compound, biological_group)
     ]
 
-    group_stats <- b[t, on = .(Compound, biological_group)]
-    setorder(group_stats, Compound, biological_group)
+    group_stats <- b[t, on = .(compound, biological_group)]
+    setorder(group_stats, compound, biological_group)
 
-    return(group_stats)
+    group_stats
   },
   get_cv = function() {
     if (!exists("cv_values", self$logger)) {
@@ -100,6 +99,6 @@ filter_pactr <- R6Class("filter_pactr", public = list(
                       to the data - run filter_cv() first.")
     }
 
-    return(self$logger$cv_values)
+    self$logger$cv_values
   }
 ))
