@@ -31,6 +31,9 @@ Useful links:
 
 Authors:
 
+- Patrick Schloss <pschloss@umich.edu>
+  ([ORCID](https://orcid.org/0000-0002-6935-4275)) \[copyright holder\]
+
 - Allison Mason <masonar@umich.edu>
   ([ORCID](https://orcid.org/0000-0003-1339-1592))
 

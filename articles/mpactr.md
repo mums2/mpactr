@@ -15,8 +15,8 @@ Both are expected to be comma separated files (*.csv*).
 
 1.  peak_table: a peak table in Progenesis format is expected. To export
     a compatible peak table in Progenesis, navigate to the *Review
-    Compounds* tab then File -\> Export Compound Measurements. Select
-    the following properties: Compound, m/z, Retention time (min), and
+    compounds* tab then File -\> Export compound Measurements. Select
+    the following properties: compound, m/z, Retention time (min), and
     Raw abundance and click ok.
 2.  metadata: a table with sample information. At minimum the following
     columns are expected: Injection, Sample_Code, Biological_Group.
@@ -29,7 +29,7 @@ Both are expected to be comma separated files (*.csv*).
 To import these data into R, use the mpactr function
 [`import_data()`](https://www.mums2.org/mpactr/reference/import_data.md),
 which has the arguments: `peak_table_file_path` and
-`meta_data_file_path`. This tutorial will show you examples with data
+`metadata_file_path`. This tutorial will show you examples with data
 from the original mpact program, found on
 [GitHub](https://github.com/BalunasLab/mpact/tree/main/rawdata/PTY087I2).
 This dataset contain 38 samples for biological groups solvent blanks,
@@ -66,20 +66,20 @@ samples <- fread(example_path("PTY087I2_dataset.csv"), skip = 2) %>%
   colnames() %>%
   str_subset(., "200826")
 
-meta_data <- samplelist %>%
+metadata <- samplelist %>%
   left_join(metadata, by = "Sample_Code") %>%
   filter(Injection %in% samples)
 ```
 
 Now we can import the data. We will provide the url for the
-`peak_table`, and our reformatted meta_data object. This peak table was
+`peak_table`, and our reformatted metadata object. This peak table was
 exported from Progenesis, so we will set the `format` argument to
 Progenesis.
 
 ``` r
 
 data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
-  meta_data = meta_data,
+  metadata = metadata,
   format = "Progenesis"
 )
 ```
@@ -93,7 +93,7 @@ terminal:
 ``` r
 
 data
-#>               Compound       mz        rt 200826_blank1_r1 200826_blank1_r2
+#>               compound       mz        rt 200826_blank1_r1 200826_blank1_r2
 #>                 <char>    <num>     <num>            <num>            <num>
 #>    1:   0.80_418.1451n 419.1521 0.8027667          0.00000         0.000000
 #>    2: 0.81_210.0803m/z 210.0803 0.8099167          0.00000         0.000000
@@ -283,7 +283,7 @@ To extract the raw input peak table, use the function
 ``` r
 
 get_raw_data(data)[1:5, 1:8]
-#>            Compound       mz        rt 200826_blank1_r1 200826_blank1_r2
+#>            compound       mz        rt 200826_blank1_r1 200826_blank1_r2
 #>              <char>    <num>     <num>            <num>            <num>
 #> 1:   0.80_418.1451n 419.1521 0.8027667                0                0
 #> 2: 0.81_210.0803m/z 210.0803 0.8099167                0                0
@@ -307,7 +307,7 @@ been applied, use
 ``` r
 
 get_peak_table(data)[1:5, 1:8]
-#>            Compound       mz        rt 200826_blank1_r1 200826_blank1_r2
+#>            compound       mz        rt 200826_blank1_r1 200826_blank1_r2
 #>              <char>    <num>     <num>            <num>            <num>
 #> 1:   0.80_418.1451n 419.1521 0.8027667                0                0
 #> 2: 0.81_210.0803m/z 210.0803 0.8099167                0                0
@@ -325,7 +325,8 @@ get_peak_table(data)[1:5, 1:8]
 
 ### Extract metadata
 
-Metadata can be accessed with `get_meta_data()`:
+Metadata can be accessed with
+[`get_metadata()`](https://www.mums2.org/mpactr/reference/get_metadata.md):
 
 ``` r
 
@@ -367,12 +368,12 @@ Where the raw data object has 4956 ions in the feature table:
 ``` r
 
 data2 <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
-  meta_data = meta_data,
+  metadata = metadata,
   format = "Progenesis"
 )
 
 get_peak_table(data2)[, 1:5]
-#>               Compound       mz        rt 200826_blank1_r1 200826_blank1_r2
+#>               compound       mz        rt 200826_blank1_r1 200826_blank1_r2
 #>                 <char>    <num>     <num>            <num>            <num>
 #>    1:   0.80_418.1451n 419.1521 0.8027667          0.00000         0.000000
 #>    2: 0.81_210.0803m/z 210.0803 0.8099167          0.00000         0.000000
@@ -404,8 +405,8 @@ data2_mispicked <- filter_mispicked_ions(data2,
 #> ✔ 291 ions failed the mispicked filter, 4665 ions remain.
 
 get_peak_table(data2_mispicked)[, 1:5]
-#> Key: <Compound, mz, kmd, rt>
-#>               Compound        mz        kmd         rt
+#> Key: <compound, mz, kmd, rt>
+#>               compound        mz        kmd         rt
 #>                 <char>     <num>      <num>      <num>
 #>    1: 0.03_102.1549m/z 102.15495 0.15494700 0.03431667
 #>    2: 0.04_113.9641m/z 113.96412 0.96411580 0.04146667
@@ -440,8 +441,8 @@ was also updated and now has 4665 ions in the feature table:
 ``` r
 
 get_peak_table(data2)[, 1:5]
-#> Key: <Compound, mz, kmd, rt>
-#>               Compound        mz        kmd         rt
+#> Key: <compound, mz, kmd, rt>
+#>               compound        mz        kmd         rt
 #>                 <char>     <num>      <num>      <num>
 #>    1: 0.03_102.1549m/z 102.15495 0.15494700 0.03431667
 #>    2: 0.04_113.9641m/z 113.96412 0.96411580 0.04146667
@@ -649,11 +650,11 @@ head(cv)
 #> 1 cv    <tibble [49,560 × 7]>
 ```
 
-The nested data are tibbles with the columns Compound, biological_group,
+The nested data are tibbles with the columns compound, biological_group,
 sample_code, passes_cv_filter, cv, index, index_scale:
 
     #> # A tibble: 6 × 7
-    #>   Compound biological_group sample_code passes_cv_filter    cv index index_scale
+    #>   compound biological_group sample_code passes_cv_filter    cv index index_scale
     #>   <chr>    <chr>            <chr>       <lgl>            <dbl> <int>       <dbl>
     #> 1 0.03_10… Media            MB1109      FALSE               -1     0     0      
     #> 2 0.03_10… Media            MB1110      FALSE               -1     1     0.00202
@@ -759,7 +760,7 @@ function after identification of high-quality ions.
 ``` r
 
 data <- import_data(peak_table = example_path("PTY087I2_dataset.csv"),
-  meta_data = meta_data,
+  metadata = metadata,
   format = "Progenesis"
 )
 

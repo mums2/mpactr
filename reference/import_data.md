@@ -6,7 +6,7 @@ table and one for sample metadata. Both files should be .csv.
 ## Usage
 
 ``` r
-import_data(peak_table, meta_data, format = "none")
+import_data(peak_table, metadata, format = "none")
 ```
 
 ## Arguments
@@ -15,9 +15,9 @@ import_data(peak_table, meta_data, format = "none")
 
   The file path or valid `https` url to your feature table file.
 
-- meta_data:
+- metadata:
 
-  The file path to your meta_data file or `data.frame`.
+  The file path to your metadata file or `data.frame`.
 
 - format:
 
@@ -49,9 +49,9 @@ exported by Metaboscape with default settings. The import function will
 save the raw peak table in the `mpactr_object` and store a formatted
 peak table for filtering. Reformatting includes selecting "FEATURE_ID",
 "RT", "PEPMASS", and sample columns. Sample columns are determined from
-the "Injection" column in `meta_data` (see below). "PEPMASS" is
-converted to m/z using the "ADDUCT" column and compound metadata columns
-are renamed for mpactr.
+the "Injection" column in `metadata` (see below). "PEPMASS" is converted
+to m/z using the "ADDUCT" column and compound metadata columns are
+renamed for mpactr.
 
 `format` = "None" allows users to provide a feature table file in the
 expected format. This can be useful if you have a file from another tool
@@ -62,8 +62,8 @@ The feature table must have the compound metadata columns "Compound",
 `numeric` or `character`. "mz" is the compound m/z, and should be
 `numeric`. "rt" is the retention time, in minutes, and should be
 `numeric`. The remaining columns should be samples, and match the names
-in the "Injection" column of the `meta_data` file. 2. `meta_data`: a
-table with sample information. Either a file path or `data.frame` can be
+in the "Injection" column of the `metadata` file. 2. `metadata`: a table
+with sample information. Either a file path or `data.frame` can be
 supplied. At minimum the following columns are expected: "Injection",
 "Sample_Code", and "Biological_Group". "Injection" is the sample name
 and is expected to match sample column names in the `peak_table`.
@@ -81,9 +81,9 @@ data <- import_data(
   format = "Progenesis"
 )
 
-meta_data <- read.csv(example_path("metadata.csv"))
+metadata <- read.csv(example_path("metadata.csv"))
 data <- import_data(example_path("coculture_peak_table.csv"),
-  meta_data,
+  metadata,
   format = "Progenesis"
 )
 ```

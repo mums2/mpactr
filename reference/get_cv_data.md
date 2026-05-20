@@ -39,7 +39,7 @@ data_filter <- filter_cv(data,
 
 cv <- get_cv_data(data_filter)
 head(cv)
-#>    Compound  biological_group sample_code passes_cv_filter          cv
+#>    compound  biological_group sample_code passes_cv_filter          cv
 #>      <char>            <char>      <char>           <lgcl>       <num>
 #> 1:        1            Blanks     UM1846B            FALSE  0.86736617
 #> 2:        1  JC28 monoculture     UM1847B            FALSE  0.01656991

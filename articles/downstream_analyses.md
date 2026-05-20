@@ -104,14 +104,14 @@ need to extract the raw data table, which has all pre-filtered ions
 (including m/z and retention time). We can do this with the mpactr
 function
 [`get_raw_data()`](https://www.mums2.org/mpactr/reference/get_raw_data.md),
-and then select the Compound, mz, and rt columns.
+and then select the compound, mz, and rt columns.
 
 ``` r
 
 get_raw_data(data_filtered) %>%
-  select(Compound, mz, rt) %>%
+  select(compound, mz, rt) %>%
   head()
-#>    Compound       mz        rt
+#>    compound       mz        rt
 #>       <int>    <num>     <num>
 #> 1:        1 256.0883 0.7748333
 #> 2:        2 484.2921 0.7756667
@@ -146,13 +146,13 @@ We can join these two `data.table`s for plotting data set:
 ``` r
 
 get_raw_data(data_filtered) %>%
-  mutate(Compound = as.character(Compound)) %>%
-  select(Compound, mz, rt) %>%
+  mutate(compound = as.character(compound)) %>%
+  select(compound, mz, rt) %>%
   left_join(qc_summary(data_filtered),
-    by = join_by("Compound" == "compounds")
+    by = join_by("compound" == "compounds")
   ) %>%
   head()
-#>    Compound       mz        rt      status
+#>    compound       mz        rt      status
 #>      <char>    <num>     <num>      <char>
 #> 1:        1 256.0883 0.7748333 group-Media
 #> 2:        2 484.2921 0.7756667 group-Media
@@ -168,10 +168,10 @@ retention time) and their fate (status) using `ggolot` and `geom_point`.
 ``` r
 
 get_raw_data(data_filtered) %>%
-  mutate(Compound = as.character(Compound)) %>%
-  select(Compound, mz, rt) %>%
+  mutate(compound = as.character(compound)) %>%
+  select(compound, mz, rt) %>%
   left_join(qc_summary(data_filtered),
-    by = join_by("Compound" == "compounds")
+    by = join_by("compound" == "compounds")
   ) %>%
   ggplot() +
   aes(x = rt, y = mz, color = status) +
@@ -194,15 +194,15 @@ We can also make the plot interactive with the `plotly` package function
 ``` r
 
 feature_plot <- get_raw_data(data_filtered) %>%
-  mutate(Compound = as.character(Compound)) %>%
-  select(Compound, mz, rt) %>%
+  mutate(compound = as.character(compound)) %>%
+  select(compound, mz, rt) %>%
   left_join(qc_summary(data_filtered),
-    by = join_by("Compound" == "compounds")
+    by = join_by("compound" == "compounds")
   ) %>%
   ggplot() +
   aes(
     x = rt, y = mz, color = status,
-    text = paste0("Compound: ", Compound)
+    text = paste0("compound: ", compound)
   ) +
   geom_point() +
   viridis::scale_color_viridis(discrete = TRUE) +
@@ -232,8 +232,8 @@ for samples.
 ft <- get_peak_table(data_filtered)
 
 ft[1:5, 1:7]
-#> Key: <Compound, mz, kmd, rt>
-#>    Compound       mz     kmd       rt 102423_Blank_77_1_5095
+#> Key: <compound, mz, kmd, rt>
+#>    compound       mz     kmd       rt 102423_Blank_77_1_5095
 #>      <char>    <num>   <num>    <num>                  <num>
 #> 1:     1000 278.0638 0.06382 5.522833                      0
 #> 2:     1001 296.0736 0.07365 5.524667                      0
@@ -270,8 +270,8 @@ solvent blanks).
 ``` r
 
 counts <- ft %>%
-  select(Compound, all_of(get_metadata(data_filtered)$injection)) %>%
-  column_to_rownames(var = "Compound") %>%
+  select(compound, all_of(get_metadata(data_filtered)$injection)) %>%
+  column_to_rownames(var = "compound") %>%
   select(where(~ sum(.x) != 0))
 
 counts[1:5, 1:2]
@@ -343,15 +343,15 @@ average intensity for each compound across technical replicates and run
 a correlation in the same manner shown above.
 
 In the original `counts` table, we set the row names from the column
-`Compound`, which holds the compound id. Here we need to reset our
-`Compound` column and pivot the data table for calculating averages.
+`compound`, which holds the compound id. Here we need to reset our
+`compound` column and pivot the data table for calculating averages.
 
 ``` r
 
 meta <- get_metadata(data_filtered)
 
 counts %>%
-  rownames_to_column(var = "Compound") %>%
+  rownames_to_column(var = "compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
     names_to = "injection",
@@ -359,7 +359,7 @@ counts %>%
   ) %>%
   head()
 #> # A tibble: 6 × 3
-#>   Compound injection                          intensity
+#>   compound injection                          intensity
 #>   <chr>    <chr>                                  <dbl>
 #> 1 1000     102623_UM1848B_JC1_69_1_5004              0 
 #> 2 1000     102623_UM1847B_JC28_68_1_5006        183612.
@@ -375,7 +375,7 @@ Next, we will join with sample meta data so we can calculate averages by
 ``` r
 
 counts %>%
-  rownames_to_column(var = "Compound") %>%
+  rownames_to_column(var = "compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
     names_to = "injection",
@@ -384,7 +384,7 @@ counts %>%
   left_join(meta, by = "injection") %>%
   head()
 #> # A tibble: 6 × 6
-#>   Compound injection             intensity sample_code biological_group dilution
+#>   compound injection             intensity sample_code biological_group dilution
 #>   <chr>    <chr>                     <dbl> <chr>       <chr>               <int>
 #> 1 1000     102623_UM1848B_JC1_6…        0  UM1848B     JC1                     1
 #> 2 1000     102623_UM1847B_JC28_…   183612. UM1847B     JC28                    1
@@ -394,13 +394,13 @@ counts %>%
 #> 6 1000     102623_MixedMonocult…    15295. MixedMonoc… Mixed_Monocultu…        1
 ```
 
-Now we can calculate mean intensity for each `Compound` and
+Now we can calculate mean intensity for each `compound` and
 `sample_code`.
 
 ``` r
 
 counts %>%
-  rownames_to_column(var = "Compound") %>%
+  rownames_to_column(var = "compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
     names_to = "injection",
@@ -409,11 +409,11 @@ counts %>%
   left_join(meta, by = "injection") %>%
   summarise(
     mean_intensity = mean(intensity),
-    .by = c(Compound, sample_code)
+    .by = c(compound, sample_code)
   ) %>%
   head()
 #> # A tibble: 6 × 3
-#>   Compound sample_code      mean_intensity
+#>   compound sample_code      mean_intensity
 #>   <chr>    <chr>                     <dbl>
 #> 1 1000     UM1848B                      0 
 #> 2 1000     UM1847B                 182682.
@@ -429,7 +429,7 @@ the correlation.
 ``` r
 
 sample_counts <- counts %>%
-  rownames_to_column(var = "Compound") %>%
+  rownames_to_column(var = "compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
     names_to = "injection",
@@ -438,13 +438,13 @@ sample_counts <- counts %>%
   left_join(meta, by = "injection") %>%
   summarise(
     mean_intensity = mean(intensity),
-    .by = c(Compound, sample_code)
+    .by = c(compound, sample_code)
   ) %>%
   pivot_wider(
     names_from = sample_code,
     values_from = mean_intensity
   ) %>%
-  column_to_rownames(var = "Compound")
+  column_to_rownames(var = "compound")
 
 sample_counts[1:5, 1:5]
 #>      UM1848B   UM1847B  UM1850B UM1849B UM1852B
@@ -489,7 +489,7 @@ manner as we did for `sample_code`.
 ``` r
 
 group_counts <- counts %>%
-  rownames_to_column(var = "Compound") %>%
+  rownames_to_column(var = "compound") %>%
   pivot_longer(
     cols = starts_with("102623"),
     names_to = "injection",
@@ -498,13 +498,13 @@ group_counts <- counts %>%
   left_join(meta, by = "injection") %>%
   summarise(
     mean_intensity = mean(intensity),
-    .by = c(Compound, biological_group)
+    .by = c(compound, biological_group)
   ) %>%
   pivot_wider(
     names_from = biological_group,
     values_from = mean_intensity
   ) %>%
-  column_to_rownames(var = "Compound")
+  column_to_rownames(var = "compound")
 ```
 
 Run the correlation analysis with
@@ -605,12 +605,12 @@ and calculate compound fold change.
 get_group_averages(data_filtered) %>%
   filter(biological_group == "Coculture" |
            biological_group == "ANG18") %>%
-  select(Compound, biological_group, average) %>%
+  select(compound, biological_group, average) %>%
   pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
 #> # A tibble: 6 × 4
-#>   Compound ANG18 Coculture    fc
+#>   compound ANG18 Coculture    fc
 #>   <chr>    <dbl>     <dbl> <dbl>
 #> 1 1000         0         0   NaN
 #> 2 1001         0         0   NaN
@@ -628,7 +628,7 @@ numerator or denominator ($`fold change = experimental / control`$).
 There is also the chance that the compound is not found in either group,
 yielding a fold change on NaN (0/0).
 
-Compounds that are not in either group are of no interest in this
+compounds that are not in either group are of no interest in this
 comparison and can therefore be removed from the analysis.
 
 ``` r
@@ -636,7 +636,7 @@ comparison and can therefore be removed from the analysis.
 get_group_averages(data_filtered) %>%
   filter(biological_group == "Coculture" |
            biological_group == "ANG18") %>%
-  select(Compound, biological_group, average) %>%
+  select(compound, biological_group, average) %>%
   pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0 & ANG18 == 0,
                                     FALSE,
@@ -645,7 +645,7 @@ get_group_averages(data_filtered) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
 #> # A tibble: 6 × 5
-#>   Compound ANG18 Coculture nonzero_compound    fc
+#>   compound ANG18 Coculture nonzero_compound    fc
 #>   <chr>    <dbl>     <dbl> <lgl>            <dbl>
 #> 1 1007        0      8929. TRUE               Inf
 #> 2 1023        0      6117. TRUE               Inf
@@ -669,9 +669,9 @@ and ANG18:
 get_group_averages(data_filtered) %>%
   filter(biological_group == "Coculture" |
            biological_group == "ANG18") %>%
-  select(Compound, biological_group, average) %>%
+  select(compound, biological_group, average) %>%
   head()
-#>    Compound biological_group average
+#>    compound biological_group average
 #>      <char>           <char>   <num>
 #> 1:     1000            ANG18       0
 #> 2:     1000        Coculture       0
@@ -690,9 +690,9 @@ Coculture:
 get_group_averages(data_filtered) %>%
   filter(biological_group == "Coculture" |
            biological_group == "ANG18") %>%
-  select(Compound, biological_group, average) %>%
+  select(compound, biological_group, average) %>%
   head()
-#>    Compound biological_group average
+#>    compound biological_group average
 #>      <char>           <char>   <num>
 #> 1:     1000            ANG18       0
 #> 2:     1000        Coculture       0
@@ -709,12 +709,12 @@ Now we create pseudo-counts by adding 0.001 to the counts column:
 get_group_averages(data_filtered) %>%
   filter(biological_group == "Coculture" |
            biological_group == "ANG18") %>%
-  select(Compound, biological_group, average) %>%
+  select(compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
   pivot_wider(names_from = biological_group, values_from = average) %>%
   head()
 #> # A tibble: 6 × 3
-#>   Compound ANG18 Coculture
+#>   compound ANG18 Coculture
 #>   <chr>    <dbl>     <dbl>
 #> 1 1000     0.001     0.001
 #> 2 1001     0.001     0.001
@@ -732,7 +732,7 @@ equates to a pseudo-count of 0.001:
 get_group_averages(data_filtered) %>%
   filter(biological_group == "Coculture" |
            biological_group == "ANG18") %>%
-  select(Compound, biological_group, average) %>%
+  select(compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
   pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
@@ -741,7 +741,7 @@ get_group_averages(data_filtered) %>%
   filter(nonzero_compound == TRUE) %>%
   head()
 #> # A tibble: 6 × 4
-#>   Compound   ANG18 Coculture nonzero_compound
+#>   compound   ANG18 Coculture nonzero_compound
 #>   <chr>      <dbl>     <dbl> <lgl>           
 #> 1 1007       0.001  8929.    TRUE            
 #> 2 1023       0.001  6117.    TRUE            
@@ -758,7 +758,7 @@ Next, we calculate fold change for all remaining compounds:
 get_group_averages(data_filtered) %>%
   filter(biological_group == "Coculture" |
            biological_group == "ANG18") %>%
-  select(Compound, biological_group, average) %>%
+  select(compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
   pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
@@ -768,7 +768,7 @@ get_group_averages(data_filtered) %>%
   mutate(fc = Coculture / ANG18) %>%
   head()
 #> # A tibble: 6 × 5
-#>   Compound   ANG18 Coculture nonzero_compound      fc
+#>   compound   ANG18 Coculture nonzero_compound      fc
 #>   <chr>      <dbl>     <dbl> <lgl>              <dbl>
 #> 1 1007       0.001  8929.    TRUE             8.93e+6
 #> 2 1023       0.001  6117.    TRUE             6.12e+6
@@ -785,7 +785,7 @@ Finally, transform fold change to log2:
 foldchanges <- get_group_averages(data_filtered) %>%
   filter(biological_group == "Coculture" |
            biological_group == "ANG18") %>%
-  select(Compound, biological_group, average) %>%
+  select(compound, biological_group, average) %>%
   mutate(average = average + 0.001) %>%
   pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(nonzero_compound = if_else(Coculture == 0.001 & ANG18 == 0.001,
@@ -797,7 +797,7 @@ foldchanges <- get_group_averages(data_filtered) %>%
 
 head(foldchanges)
 #> # A tibble: 6 × 6
-#>   Compound   ANG18 Coculture nonzero_compound      fc logfc
+#>   compound   ANG18 Coculture nonzero_compound      fc logfc
 #>   <chr>      <dbl>     <dbl> <lgl>              <dbl> <dbl>
 #> 1 1007       0.001  8929.    TRUE             8.93e+6  23.1
 #> 2 1023       0.001  6117.    TRUE             6.12e+6  22.5
@@ -815,7 +815,7 @@ changes as a function of m/z and retention time:
 ``` r
 
 fc_plotting <- foldchanges %>%
-  left_join(select(ft, Compound, mz, rt), by = "Compound")
+  left_join(select(ft, compound, mz, rt), by = "compound")
 
 plot_ly(fc_plotting,
   x = ~logfc, y = ~rt, z = ~mz,
@@ -882,7 +882,7 @@ stats <- get_group_averages(data_filtered) %>%
   filter(biological_group %in% my_comp)
 
 head(stats)
-#>    Compound biological_group average BiolRSD Bioln techRSD techn combRSD
+#>    compound biological_group average BiolRSD Bioln techRSD techn combRSD
 #>      <char>           <char>   <num>   <num> <int>   <num> <num>   <num>
 #> 1:     1000            ANG18       0       0     3       0     3      NA
 #> 2:     1000        Coculture       0       0     3       0     3      NA
@@ -906,20 +906,20 @@ head(stats)
 
 denom <- stats %>%
   summarise(den = combASD^2 / (neff),
-            .by = c("Compound", "biological_group")) %>%
+            .by = c("compound", "biological_group")) %>%
   mutate(den = if_else(!is.finite(den), 0, den)) %>%
-  summarise(denom = sqrt(sum(den)), .by = c("Compound"))
+  summarise(denom = sqrt(sum(den)), .by = c("compound"))
 
 t_test <- stats %>%
-  select(Compound, biological_group, average) %>%
+  select(compound, biological_group, average) %>%
   pivot_wider(names_from = biological_group, values_from = average) %>%
   mutate(numerator = (Coculture - ANG18)) %>% # experimental - control
-  left_join(denom, by = "Compound") %>%
+  left_join(denom, by = "compound") %>%
   mutate(t = abs(numerator / denom))
 
 head(t_test)
 #> # A tibble: 6 × 6
-#>   Compound ANG18 Coculture numerator denom     t
+#>   compound ANG18 Coculture numerator denom     t
 #>   <chr>    <dbl>     <dbl>     <dbl> <dbl> <dbl>
 #> 1 1000         0         0         0     0   NaN
 #> 2 1001         0         0         0     0   NaN
@@ -934,15 +934,15 @@ head(t_test)
 ``` r
 
 df <- stats %>%
-  select(Compound, biological_group, neff) %>%
+  select(compound, biological_group, neff) %>%
   mutate(neff = if_else(!is.finite(neff), 0, neff)) %>%
   pivot_wider(names_from = biological_group, values_from = neff) %>%
   mutate(deg = Coculture + ANG18 - 2) %>%
-  select(Compound, deg)
+  select(compound, deg)
 
 head(df)
 #> # A tibble: 6 × 2
-#>   Compound   deg
+#>   compound   deg
 #>   <chr>    <dbl>
 #> 1 1000        -2
 #> 2 1001        -2
@@ -957,17 +957,17 @@ head(df)
 ``` r
 
 t <- t_test %>%
-  left_join(df, by = "Compound") %>%
+  left_join(df, by = "compound") %>%
   mutate(
     p = (1 - pt(t, deg)) * 2,
     logp = log10(p),
     neg_logp = -logp
   ) %>%
-  select(Compound, t, deg, p, logp, neg_logp)
+  select(compound, t, deg, p, logp, neg_logp)
 
 head(t)
 #> # A tibble: 6 × 6
-#>   Compound     t   deg     p  logp neg_logp
+#>   compound     t   deg     p  logp neg_logp
 #>   <chr>    <dbl> <dbl> <dbl> <dbl>    <dbl>
 #> 1 1000       NaN    -2   NaN   NaN      NaN
 #> 2 1001       NaN    -2   NaN   NaN      NaN
@@ -987,7 +987,7 @@ num_ions <- t %>%
   pull()
 
 fc <- foldchanges %>%
-  left_join(t, by = "Compound") %>%
+  left_join(t, by = "compound") %>%
   arrange(p) %>%
   mutate(
     qval = seq_len(length(p)),
@@ -1120,10 +1120,10 @@ fc2 %>%
       labels = c("Increased", "Decreased", "Inconclusive", "Not significant")
     )
   ) %>%
-  select(Compound, ANG18, Coculture, fc, logfc, p, sig) %>%
+  select(compound, ANG18, Coculture, fc, logfc, p, sig) %>%
   head()
 #> # A tibble: 6 × 7
-#>   Compound    ANG18 Coculture      fc   logfc       p sig            
+#>   compound    ANG18 Coculture      fc   logfc       p sig            
 #>   <chr>       <dbl>     <dbl>   <dbl>   <dbl>   <dbl> <fct>          
 #> 1 637      2174.     2022.    9.30e-1  -0.105 0.458   Not significant
 #> 2 699         0.001 38505.    3.85e+7  25.2   0.00420 Increased      
@@ -1228,7 +1228,7 @@ volcano <- fc2 %>%
   ggplot() +
   aes(
     x = logfc, y = neg_logp, color = sig,
-    text = paste0("Compound: ", Compound)
+    text = paste0("compound: ", compound)
   ) +
   geom_point() +
   geom_hline(yintercept = -log10(0.05), linetype = "dashed") +

@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mpactr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,8 +84,8 @@ Both are expected to be comma separated files (<em>.csv</em>).</p>
 <ol style="list-style-type: decimal">
 <li>peak_table: a peak table in Progenesis format is expected. To export
 a compatible peak table in Progenesis, navigate to the <em>Review
-Compounds</em> tab then File -&gt; Export Compound Measurements. Select
-the following properties: Compound, m/z, Retention time (min), and Raw
+compounds</em> tab then File -&gt; Export compound Measurements. Select
+the following properties: compound, m/z, Retention time (min), and Raw
 abundance and click ok.</li>
 <li>metadata: a table with sample information. At minimum the following
 columns are expected: Injection, Sample_Code, Biological_Group.
@@ -97,7 +97,7 @@ analysis following filtering with mpactr.</li>
 </ol>
 <p>To import these data into R, use the mpactr function
 <code><a href="../reference/import_data.html">import_data()</a></code>, which has the arguments:
-<code>peak_table_file_path</code> and <code>meta_data_file_path</code>.
+<code>peak_table_file_path</code> and <code>metadata_file_path</code>.
 This tutorial will show you examples with data from the original mpact
 program, found on <a href="https://github.com/BalunasLab/mpact/tree/main/rawdata/PTY087I2" class="external-link">GitHub</a>.
 This dataset contain 38 samples for biological groups solvent blanks,
@@ -122,16 +122,16 @@ feature table, and therefore should be removed prior to import.</p>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_subset.html" class="external-link">str_subset</a></span><span class="op">(</span><span class="va">.</span>, <span class="st">"200826"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">meta_data</span> <span class="op">&lt;-</span> <span class="va">samplelist</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="va">samplelist</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">metadata</span>, by <span class="op">=</span> <span class="st">"Sample_Code"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Injection</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">samples</span><span class="op">)</span></span></code></pre></div>
 <p>Now we can import the data. We will provide the url for the
-<code>peak_table</code>, and our reformatted meta_data object. This peak
+<code>peak_table</code>, and our reformatted metadata object. This peak
 table was exported from Progenesis, so we will set the
 <code>format</code> argument to Progenesis.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>,</span>
-<span>  meta_data <span class="op">=</span> <span class="va">meta_data</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">metadata</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This will create an R6 class object, which will store both the peak
@@ -140,7 +140,7 @@ table and metadata.</p>
 the terminal:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span></span>
-<span><span class="co">#&gt;               Compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
+<span><span class="co">#&gt;               compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
 <span><span class="co">#&gt;                 &lt;char&gt;    &lt;num&gt;     &lt;num&gt;            &lt;num&gt;            &lt;num&gt;</span></span>
 <span><span class="co">#&gt;    1:   0.80_418.1451n 419.1521 0.8027667          0.00000         0.000000</span></span>
 <span><span class="co">#&gt;    2: 0.81_210.0803m/z 210.0803 0.8099167          0.00000         0.000000</span></span>
@@ -325,7 +325,7 @@ mpactr. To extract the raw input peak table, use the function
 <code><a href="../reference/get_raw_data.html">get_raw_data()</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_raw_data.html">get_raw_data</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span></span>
-<span><span class="co">#&gt;            Compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
+<span><span class="co">#&gt;            compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;    &lt;num&gt;     &lt;num&gt;            &lt;num&gt;            &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1:   0.80_418.1451n 419.1521 0.8027667                0                0</span></span>
 <span><span class="co">#&gt; 2: 0.81_210.0803m/z 210.0803 0.8099167                0                0</span></span>
@@ -344,7 +344,7 @@ data. If you want to extract the filtered peak table, with filters that
 have been applied, use <code><a href="../reference/get_peak_table.html">get_peak_table()</a></code>:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">]</span></span>
-<span><span class="co">#&gt;            Compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
+<span><span class="co">#&gt;            compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
 <span><span class="co">#&gt;              &lt;char&gt;    &lt;num&gt;     &lt;num&gt;            &lt;num&gt;            &lt;num&gt;</span></span>
 <span><span class="co">#&gt; 1:   0.80_418.1451n 419.1521 0.8027667                0                0</span></span>
 <span><span class="co">#&gt; 2: 0.81_210.0803m/z 210.0803 0.8099167                0                0</span></span>
@@ -362,7 +362,7 @@ have been applied, use <code><a href="../reference/get_peak_table.html">get_peak
 <div class="section level3">
 <h3 id="extract-metadata">Extract metadata<a class="anchor" aria-label="anchor" href="#extract-metadata"></a>
 </h3>
-<p>Metadata can be accessed with <code>get_meta_data()</code>:</p>
+<p>Metadata can be accessed with <code><a href="../reference/get_metadata.html">get_metadata()</a></code>:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_metadata.html">get_metadata</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span></span>
 <span><span class="co">#&gt;           injection file text sample_notes                     ms method</span></span>
@@ -401,12 +401,12 @@ below.</p>
 <p>Where the raw data object has 4956 ions in the feature table:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>,</span>
-<span>  meta_data <span class="op">=</span> <span class="va">meta_data</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">metadata</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data2</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
-<span><span class="co">#&gt;               Compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
+<span><span class="co">#&gt;               compound       mz        rt 200826_blank1_r1 200826_blank1_r2</span></span>
 <span><span class="co">#&gt;                 &lt;char&gt;    &lt;num&gt;     &lt;num&gt;            &lt;num&gt;            &lt;num&gt;</span></span>
 <span><span class="co">#&gt;    1:   0.80_418.1451n 419.1521 0.8027667          0.00000         0.000000</span></span>
 <span><span class="co">#&gt;    2: 0.81_210.0803m/z 210.0803 0.8099167          0.00000         0.000000</span></span>
@@ -435,8 +435,8 @@ semantics).</p>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 291 ions failed the mispicked filter, 4665 ions remain.</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data2_mispicked</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
-<span><span class="co">#&gt; Key: &lt;Compound, mz, kmd, rt&gt;</span></span>
-<span><span class="co">#&gt;               Compound        mz        kmd         rt</span></span>
+<span><span class="co">#&gt; Key: &lt;compound, mz, kmd, rt&gt;</span></span>
+<span><span class="co">#&gt;               compound        mz        kmd         rt</span></span>
 <span><span class="co">#&gt;                 &lt;char&gt;     &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
 <span><span class="co">#&gt;    1: 0.03_102.1549m/z 102.15495 0.15494700 0.03431667</span></span>
 <span><span class="co">#&gt;    2: 0.04_113.9641m/z 113.96412 0.96411580 0.04146667</span></span>
@@ -468,8 +468,8 @@ we created an object called <code>data2_mispicked</code>, the original
 feature table:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data2</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
-<span><span class="co">#&gt; Key: &lt;Compound, mz, kmd, rt&gt;</span></span>
-<span><span class="co">#&gt;               Compound        mz        kmd         rt</span></span>
+<span><span class="co">#&gt; Key: &lt;compound, mz, kmd, rt&gt;</span></span>
+<span><span class="co">#&gt;               compound        mz        kmd         rt</span></span>
 <span><span class="co">#&gt;                 &lt;char&gt;     &lt;num&gt;      &lt;num&gt;      &lt;num&gt;</span></span>
 <span><span class="co">#&gt;    1: 0.03_102.1549m/z 102.15495 0.15494700 0.03431667</span></span>
 <span><span class="co">#&gt;    2: 0.04_113.9641m/z 113.96412 0.96411580 0.04146667</span></span>
@@ -651,11 +651,11 @@ can filter the data by the parameter of choice.</p>
 <span><span class="co">#&gt;   param data                 </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>               </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> cv    <span style="color: #949494;">&lt;tibble [49,560 × 7]&gt;</span></span></span></code></pre></div>
-<p>The nested data are tibbles with the columns Compound,
+<p>The nested data are tibbles with the columns compound,
 biological_group, sample_code, passes_cv_filter, cv, index,
 index_scale:</p>
 <pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 7</span></span></span>
-<span><span class="co">#&gt;   Compound biological_group sample_code passes_cv_filter    cv index index_scale</span></span>
+<span><span class="co">#&gt;   compound biological_group sample_code passes_cv_filter    cv index index_scale</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 0.03_10… Media            MB1109      FALSE               -<span style="color: #BB0000;">1</span>     0     0      </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 0.03_10… Media            MB1110      FALSE               -<span style="color: #BB0000;">1</span>     1     0.002<span style="text-decoration: underline;">02</span></span></span>
@@ -746,7 +746,7 @@ the removal of media blank components with the
 high-quality ions.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import_data.html">import_data</a></span><span class="op">(</span>peak_table <span class="op">=</span> <span class="fu"><a href="../reference/example_path.html">example_path</a></span><span class="op">(</span><span class="st">"PTY087I2_dataset.csv"</span><span class="op">)</span>,</span>
-<span>  meta_data <span class="op">=</span> <span class="va">meta_data</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="va">metadata</span>,</span>
 <span>  format <span class="op">=</span> <span class="st">"Progenesis"</span></span>
 <span><span class="op">)</span></span>
 <span></span>

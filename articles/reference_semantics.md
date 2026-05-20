@@ -24,7 +24,7 @@ data2 <- import_data(
 
 
 get_peak_table(data2)[, 1:5]
-#>       Compound       mz         rt 102623_UM1848B_JC1_69_1_5004
+#>       compound       mz         rt 102623_UM1848B_JC1_69_1_5004
 #>         <char>    <num>      <num>                        <num>
 #>    1:        1 256.0883  0.7748333                         0.00
 #>    2:        2 484.2921  0.7756667                       546.56
@@ -68,8 +68,8 @@ data2_mispicked <- filter_mispicked_ions(data2,
 #> ✔ 73 ions failed the mispicked filter, 1261 ions remain.
 
 get_peak_table(data2_mispicked)[, 1:5]
-#> Key: <Compound, mz, kmd, rt>
-#>       Compound       mz     kmd        rt 102423_Blank_77_1_5095
+#> Key: <compound, mz, kmd, rt>
+#>       compound       mz     kmd        rt 102423_Blank_77_1_5095
 #>         <char>    <num>   <num>     <num>                  <num>
 #>    1:        1 256.0883 0.08831 0.7748333                      0
 #>    2:       10 340.2040 0.20399 0.7916667                      0
@@ -95,8 +95,8 @@ table:
 ``` r
 
 get_peak_table(data2)[, 1:5]
-#> Key: <Compound, mz, kmd, rt>
-#>       Compound       mz     kmd        rt 102423_Blank_77_1_5095
+#> Key: <compound, mz, kmd, rt>
+#>       compound       mz     kmd        rt 102423_Blank_77_1_5095
 #>         <char>    <num>   <num>     <num>                  <num>
 #>    1:        1 256.0883 0.08831 0.7748333                      0
 #>    2:       10 340.2040 0.20399 0.7916667                      0

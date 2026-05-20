@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">mpactr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,7 +92,7 @@ below.</p>
 <span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data2</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
-<span><span class="co">#&gt;       Compound       mz         rt 102623_UM1848B_JC1_69_1_5004</span></span>
+<span><span class="co">#&gt;       compound       mz         rt 102623_UM1848B_JC1_69_1_5004</span></span>
 <span><span class="co">#&gt;         &lt;char&gt;    &lt;num&gt;      &lt;num&gt;                        &lt;num&gt;</span></span>
 <span><span class="co">#&gt;    1:        1 256.0883  0.7748333                         0.00</span></span>
 <span><span class="co">#&gt;    2:        2 484.2921  0.7756667                       546.56</span></span>
@@ -132,8 +132,8 @@ below.</p>
 <span><span class="co">#&gt; <span style="color: #00BB00;">✔</span> 73 ions failed the mispicked filter, 1261 ions remain.</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data2_mispicked</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
-<span><span class="co">#&gt; Key: &lt;Compound, mz, kmd, rt&gt;</span></span>
-<span><span class="co">#&gt;       Compound       mz     kmd        rt 102423_Blank_77_1_5095</span></span>
+<span><span class="co">#&gt; Key: &lt;compound, mz, kmd, rt&gt;</span></span>
+<span><span class="co">#&gt;       compound       mz     kmd        rt 102423_Blank_77_1_5095</span></span>
 <span><span class="co">#&gt;         &lt;char&gt;    &lt;num&gt;   &lt;num&gt;     &lt;num&gt;                  &lt;num&gt;</span></span>
 <span><span class="co">#&gt;    1:        1 256.0883 0.08831 0.7748333                      0</span></span>
 <span><span class="co">#&gt;    2:       10 340.2040 0.20399 0.7916667                      0</span></span>
@@ -154,8 +154,8 @@ the original <code>data2</code> object was also updated and now has 1261
 ions in the feature table:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_peak_table.html">get_peak_table</a></span><span class="op">(</span><span class="va">data2</span><span class="op">)</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span></span>
-<span><span class="co">#&gt; Key: &lt;Compound, mz, kmd, rt&gt;</span></span>
-<span><span class="co">#&gt;       Compound       mz     kmd        rt 102423_Blank_77_1_5095</span></span>
+<span><span class="co">#&gt; Key: &lt;compound, mz, kmd, rt&gt;</span></span>
+<span><span class="co">#&gt;       compound       mz     kmd        rt 102423_Blank_77_1_5095</span></span>
 <span><span class="co">#&gt;         &lt;char&gt;    &lt;num&gt;   &lt;num&gt;     &lt;num&gt;                  &lt;num&gt;</span></span>
 <span><span class="co">#&gt;    1:        1 256.0883 0.08831 0.7748333                      0</span></span>
 <span><span class="co">#&gt;    2:       10 340.2040 0.20399 0.7916667                      0</span></span>
