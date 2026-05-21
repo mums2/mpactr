@@ -2,6 +2,8 @@
 
 ## mpactr 0.3.3
 
+CRAN release: 2026-05-21
+
 - Minor naming inconsistencies inside the package. All imported
   peak_tables names that are not in the `injection` column of the
   metadata file will be converted to lowercase. \# mpactr 0.3.2

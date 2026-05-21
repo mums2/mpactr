@@ -12,7 +12,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/mums2/mpactr/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/mums2/mpactr/blob/v0.3.3/inst/CITATION)
 
 Mason AR, Johnson Jr G, Krampen J, Nguyen JNT, Balunas MJ, Schloss PD
 (2025). “mpactR: an R adaptation of the metabolomics peak analysis
