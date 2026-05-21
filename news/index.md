@@ -1,5 +1,7 @@
 # Changelog
 
+## mpactr (development version)
+
 ## mpactr 0.3.3
 
 CRAN release: 2026-05-21
